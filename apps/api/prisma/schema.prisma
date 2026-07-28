@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
+
+enum MessageKind {
+  TEXT
+  EMOJI
+  STATUS
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+}
+
+model User {
+  id             String        @id @default(uuid()) @db.Uuid
+  email          String        @unique
+  passwordHash   String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  profile        Profile?
+  sentRequests   Friendship[]  @relation("FriendshipRequester")
+  receivedRequests Friendship[] @relation("FriendshipReceiver")
+  sentInvites    Invite[]      @relation("InviteCreator")
+  usedInvites    Invite[]      @relation("InviteUser")
+  sentMessages   Message[]     @relation("MessageSender")
+  receivedMessages Message[]   @relation("MessageReceiver")
+  ownedWidgetStates WidgetState[] @relation("WidgetOwner")
+  sourceWidgetStates WidgetState[] @relation("WidgetSource")
+  pushTokens     PushToken[]
+}
+
+model Profile {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @unique @db.Uuid
+  displayName String
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Friendship {
+  id          String           @id @default(uuid()) @db.Uuid
+  requesterId String           @db.Uuid
+  receiverId  String           @db.Uuid
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  acceptedAt  DateTime?
+  requester   User             @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiver    User             @relation("FriendshipReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, receiverId])
+  @@index([receiverId, status])
+}
+
+model Invite {
+  id        String    @id @default(uuid()) @db.Uuid
+  createdBy String   @db.Uuid
+  code      String   @unique
+  expiresAt DateTime
+  usedBy    String?  @db.Uuid
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  creator   User     @relation("InviteCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  usedByUser User?   @relation("InviteUser", fields: [usedBy], references: [id], onDelete: SetNull)
+}
+
+model Message {
+  id         String      @id @default(uuid()) @db.Uuid
+  senderId   String      @db.Uuid
+  receiverId String      @db.Uuid
+  body       String
+  kind       MessageKind @default(TEXT)
+  createdAt  DateTime    @default(now())
+  readAt     DateTime?
+  sender     User        @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User        @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  widgetStates WidgetState[]
+
+  @@index([receiverId, createdAt])
+  @@index([senderId, receiverId, createdAt])
+}
+
+model WidgetState {
+  id           String   @id @default(uuid()) @db.Uuid
+  ownerId      String   @db.Uuid
+  sourceUserId String   @db.Uuid
+  messageId    String?  @db.Uuid
+  displayText  String?
+  displayEmoji String?
+  theme        String?
+  updatedAt    DateTime @updatedAt
+  owner        User     @relation("WidgetOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  sourceUser   User     @relation("WidgetSource", fields: [sourceUserId], references: [id], onDelete: Cascade)
+  message      Message? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+
+  @@unique([ownerId, sourceUserId])
+}
+
+model PushToken {
+  id        String         @id @default(uuid()) @db.Uuid
+  userId    String         @db.Uuid
+  token     String         @unique
+  platform  DevicePlatform
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

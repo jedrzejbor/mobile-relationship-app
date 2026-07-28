@@ -1,0 +1,15 @@
+{
+  "name": "widget-friends-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:mobile": "pnpm --filter mobile start",
+    "dev:api": "pnpm --filter api start:dev",
+    "db:up": "docker compose up -d postgres redis adminer",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f postgres",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "packageManager": "pnpm@10.24.0"
+}

@@ -155,34 +155,48 @@ oraz manualnie uruchom aplikacje przez Expo.
 
 ## Uruchomienie aplikacji na telefonie
 
-Tak, mozesz odpalic ten projekt na swoim telefonie przez Expo.
+Tak, mozesz odpalic ten projekt na swoim telefonie przez Expo Go. Docker dalej dziala tylko na komputerze: trzyma PostgreSQL, Redis i Adminera. Telefon nie laczy sie bezposrednio z Dockerem ani baza danych. Telefon laczy sie z aplikacja Expo oraz z API uruchomionym na komputerze.
 
-1. Zainstaluj aplikacje Expo Go:
-   - iPhone: App Store
-   - Android: Google Play
+Schemat wyglada tak:
 
-2. Upewnij sie, ze komputer i telefon sa w tej samej sieci Wi-Fi.
-
-3. Uruchom backend:
-
-```bash
-pnpm db:up
-pnpm dev:api
+```txt
+Telefon z Expo Go -> API na komputerze -> PostgreSQL/Redis w Dockerze
 ```
 
-4. Uruchom Expo w drugim terminalu:
+### 1. Zainstaluj Expo Go
+
+Zainstaluj aplikacje Expo Go:
+
+- iPhone: App Store
+- Android: Google Play
+
+### 2. Podlacz telefon i komputer do tej samej sieci
+
+Telefon i komputer musza byc w tej samej sieci Wi-Fi. To najprostszy wariant, bo wtedy telefon moze wejsc na adres IP komputera.
+
+### 3. Sprawdz adres IP komputera
+
+Na macOS uruchom:
 
 ```bash
-pnpm dev:mobile
+ipconfig getifaddr en0
 ```
 
-5. Po starcie Expo zobaczysz kod QR w terminalu.
+Przykladowy wynik:
 
-6. Otworz aplikacje na telefonie:
-   - iPhone: zeskanuj QR aparatem albo aplikacja Expo Go.
-   - Android: zeskanuj QR w aplikacji Expo Go.
+```txt
+192.168.1.50
+```
 
-## Wazna uwaga o API na telefonie
+Ten adres bedzie potrzebny w konfiguracji aplikacji mobilnej.
+
+Jesli ta komenda nic nie zwroci, sproboj:
+
+```bash
+ipconfig getifaddr en1
+```
+
+### 4. Ustaw API URL dla telefonu
 
 W pliku `apps/mobile/.env` domyslnie jest:
 
@@ -190,7 +204,7 @@ W pliku `apps/mobile/.env` domyslnie jest:
 EXPO_PUBLIC_API_URL=http://localhost:3001
 ```
 
-Na telefonie `localhost` oznacza telefon, a nie komputer. Jesli aplikacja mobilna ma laczyc sie z API uruchomionym na komputerze, zmien ten adres na lokalny adres IP komputera w sieci Wi-Fi.
+Na telefonie `localhost` oznacza telefon, a nie komputer. Dlatego do testowania na fizycznym telefonie zmien `localhost` na IP komputera.
 
 Przyklad:
 
@@ -198,17 +212,55 @@ Przyklad:
 EXPO_PUBLIC_API_URL=http://192.168.1.50:3001
 ```
 
-Adres IP komputera sprawdzisz na macOS na przyklad tak:
+Zostaw port `3001`, bo na nim dziala backend.
+
+### 5. Uruchom Dockera i backend
+
+W pierwszym terminalu:
 
 ```bash
-ipconfig getifaddr en0
+pnpm db:up
+pnpm dev:api
 ```
 
-Po zmianie `apps/mobile/.env` zatrzymaj Expo i uruchom ponownie:
+`pnpm db:up` uruchamia PostgreSQL, Redis i Adminera w Dockerze. `pnpm dev:api` uruchamia backend NestJS lokalnie na komputerze.
+
+### 6. Uruchom Expo
+
+W drugim terminalu:
 
 ```bash
 pnpm dev:mobile
 ```
+
+Po starcie Expo zobaczysz kod QR w terminalu.
+
+### 7. Otworz aplikacje na telefonie
+
+- iPhone: zeskanuj QR aparatem albo aplikacja Expo Go.
+- Android: zeskanuj QR w aplikacji Expo Go.
+
+Po zeskanowaniu kodu aplikacja powinna uruchomic sie w Expo Go.
+
+## Jesli telefon nie laczy sie z aplikacja
+
+Najpierw sprawdz tryb Expo. W terminalu Expo zwykle widac, czy dziala w trybie `lan`, `localhost` albo `tunnel`.
+
+Najlepszy wariant lokalnie:
+
+```bash
+pnpm --filter mobile start -- --lan
+```
+
+Jesli telefon i komputer nie widza sie w sieci Wi-Fi, uzyj tunelu:
+
+```bash
+pnpm --filter mobile start -- --tunnel
+```
+
+Tunel pomaga z samym polaczeniem Expo Go z projektem. Nadal jednak API URL w `apps/mobile/.env` musi wskazywac na adres dostepny z telefonu. Najczesciej bedzie to IP komputera, np. `http://192.168.1.50:3001`.
+
+## Jesli aplikacja sie odpala, ale nie laczy sie z API
 
 Jesli telefon dalej nie laczy sie z API, sprawdz:
 
@@ -216,6 +268,20 @@ Jesli telefon dalej nie laczy sie z API, sprawdz:
 - czy API nadal dziala na porcie `3001`,
 - czy firewall na komputerze nie blokuje polaczen przychodzacych,
 - czy w adresie API jest IP komputera, a nie `localhost`.
+
+Mozesz tez sprawdzic z telefonu w przegladarce, czy API jest widoczne. Wejdz na adres z IP komputera:
+
+```txt
+http://192.168.1.50:3001/api
+```
+
+Podmien `192.168.1.50` na swoje IP. Jesli telefon nie moze otworzyc tego adresu, problem jest w sieci, firewallu albo backend nie jest uruchomiony.
+
+Po kazdej zmianie `apps/mobile/.env` zatrzymaj Expo i uruchom ponownie:
+
+```bash
+pnpm dev:mobile
+```
 
 ## Uruchomienie w przegladarce
 

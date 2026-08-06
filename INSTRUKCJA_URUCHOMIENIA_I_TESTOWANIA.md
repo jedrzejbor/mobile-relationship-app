@@ -11,7 +11,7 @@ Ten projekt to monorepo z aplikacja mobilna Expo/React Native oraz backendem Nes
 
 Zainstaluj lokalnie:
 
-- Node.js
+- Node.js 20 LTS
 - pnpm
 - Docker Desktop
 - Expo Go na telefonie, jesli chcesz uruchamiac aplikacje na fizycznym urzadzeniu
@@ -23,6 +23,21 @@ node -v
 pnpm -v
 docker --version
 ```
+
+Projekt mobile po downgrade do Expo SDK 54 najlepiej uruchamiac na Node 20. Na Node 22 Expo CLI moze wywalic blad portu podobny do:
+
+```txt
+RangeError [ERR_SOCKET_BAD_PORT]: options.port should be >= 0 and < 65536
+```
+
+Jesli uzywasz `nvm`, przelacz Node tak:
+
+```bash
+nvm install 20
+nvm use
+```
+
+W repo jest plik `.nvmrc`, wiec `nvm use` powinno automatycznie wybrac Node 20.
 
 ## Pierwsze uruchomienie projektu
 
@@ -249,16 +264,57 @@ Najpierw sprawdz tryb Expo. W terminalu Expo zwykle widac, czy dziala w trybie `
 Najlepszy wariant lokalnie:
 
 ```bash
-pnpm --filter mobile start -- --lan
+pnpm --filter mobile exec expo start --lan
 ```
 
 Jesli telefon i komputer nie widza sie w sieci Wi-Fi, uzyj tunelu:
 
 ```bash
-pnpm --filter mobile start -- --tunnel
+pnpm --filter mobile exec expo start --tunnel
 ```
 
 Tunel pomaga z samym polaczeniem Expo Go z projektem. Nadal jednak API URL w `apps/mobile/.env` musi wskazywac na adres dostepny z telefonu. Najczesciej bedzie to IP komputera, np. `http://192.168.1.50:3001`.
+
+## Wersja Expo po downgrade do SDK 54
+
+Projekt mobile jest ustawiony na Expo SDK 54:
+
+```txt
+expo: ~54.0.36
+react-native: 0.81.5
+react: 19.1.0
+```
+
+Ta wersja jest wybrana po to, zeby projekt mogl dzialac w Expo Go na fizycznym telefonie.
+
+Po zmianie wersji zaleznosci odpal:
+
+```bash
+pnpm install
+pnpm --filter mobile typecheck
+pnpm --filter mobile lint
+```
+
+Uruchamiaj Expo na Node 20:
+
+```bash
+nvm use
+pnpm --filter mobile exec expo start --clear --lan
+```
+
+Jesli Expo Go dalej pokazuje komunikat o niezgodnej wersji:
+
+1. Zatrzymaj Expo w terminalu.
+2. Uruchom Expo z wyczyszczeniem cache:
+
+```bash
+pnpm --filter mobile exec expo start --clear --lan
+```
+
+3. Zamknij Expo Go na telefonie i otworz ponownie.
+4. Zeskanuj nowy kod QR.
+
+Stary proces Expo mogl trzymac bundle z poprzedniej wersji SDK, dlatego czyszczenie cache jest wazne po downgrade.
 
 ## Jesli aplikacja sie odpala, ale nie laczy sie z API
 

@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga i trzecia iteracja zrobione.
+Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -758,6 +758,14 @@ Trzecia iteracja:
 - Przebudowano `UpgradeShopPanel`: ciemne karty, pomaranczowy aktywny segment, statusy zakupu, kolory per click i passive income zgodne z referencja.
 - Ekran gry dostal ciemne tlo i pomaranczowy tytul bez zmiany przeplywu danych ani mechaniki gry.
 - UI nadal jest komponentowy i nie uzywa referencji jako statycznego screena.
+
+Czwarta iteracja:
+
+- Podmieniono komponentowy placeholder auta w `CarTapButton` na asset auta wybierany statycznie po tierze.
+- Dodano `getStarterCarStageAsset`, zeby wybor grafiki auta byl zamkniety w warstwie assetow, a nie w komponencie UI.
+- Zachowano animacje klikniecia i floating `+cash`, ale przeniesiono je na ramke z obrazem auta.
+- Dodano miniatury ulepszen w `UpgradeShopPanel` na podstawie `CAR_CLICKER_UPGRADE_ASSETS`.
+- Poziom ulepszenia jest teraz widoczny jako badge na miniaturze, zgodnie z kierunkiem referencji UI.
 
 Zakres pierwszej iteracji:
 

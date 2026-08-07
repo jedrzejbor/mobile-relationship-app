@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
 
@@ -6,7 +7,10 @@ import { Spacing } from '@/constants/theme';
 import { getCarAppearance } from '@/features/car-clicker/car-appearance';
 import { formatCarClickerCash } from '@/features/car-clicker/format';
 import { CAR_CLICKER_SCREEN } from '@/features/car-clicker/screen';
-import { useTheme } from '@/hooks/use-theme';
+import {
+  CarClickerTheme,
+  getStarterCarStageAsset,
+} from '@/features/car-clicker';
 
 type CarTapButtonProps = {
   perClick: number;
@@ -15,8 +19,8 @@ type CarTapButtonProps = {
 };
 
 export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
-  const theme = useTheme();
   const appearance = getCarAppearance(tier);
+  const stageAsset = getStarterCarStageAsset(tier);
   const scale = useRef(new Animated.Value(1)).current;
   const feedbackOpacity = useRef(new Animated.Value(0)).current;
   const feedbackTranslateY = useRef(new Animated.Value(0)).current;
@@ -62,14 +66,10 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
       onPress={handlePress}
       style={({ pressed }) => [
         styles.button,
-        {
-          backgroundColor: theme.backgroundElement,
-          borderColor: theme.backgroundSelected,
-        },
         pressed && styles.buttonPressed,
       ]}>
-      <ThemedText themeColor="textSecondary" style={styles.tierLabel}>
-        Tier {tier} · {appearance.name}
+      <ThemedText style={styles.tierLabel}>
+        Tier {tier} · {appearance.name} · {stageAsset.label}
       </ThemedText>
       <View style={styles.carStage}>
         <Animated.View
@@ -87,47 +87,13 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
           </ThemedText>
         </Animated.View>
 
-        <Animated.View style={[styles.car, { transform: [{ scale }] }]}>
-          {appearance.hasSpoiler && (
-            <View
-              style={[
-                styles.spoiler,
-                { backgroundColor: appearance.accentColor },
-              ]}
-            />
-          )}
-          <View
-            style={[
-              styles.carCabin,
-              { backgroundColor: appearance.cabinColor },
-            ]}
+        <Animated.View style={[styles.carFrame, { transform: [{ scale }] }]}>
+          <Image
+            accessibilityIgnoresInvertColors
+            contentFit="contain"
+            source={stageAsset.source}
+            style={styles.carImage}
           />
-          <View
-            style={[
-              styles.carBody,
-              { backgroundColor: appearance.bodyColor },
-            ]}>
-            <View style={[styles.carWindow, styles.carWindowLeft]} />
-            <View style={[styles.carWindow, styles.carWindowRight]} />
-            <View
-              style={[
-                styles.sideAccent,
-                { backgroundColor: appearance.accentColor },
-              ]}
-            />
-          </View>
-          {appearance.hasNeon && (
-            <View
-              style={[
-                styles.neon,
-                { backgroundColor: appearance.accentColor },
-              ]}
-            />
-          )}
-          <View style={styles.wheels}>
-            <View style={styles.wheel} />
-            <View style={styles.wheel} />
-          </View>
         </Animated.View>
       </View>
       <ThemedText type="smallBold" style={styles.tapHint}>
@@ -141,14 +107,20 @@ const styles = StyleSheet.create({
   button: {
     alignSelf: 'center',
     width: '100%',
-    maxWidth: 420,
-    minHeight: 260,
-    borderRadius: Spacing.three,
-    borderWidth: 1,
+    maxWidth: 560,
+    minHeight: 284,
+    borderRadius: CarClickerTheme.radii.panel,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.borderStrong,
+    backgroundColor: CarClickerTheme.colors.panel,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: Spacing.four,
+    padding: Spacing.three,
     gap: Spacing.three,
+    shadowColor: CarClickerTheme.colors.accent,
+    shadowOpacity: 0.22,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
   },
   buttonPressed: {
     opacity: 0.82,
@@ -156,14 +128,15 @@ const styles = StyleSheet.create({
   },
   tierLabel: {
     minHeight: 24,
+    color: CarClickerTheme.colors.textMuted,
+    fontStyle: 'italic',
     textAlign: 'center',
   },
   carStage: {
     width: '100%',
-    maxWidth: 280,
-    minHeight: 138,
+    minHeight: 188,
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
   },
   clickFeedback: {
     position: 'absolute',
@@ -173,88 +146,23 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.two,
     paddingHorizontal: Spacing.two,
     justifyContent: 'center',
-    backgroundColor: 'rgba(31, 122, 236, 0.14)',
+    backgroundColor: CarClickerTheme.colors.accentDim,
   },
   clickFeedbackText: {
-    color: '#1f7aec',
+    color: CarClickerTheme.colors.money,
   },
-  car: {
+  carFrame: {
     width: '100%',
-    aspectRatio: 2.3,
-    justifyContent: 'flex-end',
+    aspectRatio: 1.72,
   },
-  spoiler: {
-    position: 'absolute',
-    right: '4%',
-    top: '26%',
-    width: '22%',
-    height: 8,
-    borderRadius: 4,
-  },
-  carCabin: {
-    position: 'absolute',
-    left: '32%',
-    top: '10%',
-    width: '38%',
-    height: '42%',
-    borderTopLeftRadius: Spacing.three,
-    borderTopRightRadius: Spacing.three,
-  },
-  carBody: {
-    height: '54%',
-    borderRadius: Spacing.three,
-    borderTopLeftRadius: Spacing.two,
-    borderTopRightRadius: Spacing.two,
-  },
-  carWindow: {
-    position: 'absolute',
-    top: Spacing.two,
-    width: '18%',
-    height: '30%',
-    borderRadius: Spacing.one,
-    backgroundColor: 'rgba(255, 255, 255, 0.72)',
-  },
-  carWindowLeft: {
-    left: '34%',
-  },
-  carWindowRight: {
-    right: '24%',
-  },
-  sideAccent: {
-    position: 'absolute',
-    left: '14%',
-    right: '14%',
-    bottom: '18%',
-    height: 5,
-    borderRadius: 3,
-  },
-  neon: {
-    position: 'absolute',
-    left: '16%',
-    right: '16%',
-    bottom: -Spacing.one,
-    height: 5,
-    borderRadius: 3,
-    opacity: 0.72,
-  },
-  wheels: {
-    position: 'absolute',
-    left: '12%',
-    right: '12%',
-    bottom: -Spacing.two,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  wheel: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    borderWidth: 8,
-    borderColor: '#101113',
-    backgroundColor: '#6f7378',
+  carImage: {
+    width: '100%',
+    height: '100%',
   },
   tapHint: {
     minHeight: 24,
+    color: CarClickerTheme.colors.click,
+    textTransform: 'uppercase',
     textAlign: 'center',
   },
 });

@@ -54,6 +54,14 @@ export const STARTER_CAR_STAGE_ASSETS = [
   },
 ] as const satisfies readonly CarClickerCarStageAsset[];
 
+export function getStarterCarStageAsset(tier: number): CarClickerCarStageAsset {
+  return STARTER_CAR_STAGE_ASSETS.reduce<CarClickerCarStageAsset>(
+    (selectedAsset, stageAsset) =>
+      tier >= stageAsset.minTier ? stageAsset : selectedAsset,
+    STARTER_CAR_STAGE_ASSETS[0],
+  );
+}
+
 export const CAR_CLICKER_UPGRADE_ASSETS = {
   better_tires: require('@/assets/game/upgrades/better-tires.png'),
   chip_tuning: require('@/assets/game/upgrades/chip-tuning.png'),

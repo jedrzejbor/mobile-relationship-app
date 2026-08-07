@@ -1,9 +1,11 @@
+import { Image } from 'expo-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import {
   CAR_CLICKER_UPGRADE_CATEGORY_OPTIONS,
+  CAR_CLICKER_UPGRADE_ASSETS,
   CarClickerTheme,
   formatCarClickerCash,
   type CarClickerPurchaseFeedback,
@@ -144,13 +146,24 @@ function UpgradeRow({
             : CarClickerTheme.colors.border,
         },
       ]}>
+      <View style={styles.assetFrame}>
+        <Image
+          accessibilityIgnoresInvertColors
+          contentFit="cover"
+          source={CAR_CLICKER_UPGRADE_ASSETS[upgrade.id]}
+          style={styles.assetImage}
+        />
+        <View style={styles.assetLevelBadge}>
+          <ThemedText type="smallBold" style={styles.assetLevelText}>
+            Lv. {upgradeView.level}
+          </ThemedText>
+        </View>
+      </View>
+
       <View style={styles.rowContent}>
         <View style={styles.rowTitleLine}>
           <ThemedText type="smallBold" style={styles.upgradeName}>
             {upgrade.name}
-          </ThemedText>
-          <ThemedText type="smallBold" style={styles.levelBadge}>
-            Lv. {upgradeView.level}
           </ThemedText>
         </View>
         <ThemedText type="small" style={styles.description}>
@@ -293,13 +306,39 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
   },
   row: {
-    minHeight: 124,
+    minHeight: 132,
     borderWidth: 1,
     borderRadius: CarClickerTheme.radii.panel,
-    padding: Spacing.three,
+    padding: Spacing.two,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.two,
+  },
+  assetFrame: {
+    width: 94,
+    height: 94,
+    borderRadius: CarClickerTheme.radii.control,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    overflow: 'hidden',
+    backgroundColor: CarClickerTheme.colors.panelStrong,
+  },
+  assetImage: {
+    width: '100%',
+    height: '100%',
+  },
+  assetLevelBadge: {
+    position: 'absolute',
+    left: Spacing.one,
+    bottom: Spacing.one,
+    minHeight: 22,
+    borderRadius: CarClickerTheme.radii.badge,
+    backgroundColor: 'rgba(5, 7, 11, 0.82)',
+    paddingHorizontal: Spacing.two,
+    justifyContent: 'center',
+  },
+  assetLevelText: {
+    color: CarClickerTheme.colors.textMuted,
   },
   rowContent: {
     flex: 1,
@@ -317,9 +356,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontStyle: 'italic',
     textTransform: 'uppercase',
-  },
-  levelBadge: {
-    color: CarClickerTheme.colors.textMuted,
   },
   description: {
     flexShrink: 1,

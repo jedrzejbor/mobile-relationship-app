@@ -327,6 +327,13 @@ Druga iteracja:
 - Cleanup dalej usuwa poprzedni interwal, wiec zmiana wartosci `perSecond` nie tworzy duplikatow timerow.
 - Usunieto niepotrzebna prace w tle na poczatku gry, gdy gracz nie ma jeszcze pasywnego dochodu.
 
+Trzecia iteracja:
+
+- Dodano timestamp ostatniego ticka pasywnego dochodu przez `useRef`.
+- Timer przekazuje do reducera realny `elapsedSeconds`, zamiast zawsze zakladac idealna jedna sekunde.
+- Przy zmianie `perSecond` albo czyszczeniu interwalu timestamp jest resetowany.
+- Naliczanie jest bardziej odporne na opoznienia JS thread i chwilowe przyciecia aplikacji.
+
 - Dodac timer naliczajacy `per second`.
 - Upewnic sie, ze naliczanie nie tworzy wielu timerow po rerenderach.
 - Pokazac aktualny `per second` w UI.

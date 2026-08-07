@@ -411,6 +411,13 @@ Czwarta iteracja:
 - Wyróżnienie pojawia sie tylko po udanym zakupie, nie po probie zakupu bez cashu.
 - Feedback zakupu zostaje w sklepie i nie wymaga dodatkowej logiki w ekranie gry.
 
+Piata iteracja:
+
+- Dodano animowane wejscie `TierUpFeedbackPanel`.
+- Panel awansu tieru pojawia sie przez fade-in i subtelne przesuniecie w pionie.
+- Animacja jest zamknieta w komponencie panelu i korzysta z natywnego `Animated`.
+- Efekt uruchamia sie przy zmianie feedbacku awansu, bez dodatkowej logiki w ekranie gry.
+
 - Dodac animacje klikniecia samochodu.
 - Dodac plywajacy tekst z zarobkiem po kliknieciu.
 - Dodac progress do kolejnego tieru auta.

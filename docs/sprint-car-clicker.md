@@ -206,6 +206,15 @@ Poza zakresem tej iteracji:
 - Dochod pasywny z timerem zostaje w Zadaniu 4.
 - Zaawansowane animacje i plywajacy tekst zostaja w Zadaniu 5.
 
+Druga iteracja:
+
+- Odchudzono `apps/mobile/src/app/game.tsx` do roli kontenera stanu i ukladu.
+- Wyniesiono panel statystyk do `CarClickerStatsPanel`.
+- Wyniesiono klikalny samochod do `CarTapButton`.
+- Wyniesiono pasek progresu tieru do `CarTierProgressPanel`.
+- Dodano `formatCarClickerCash`, zeby formatowanie waluty bylo wspolne dla ekranu i przyszlego sklepu.
+- Dodano `ScrollView`, zeby podstawowy widok byl odporniejszy na nizsze ekrany telefonow.
+
 - Dodac ekran lub rozbudowac istniejacy ekran gry.
 - Pokazac cash, `per click` i `per second`.
 - Dodac klikalny samochod.

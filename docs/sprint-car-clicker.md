@@ -341,6 +341,13 @@ Czwarta iteracja:
 - Cleanup usuwa teraz zarowno interwal, jak i subskrypcje `AppState`.
 - `collectPassiveIncome` nie ucina juz dochodu przez `floor` na kazdym ticku, wiec opoznione ticki nie gubia ulamkow przychodu.
 
+Piata iteracja:
+
+- Wyniesiono obsluge timera, timestampow i `AppState` do `usePassiveIncomeTicker`.
+- `useCarClickerGame` nie zna juz szczegolow interwalu; przekazuje tylko `isEnabled` i akcje dispatchowana na tick.
+- Hook timera trzyma aktualny callback w refie, wiec nie restartuje interwalu przy kazdym renderze.
+- Separacja ulatwia testowanie i dalsze uzycie timera, np. przy zapisie lokalnym albo osobnym feedbacku pasywnego przychodu.
+
 - Dodac timer naliczajacy `per second`.
 - Upewnic sie, ze naliczanie nie tworzy wielu timerow po rerenderach.
 - Pokazac aktualny `per second` w UI.

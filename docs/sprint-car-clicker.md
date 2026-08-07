@@ -717,7 +717,24 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
+Status: pierwsza iteracja zrobiona.
+
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
+
+Pierwsza iteracja:
+
+- Dodano assety samochodu startera do `apps/mobile/assets/game/cars/starter`.
+- Nazwano assety auta wedlug progresji wizualnej: `stage-0-stock`, `stage-1-sport-wheels`, `stage-2-lowered-stance`, `stage-3-rear-wing`, `stage-4-body-kit`, `stage-max-track-tuned`.
+- Zachowano podobny wariant ze spoilerem jako `stage-3-rear-wing-alt`, zeby nie gubic wygenerowanego materialu referencyjnego.
+- Dodano assety ulepszen do `apps/mobile/assets/game/upgrades`: `better-tires`, `chip-tuning`, `turbo`, `mechanic`, `workshop`, `dealer`.
+- Dodano asset lokacji/salonu do `apps/mobile/assets/game/locations/dealership`.
+- Dodano `assets.ts` w feature `car-clicker` ze statycznymi mapami `require`, zeby Expo moglo bundlowac grafiki bez dynamicznych sciezek.
+
+Poza zakresem tej iteracji:
+
+- Podmiana obecnego komponentowego placeholdera auta na `Image`.
+- Pokazanie ikon ulepszen w sklepie.
+- Finalne przyciecie albo optymalizacja rozmiaru grafik.
 
 Zakres pierwszej iteracji:
 

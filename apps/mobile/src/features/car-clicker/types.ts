@@ -49,6 +49,7 @@ export type CarClickerUpgradePurchaseResult =
 
 export type CarClickerPurchaseFeedback = {
   status: CarClickerUpgradePurchaseResult['status'];
+  upgradeId: CarClickerUpgradeId;
   upgradeName: string;
 };
 

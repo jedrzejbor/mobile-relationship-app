@@ -58,6 +58,10 @@ export function UpgradeShopPanel({
         {upgrades.length > 0 ? (
           upgrades.map((upgradeView) => (
             <UpgradeRow
+              isRecentlyPurchased={
+                purchaseFeedback?.status === 'purchased' &&
+                purchaseFeedback.upgradeId === upgradeView.upgrade.id
+              }
               key={upgradeView.upgrade.id}
               onPurchase={onPurchase}
               upgradeView={upgradeView}
@@ -111,9 +115,11 @@ function CategoryButton({
 }
 
 function UpgradeRow({
+  isRecentlyPurchased,
   onPurchase,
   upgradeView,
 }: {
+  isRecentlyPurchased: boolean;
   upgradeView: CarClickerUpgradeView;
   onPurchase: (upgradeId: CarClickerUpgradeId) => void;
 }) {
@@ -127,7 +133,18 @@ function UpgradeRow({
       : formatCarClickerCash(upgradeView.nextCost);
 
   return (
-    <View style={[styles.row, { borderColor: theme.backgroundSelected }]}>
+    <View
+      style={[
+        styles.row,
+        {
+          backgroundColor: isRecentlyPurchased
+            ? 'rgba(31, 122, 236, 0.1)'
+            : 'transparent',
+          borderColor: isRecentlyPurchased
+            ? '#1f7aec'
+            : theme.backgroundSelected,
+        },
+      ]}>
       <View style={styles.rowContent}>
         <View style={styles.rowTitleLine}>
           <ThemedText type="smallBold" style={styles.upgradeName}>
@@ -143,6 +160,11 @@ function UpgradeRow({
         <ThemedText type="small" style={styles.effect}>
           {effectLabel}
         </ThemedText>
+        {isRecentlyPurchased && (
+          <ThemedText type="smallBold" style={styles.recentlyPurchased}>
+            Ostatnio kupione
+          </ThemedText>
+        )}
         {!upgradeView.isAffordable && !upgradeView.isMaxLevelReached && (
           <ThemedText themeColor="textSecondary" type="small">
             Brakuje {formatCarClickerCash(upgradeView.missingCash)}
@@ -262,6 +284,9 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   effect: {
+    color: '#1f7aec',
+  },
+  recentlyPurchased: {
     color: '#1f7aec',
   },
   buyButton: {

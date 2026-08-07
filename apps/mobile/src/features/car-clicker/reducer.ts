@@ -69,6 +69,7 @@ export function carClickerReducer(
         game: purchaseResult.state,
         purchaseFeedback: {
           status: purchaseResult.status,
+          upgradeId: action.upgradeId,
           upgradeName: upgrade.name,
         },
         tierFeedback: didTierIncrease

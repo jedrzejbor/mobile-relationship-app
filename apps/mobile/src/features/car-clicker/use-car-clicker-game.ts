@@ -7,15 +7,28 @@ import {
   getUpgradeViews,
   purchaseCarClickerUpgrade,
 } from './economy';
-import type { CarClickerUpgradeId } from './types';
+import type {
+  CarClickerUpgradeCategory,
+  CarClickerUpgradeCategoryFilter,
+  CarClickerUpgradeId,
+} from './types';
 
 export function useCarClickerGame() {
   const [state, setState] = useState(createInitialCarClickerState);
+  const [selectedUpgradeCategory, setSelectedUpgradeCategory] =
+    useState<CarClickerUpgradeCategoryFilter>('all');
   const tierProgress = useMemo(
     () => getCarTierProgress(state.upgrades),
     [state.upgrades],
   );
-  const upgradeViews = useMemo(() => getUpgradeViews(state), [state]);
+  const upgradeCategory: CarClickerUpgradeCategory | undefined =
+    selectedUpgradeCategory === 'all'
+      ? undefined
+      : selectedUpgradeCategory;
+  const upgradeViews = useMemo(
+    () => getUpgradeViews(state, upgradeCategory),
+    [state, upgradeCategory],
+  );
 
   function collectClick() {
     setState((currentState) => collectClickIncome(currentState));
@@ -29,11 +42,13 @@ export function useCarClickerGame() {
 
   return {
     state,
+    selectedUpgradeCategory,
     tierProgress,
     upgradeViews,
     actions: {
       collectClick,
       purchaseUpgrade,
+      selectUpgradeCategory: setSelectedUpgradeCategory,
     },
   };
 }

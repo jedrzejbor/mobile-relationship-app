@@ -11,7 +11,13 @@ import { UpgradeShopPanel } from '@/features/car-clicker/components/upgrade-shop
 import { CAR_CLICKER_SCREEN, useCarClickerGame } from '@/features/car-clicker';
 
 export default function GameScreen() {
-  const { actions, state, tierProgress, upgradeViews } = useCarClickerGame();
+  const {
+    actions,
+    selectedUpgradeCategory,
+    state,
+    tierProgress,
+    upgradeViews,
+  } = useCarClickerGame();
 
   return (
     <ThemedView style={styles.screen}>
@@ -45,7 +51,9 @@ export default function GameScreen() {
             <CarTierProgressPanel progress={tierProgress} />
 
             <UpgradeShopPanel
+              onCategoryChange={actions.selectUpgradeCategory}
               onPurchase={actions.purchaseUpgrade}
+              selectedCategory={selectedUpgradeCategory}
               upgrades={upgradeViews}
             />
           </ThemedView>

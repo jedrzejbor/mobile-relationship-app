@@ -4,18 +4,27 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import {
+  CAR_CLICKER_UPGRADE_CATEGORY_OPTIONS,
   formatCarClickerCash,
+  type CarClickerUpgradeCategoryFilter,
   type CarClickerUpgradeId,
   type CarClickerUpgradeView,
 } from '@/features/car-clicker';
 import { useTheme } from '@/hooks/use-theme';
 
 type UpgradeShopPanelProps = {
+  selectedCategory: CarClickerUpgradeCategoryFilter;
   upgrades: CarClickerUpgradeView[];
+  onCategoryChange: (category: CarClickerUpgradeCategoryFilter) => void;
   onPurchase: (upgradeId: CarClickerUpgradeId) => void;
 };
 
-export function UpgradeShopPanel({ upgrades, onPurchase }: UpgradeShopPanelProps) {
+export function UpgradeShopPanel({
+  selectedCategory,
+  upgrades,
+  onCategoryChange,
+  onPurchase,
+}: UpgradeShopPanelProps) {
   return (
     <ThemedView type="backgroundElement" style={styles.panel}>
       <View style={styles.header}>
@@ -23,6 +32,17 @@ export function UpgradeShopPanel({ upgrades, onPurchase }: UpgradeShopPanelProps
         <ThemedText themeColor="textSecondary" type="small">
           Kup tuning i zwieksz zarobek
         </ThemedText>
+      </View>
+
+      <View style={styles.categoryList}>
+        {CAR_CLICKER_UPGRADE_CATEGORY_OPTIONS.map((category) => (
+          <CategoryButton
+            isSelected={selectedCategory === category.id}
+            key={category.id}
+            label={category.label}
+            onPress={() => onCategoryChange(category.id)}
+          />
+        ))}
       </View>
 
       <View style={styles.list}>
@@ -35,6 +55,40 @@ export function UpgradeShopPanel({ upgrades, onPurchase }: UpgradeShopPanelProps
         ))}
       </View>
     </ThemedView>
+  );
+}
+
+function CategoryButton({
+  isSelected,
+  label,
+  onPress,
+}: {
+  isSelected: boolean;
+  label: string;
+  onPress: () => void;
+}) {
+  const theme = useTheme();
+
+  return (
+    <Pressable
+      accessibilityRole="tab"
+      accessibilityState={{ selected: isSelected }}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.categoryButton,
+        {
+          backgroundColor: isSelected ? theme.text : theme.backgroundSelected,
+        },
+        pressed && styles.categoryButtonPressed,
+      ]}>
+      <ThemedText
+        type="smallBold"
+        style={{
+          color: isSelected ? theme.background : theme.textSecondary,
+        }}>
+        {label}
+      </ThemedText>
+    </Pressable>
   );
 }
 
@@ -123,6 +177,20 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: Spacing.one,
+  },
+  categoryList: {
+    flexDirection: 'row',
+    gap: Spacing.two,
+  },
+  categoryButton: {
+    minHeight: 36,
+    borderRadius: Spacing.two,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.three,
+  },
+  categoryButtonPressed: {
+    opacity: 0.78,
   },
   list: {
     gap: Spacing.two,

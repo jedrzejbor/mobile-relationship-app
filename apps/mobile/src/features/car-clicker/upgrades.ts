@@ -1,8 +1,20 @@
 import type {
+  CarClickerUpgradeCategoryFilter,
   CarClickerUpgradeDefinition,
   CarClickerUpgradeId,
   CarClickerUpgradeLevels,
 } from './types';
+
+export type CarClickerUpgradeCategoryOption = {
+  id: CarClickerUpgradeCategoryFilter;
+  label: string;
+};
+
+export const CAR_CLICKER_UPGRADE_CATEGORY_OPTIONS = [
+  { id: 'all', label: 'Wszystkie' },
+  { id: 'power', label: 'Moc' },
+  { id: 'garage', label: 'Garaz' },
+] as const satisfies readonly CarClickerUpgradeCategoryOption[];
 
 export const CAR_CLICKER_UPGRADES: readonly CarClickerUpgradeDefinition[] = [
   {

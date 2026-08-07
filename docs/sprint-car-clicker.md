@@ -259,6 +259,15 @@ Poza zakresem tej iteracji:
 - Lepsze sortowanie sklepu i stany pustej listy.
 - Animacje zakupu i feedback po zakupie.
 
+Druga iteracja:
+
+- Dodano filtr kategorii sklepu: `Wszystkie`, `Moc`, `Garaz`.
+- Dodano `CarClickerUpgradeCategoryFilter`, zeby UI mogl obslugiwac filtr `all` bez mieszania go z realnymi kategoriami ulepszen.
+- Dodano `CAR_CLICKER_UPGRADE_CATEGORY_OPTIONS` jako konfiguracje segmentow sklepu.
+- Przeniesiono wybrana kategorie do `useCarClickerGame`, razem z akcja `selectUpgradeCategory`.
+- `UpgradeShopPanel` renderuje segmenty kategorii i dostaje juz przefiltrowana liste ulepszen.
+- Przygotowano strukture pod pozniejsze kategorie `Styl` i `Automatyzacja`.
+
 - Pokazac liste ulepszen.
 - Dodac przycisk kupna.
 - Wylaczyc przycisk, gdy brakuje cashu.

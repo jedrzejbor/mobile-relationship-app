@@ -4,6 +4,8 @@ export type CarClickerUpgradeCategory =
   | 'style'
   | 'automation';
 
+export type CarClickerUpgradeCategoryFilter = CarClickerUpgradeCategory | 'all';
+
 export type CarClickerUpgradeId =
   | 'better_tires'
   | 'chip_tuning'

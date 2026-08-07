@@ -422,7 +422,7 @@ Kryteria akceptacji:
 
 ### Zadanie 3: sklep ulepszen
 
-Status: pierwsza iteracja zrobiona.
+Status: pierwsza, druga, trzecia, czwarta i piata iteracja zrobione.
 
 Zaimplementowane:
 
@@ -484,7 +484,7 @@ Kryteria akceptacji:
 
 ### Zadanie 4: pasywny dochod
 
-Status: pierwsza iteracja zrobiona.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta i siodma iteracja zrobione.
 
 Zaimplementowane:
 
@@ -553,7 +553,7 @@ Kryteria akceptacji:
 
 ### Zadanie 5: feedback i progres wizualny
 
-Status: pierwsza iteracja zrobiona.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta i siodma iteracja zrobione.
 
 Zaimplementowane:
 
@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza iteracja zrobiona.
+Status: pierwsza i druga iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -735,6 +735,21 @@ Poza zakresem tej iteracji:
 - Podmiana obecnego komponentowego placeholdera auta na `Image`.
 - Pokazanie ikon ulepszen w sklepie.
 - Finalne przyciecie albo optymalizacja rozmiaru grafik.
+
+Druga iteracja:
+
+- Dodano referencje UI do `apps/mobile/assets/game/references/ui`.
+- Docelowy styl UI ma isc w kierunku ciemnego racing HUD: czarne tlo, stalowe panele, pomaranczowy glow jako glowny accent i niebieski/cyan dla `per click`.
+- Karty i przyciski maja miec techniczny, tuningowy charakter: cienkie obramowania, subtelne rozswietlenia, stan aktywny w pomaranczu, stan niedostepny w szarosci/czerwieni.
+- Typografia powinna byc mocna, skondensowana i lekko pochylona tam, gdzie to mozliwe w obecnym systemie fontow; bez zamiany calego ekranu na statyczna grafike.
+- Kolory funkcjonalne z referencji:
+  - money: zielony,
+  - click/per click: cyan albo electric blue,
+  - passive income: fiolet,
+  - active/primary: pomaranczowy,
+  - locked/error: szary i czerwien.
+- Layout clickera powinien zostac komponentowy: top HUD, segmenty kategorii, karty upgrade, asset auta, bottom tab. Referencje sa kierunkiem wizualnym, nie gotowym ekranem do wklejenia.
+- W kolejnej iteracji UI zaczynamy od tokenow wizualnych i przebudowy `CarClickerStatsPanel` oraz `UpgradeShopPanel`; dopiero potem podmieniamy auto na asset.
 
 Zakres pierwszej iteracji:
 

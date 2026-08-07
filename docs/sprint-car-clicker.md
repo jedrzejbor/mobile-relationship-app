@@ -625,7 +625,7 @@ Kryteria akceptacji:
 
 ### Zadanie 6: zapis lokalny
 
-Status: pierwsza, druga i trzecia iteracja zrobione.
+Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
 
 Zaimplementowane:
 
@@ -664,6 +664,13 @@ Trzecia iteracja:
 - `storage.ts` potrafi zwrocic pelne dane zapisu przez `loadCarClickerSaveData`, a dotychczasowe `loadCarClickerSave` zostalo zachowane jako prosty helper kompatybilny z poprzednim uzyciem.
 - `useCarClickerSave` dolicza bonus offline podczas hydracji i przekazuje feedback do reducera.
 - Dodano `OfflineIncomeFeedbackPanel`, ktory pokazuje graczowi naliczony cash i czas offline po powrocie do gry.
+
+Czwarta iteracja:
+
+- Dodano obsluge `AppState` w `useCarClickerSave`, zeby zapis wykonywal sie przy przejsciu aplikacji z aktywnej do `inactive` albo `background`.
+- Wydzielono `clearPendingSave` i `flushSave`, zeby debounce, background save i cleanup korzystaly z jednej sciezki zapisu.
+- Przy flushu anulowany jest oczekujacy debounce, wiec nie zapisujemy tego samego stanu niepotrzebnie dwa razy.
+- Zapis przy przejsciu w tlo aktualizuje `savedAt`, co poprawia dokladnosc pozniejszego bonusu offline.
 
 - Sprawdzic, jaki storage jest juz uzywany w aplikacji.
 - Jesli brak gotowego storage, dodac najprostszy lokalny zapis dopiero po decyzji technologicznej.

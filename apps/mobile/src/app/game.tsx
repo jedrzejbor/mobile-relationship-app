@@ -36,10 +36,12 @@ export default function GameScreen() {
   const theme = useTheme();
   const [board, setBoard] = useState<Cell[]>(Array<Cell>(9).fill(null));
   const [currentPlayer, setCurrentPlayer] = useState<Player>('X');
+  const [isResultVisible, setIsResultVisible] = useState(false);
 
   const winner = useMemo(() => getWinner(board), [board]);
   const isDraw = !winner && board.every(Boolean);
   const isFinished = Boolean(winner) || isDraw;
+  const resultMessage = winner ? `Wygral gracz ${winner}` : 'Remis';
 
   const status = winner
     ? `Wygrywa ${winner}`
@@ -54,13 +56,23 @@ export default function GameScreen() {
 
     const nextBoard = [...board];
     nextBoard[index] = currentPlayer;
+    const nextWinner = getWinner(nextBoard);
+    const nextIsDraw = !nextWinner && nextBoard.every(Boolean);
+
     setBoard(nextBoard);
+
+    if (nextWinner || nextIsDraw) {
+      setIsResultVisible(true);
+      return;
+    }
+
     setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
   }
 
   function resetGame() {
     setBoard(Array<Cell>(9).fill(null));
     setCurrentPlayer('X');
+    setIsResultVisible(false);
   }
 
   return (
@@ -116,6 +128,23 @@ export default function GameScreen() {
           </Pressable>
         </ThemedView>
       </SafeAreaView>
+
+      {isFinished && isResultVisible && (
+        <Pressable
+          accessibilityLabel="Zamknij wynik gry"
+          accessibilityRole="button"
+          onPress={() => setIsResultVisible(false)}
+          style={styles.resultOverlay}>
+          <ThemedView type="backgroundElement" style={styles.resultPanel}>
+            <ThemedText type="subtitle" style={styles.resultTitle}>
+              {resultMessage}
+            </ThemedText>
+            <ThemedText themeColor="textSecondary" style={styles.resultHint}>
+              Kliknij aby zamknąć
+            </ThemedText>
+          </ThemedView>
+        </Pressable>
+      )}
     </ThemedView>
   );
 }
@@ -192,5 +221,26 @@ const styles = StyleSheet.create({
   },
   resetButtonPressed: {
     opacity: 0.72,
+  },
+  resultOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.54)',
+    padding: Spacing.four,
+  },
+  resultPanel: {
+    width: '100%',
+    maxWidth: 340,
+    borderRadius: Spacing.three,
+    padding: Spacing.four,
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  resultTitle: {
+    textAlign: 'center',
+  },
+  resultHint: {
+    textAlign: 'center',
   },
 });

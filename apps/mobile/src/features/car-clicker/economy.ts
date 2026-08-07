@@ -5,6 +5,7 @@ import {
 } from './upgrades';
 import type {
   CarClickerState,
+  CarClickerOfflineIncomeFeedback,
   CarClickerTierProgress,
   CarClickerUpgradeCategory,
   CarClickerUpgradeDefinition,
@@ -20,6 +21,7 @@ const BASE_CAR_TIER = 1;
 
 const CAR_TIER_THRESHOLDS = [0, 8, 20, 40, 70] as const;
 const MAX_CAR_TIER = CAR_TIER_THRESHOLDS.length;
+export const MAX_OFFLINE_INCOME_SECONDS = 4 * 60 * 60;
 
 export function createInitialCarClickerState(): CarClickerState {
   return recalculateCarClickerState({
@@ -211,6 +213,49 @@ export function collectPassiveIncome(
     ...state,
     cash: state.cash + income,
     totalEarnedCash: state.totalEarnedCash + income,
+  };
+}
+
+export function calculateOfflineElapsedSeconds(
+  savedAt: number,
+  now = Date.now(),
+) {
+  const elapsedSeconds = (now - savedAt) / 1000;
+
+  return Math.min(
+    Math.max(elapsedSeconds, 0),
+    MAX_OFFLINE_INCOME_SECONDS,
+  );
+}
+
+export function collectOfflineIncome(
+  state: CarClickerState,
+  savedAt: number,
+  now = Date.now(),
+): {
+  feedback: CarClickerOfflineIncomeFeedback | null;
+  state: CarClickerState;
+} {
+  const elapsedSeconds = calculateOfflineElapsedSeconds(savedAt, now);
+  const earnedCash = calculatePassiveIncome(state.perSecond, elapsedSeconds);
+
+  if (earnedCash <= 0) {
+    return {
+      feedback: null,
+      state,
+    };
+  }
+
+  return {
+    feedback: {
+      earnedCash,
+      elapsedSeconds,
+    },
+    state: {
+      ...state,
+      cash: state.cash + earnedCash,
+      totalEarnedCash: state.totalEarnedCash + earnedCash,
+    },
   };
 }
 

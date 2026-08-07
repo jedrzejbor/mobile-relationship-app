@@ -6,6 +6,7 @@ import {
   purchaseCarClickerUpgrade,
 } from './economy';
 import type {
+  CarClickerOfflineIncomeFeedback,
   CarClickerState,
   CarClickerSessionState,
   CarClickerUpgradeCategoryFilter,
@@ -31,11 +32,13 @@ export type CarClickerAction =
   | {
       type: 'hydrate_game';
       game: CarClickerState;
+      offlineIncomeFeedback?: CarClickerOfflineIncomeFeedback | null;
     };
 
 export function createInitialCarClickerSessionState(): CarClickerSessionState {
   return {
     game: createInitialCarClickerState(),
+    offlineIncomeFeedback: null,
     purchaseFeedback: null,
     selectedUpgradeCategory: 'all',
     tierFeedback: null,
@@ -96,6 +99,7 @@ export function carClickerReducer(
       return {
         ...state,
         game: action.game,
+        offlineIncomeFeedback: action.offlineIncomeFeedback ?? null,
         purchaseFeedback: null,
         tierFeedback: null,
       };

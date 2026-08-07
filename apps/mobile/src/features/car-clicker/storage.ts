@@ -101,10 +101,14 @@ export function parseCarClickerSaveData(
 }
 
 export async function loadCarClickerSave() {
+  return (await loadCarClickerSaveData())?.game ?? null;
+}
+
+export async function loadCarClickerSaveData() {
   try {
     const rawSave = await SecureStore.getItemAsync(CAR_CLICKER_SAVE_KEY);
 
-    return parseCarClickerSaveData(rawSave)?.game ?? null;
+    return parseCarClickerSaveData(rawSave);
   } catch {
     return null;
   }

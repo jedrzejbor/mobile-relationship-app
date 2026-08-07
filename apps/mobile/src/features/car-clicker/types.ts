@@ -64,8 +64,14 @@ export type CarClickerTierFeedback = {
   currentTier: number;
 };
 
+export type CarClickerOfflineIncomeFeedback = {
+  earnedCash: number;
+  elapsedSeconds: number;
+};
+
 export type CarClickerSessionState = {
   game: CarClickerState;
+  offlineIncomeFeedback: CarClickerOfflineIncomeFeedback | null;
   purchaseFeedback: CarClickerPurchaseFeedback | null;
   selectedUpgradeCategory: CarClickerUpgradeCategoryFilter;
   tierFeedback: CarClickerTierFeedback | null;

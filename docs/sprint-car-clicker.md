@@ -625,7 +625,7 @@ Kryteria akceptacji:
 
 ### Zadanie 6: zapis lokalny
 
-Status: pierwsza i druga iteracja zrobione.
+Status: pierwsza, druga i trzecia iteracja zrobione.
 
 Zaimplementowane:
 
@@ -639,8 +639,7 @@ Zaimplementowane:
 
 Poza zakresem tej iteracji:
 
-- Bonus offline naliczany na podstawie `savedAt` i `lastActiveAt`.
-- Ekran informujacy gracza, ile zarobil po powrocie.
+- Rozbudowany modal powrotu do gry z animacja nagrody offline.
 - Migracja na AsyncStorage albo SQLite, jesli zapis urosnie poza maly stan MVP.
 
 Druga iteracja:
@@ -656,6 +655,15 @@ Poprawka UI po drugiej iteracji:
 - Usunieto nadmiarowy dolny inset z ekranu gry, ktory tworzyl duzy czarny odstep miedzy gra a dolnym menu.
 - Scroll ekranu gry zaczyna teraz uklad od gory zamiast centrowac cala zawartosc w pomniejszonym obszarze.
 - Dolny padding ekranu gry zostal ograniczony do malego odstepu, bo natywny tab bar sam zajmuje swoje miejsce w layoucie.
+
+Trzecia iteracja:
+
+- Dodano naliczanie ograniczonego bonusu offline na podstawie `savedAt` z lokalnego zapisu.
+- Limit offline income wynosi 4 godziny, zeby dluga przerwa nie psula balansu ekonomii.
+- Logika offline income jest czysta i znajduje sie w `economy.ts`, wiec mozna ja testowac bez UI i bez storage.
+- `storage.ts` potrafi zwrocic pelne dane zapisu przez `loadCarClickerSaveData`, a dotychczasowe `loadCarClickerSave` zostalo zachowane jako prosty helper kompatybilny z poprzednim uzyciem.
+- `useCarClickerSave` dolicza bonus offline podczas hydracji i przekazuje feedback do reducera.
+- Dodano `OfflineIncomeFeedbackPanel`, ktory pokazuje graczowi naliczony cash i czas offline po powrocie do gry.
 
 - Sprawdzic, jaki storage jest juz uzywany w aplikacji.
 - Jesli brak gotowego storage, dodac najprostszy lokalny zapis dopiero po decyzji technologicznej.

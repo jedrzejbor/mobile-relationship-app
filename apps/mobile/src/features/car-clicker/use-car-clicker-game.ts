@@ -11,6 +11,7 @@ import {
 import { useCarClickerSave } from './use-car-clicker-save';
 import { usePassiveIncomeTicker } from './use-passive-income-ticker';
 import type {
+  CarClickerOfflineIncomeFeedback,
   CarClickerState,
   CarClickerUpgradeCategory,
   CarClickerUpgradeCategoryFilter,
@@ -23,8 +24,13 @@ export function useCarClickerGame() {
     undefined,
     createInitialCarClickerSessionState,
   );
-  const { game, purchaseFeedback, selectedUpgradeCategory, tierFeedback } =
-    sessionState;
+  const {
+    game,
+    offlineIncomeFeedback,
+    purchaseFeedback,
+    selectedUpgradeCategory,
+    tierFeedback,
+  } = sessionState;
   const tierProgress = useMemo(
     () => getCarTierProgress(game.upgrades),
     [game.upgrades],
@@ -37,9 +43,19 @@ export function useCarClickerGame() {
     () => getUpgradeViews(game, upgradeCategory),
     [game, upgradeCategory],
   );
-  const hydrateGame = useCallback((savedGame: CarClickerState) => {
-    dispatch({ type: 'hydrate_game', game: savedGame });
-  }, []);
+  const hydrateGame = useCallback(
+    (
+      savedGame: CarClickerState,
+      offlineFeedback: CarClickerOfflineIncomeFeedback | null,
+    ) => {
+      dispatch({
+        type: 'hydrate_game',
+        game: savedGame,
+        offlineIncomeFeedback: offlineFeedback,
+      });
+    },
+    [],
+  );
 
   useCarClickerSave({
     game,
@@ -65,6 +81,7 @@ export function useCarClickerGame() {
   }
 
   return {
+    offlineIncomeFeedback,
     purchaseFeedback,
     state: game,
     selectedUpgradeCategory,

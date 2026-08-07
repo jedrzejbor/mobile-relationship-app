@@ -1,13 +1,20 @@
 import { useEffect, useRef } from 'react';
 
-import { loadCarClickerSave, saveCarClickerState } from './storage';
-import type { CarClickerState } from './types';
+import { collectOfflineIncome } from './economy';
+import { loadCarClickerSaveData, saveCarClickerState } from './storage';
+import type {
+  CarClickerOfflineIncomeFeedback,
+  CarClickerState,
+} from './types';
 
 const SAVE_DEBOUNCE_MS = 750;
 
 type UseCarClickerSaveParams = {
   game: CarClickerState;
-  onHydrate: (game: CarClickerState) => void;
+  onHydrate: (
+    game: CarClickerState,
+    offlineIncomeFeedback: CarClickerOfflineIncomeFeedback | null,
+  ) => void;
 };
 
 export function useCarClickerSave({
@@ -22,10 +29,15 @@ export function useCarClickerSave({
     let isMounted = true;
 
     async function hydrateGame() {
-      const savedGame = await loadCarClickerSave();
+      const saveData = await loadCarClickerSaveData();
 
-      if (isMounted && savedGame) {
-        onHydrate(savedGame);
+      if (isMounted && saveData) {
+        const offlineIncome = collectOfflineIncome(
+          saveData.game,
+          saveData.savedAt,
+        );
+
+        onHydrate(offlineIncome.state, offlineIncome.feedback);
       }
 
       if (isMounted) {

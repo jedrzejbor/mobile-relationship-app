@@ -7,6 +7,7 @@ import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { CarClickerStatsPanel } from '@/features/car-clicker/components/car-clicker-stats-panel';
 import { CarTapButton } from '@/features/car-clicker/components/car-tap-button';
 import { CarTierProgressPanel } from '@/features/car-clicker/components/car-tier-progress-panel';
+import { OfflineIncomeFeedbackPanel } from '@/features/car-clicker/components/offline-income-feedback-panel';
 import { TierUpFeedbackPanel } from '@/features/car-clicker/components/tier-up-feedback-panel';
 import { UpgradeShopPanel } from '@/features/car-clicker/components/upgrade-shop-panel';
 import { CAR_CLICKER_SCREEN, useCarClickerGame } from '@/features/car-clicker';
@@ -14,6 +15,7 @@ import { CAR_CLICKER_SCREEN, useCarClickerGame } from '@/features/car-clicker';
 export default function GameScreen() {
   const {
     actions,
+    offlineIncomeFeedback,
     purchaseFeedback,
     selectedUpgradeCategory,
     state,
@@ -44,6 +46,8 @@ export default function GameScreen() {
               perClick={state.perClick}
               perSecond={state.perSecond}
             />
+
+            <OfflineIncomeFeedbackPanel feedback={offlineIncomeFeedback} />
 
             <CarTapButton
               onPress={actions.collectClick}

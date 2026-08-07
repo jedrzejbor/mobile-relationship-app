@@ -7,7 +7,7 @@ import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { CarClickerStatsPanel } from '@/features/car-clicker/components/car-clicker-stats-panel';
 import { CarTapButton } from '@/features/car-clicker/components/car-tap-button';
 import { CarTierProgressPanel } from '@/features/car-clicker/components/car-tier-progress-panel';
-import { useCarClickerGame } from '@/features/car-clicker';
+import { CAR_CLICKER_SCREEN, useCarClickerGame } from '@/features/car-clicker';
 
 export default function GameScreen() {
   const { actions, state, tierProgress } = useCarClickerGame();
@@ -22,10 +22,10 @@ export default function GameScreen() {
           <ThemedView style={styles.content}>
             <ThemedView style={styles.header}>
               <ThemedText type="subtitle" style={styles.title}>
-                Car Clicker
+                {CAR_CLICKER_SCREEN.title}
               </ThemedText>
               <ThemedText themeColor="textSecondary" style={styles.subtitle}>
-                Klikaj auto i zbieraj kase na tuning
+                {CAR_CLICKER_SCREEN.subtitle}
               </ThemedText>
             </ThemedView>
 

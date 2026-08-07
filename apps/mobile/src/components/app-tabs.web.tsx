@@ -14,6 +14,7 @@ import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+import { CAR_CLICKER_SCREEN } from '@/features/car-clicker';
 
 export default function AppTabs() {
   return (
@@ -28,7 +29,7 @@ export default function AppTabs() {
             <TabButton>Explore</TabButton>
           </TabTrigger>
           <TabTrigger name="game" href="/game" asChild>
-            <TabButton>Gra</TabButton>
+            <TabButton>{CAR_CLICKER_SCREEN.tabTitle}</TabButton>
           </TabTrigger>
         </CustomTabList>
       </TabList>

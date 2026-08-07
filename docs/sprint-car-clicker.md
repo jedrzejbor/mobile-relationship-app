@@ -222,6 +222,13 @@ Trzecia iteracja:
 - Uproszczono `apps/mobile/src/app/game.tsx`, zeby byl glownie kompozycja layoutu.
 - Przygotowano miejsce na kolejne akcje, np. zakup ulepszenia i dochod pasywny, bez rozbudowywania komponentu ekranu.
 
+Czwarta iteracja:
+
+- Dodano `CAR_CLICKER_SCREEN` jako wspolna konfiguracje tekstow i metadanych widoku.
+- Podpieto tytul, opis i label przycisku samochodu do konfiguracji zamiast twardych stringow w komponentach.
+- Zmieniono etykiete zakladki gry na `Clicker` w nawigacji native i web.
+- Uporzadkowano nazewnictwo ekranu przed przejsciem do sklepu ulepszen.
+
 - Dodac ekran lub rozbudowac istniejacy ekran gry.
 - Pokazac cash, `per click` i `per second`.
 - Dodac klikalny samochod.

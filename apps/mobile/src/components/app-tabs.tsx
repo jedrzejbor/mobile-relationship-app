@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { Image, useColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/theme';
+import { CAR_CLICKER_SCREEN } from '@/features/car-clicker';
 
 export default function AppTabs() {
   const scheme = useColorScheme();
@@ -45,7 +46,7 @@ export default function AppTabs() {
       <Tabs.Screen
         name="game"
         options={{
-          title: 'Gra',
+          title: CAR_CLICKER_SCREEN.tabTitle,
           tabBarIcon: ({ color }) => (
             <Image
               source={require('@/assets/images/tabIcons/explore.png')}

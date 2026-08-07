@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { formatCarClickerCash } from '@/features/car-clicker/format';
+import { CAR_CLICKER_SCREEN } from '@/features/car-clicker/screen';
 import { useTheme } from '@/hooks/use-theme';
 
 type CarTapButtonProps = {
@@ -17,7 +18,7 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
   return (
     <Pressable
       accessibilityHint={`Dodaje ${perClick} cash`}
-      accessibilityLabel="Kliknij samochod"
+      accessibilityLabel={CAR_CLICKER_SCREEN.carButtonLabel}
       accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [

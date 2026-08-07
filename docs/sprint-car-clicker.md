@@ -284,6 +284,13 @@ Czwarta iteracja:
 - `useCarClickerGame` odpowiada teraz za memoizowane selektory i dispatch akcji, a nie za reczne skladanie zmian stanu.
 - Reducer jest gotowy do testow jednostkowych bez renderowania komponentow.
 
+Piata iteracja:
+
+- Dodano `compareUpgradeViews` jako czysta funkcje sortowania ulepszen.
+- `getUpgradeViews` zwraca teraz liste posortowana: najpierw dostepne zakupy, potem nizszy koszt, a max level na koncu.
+- Dodano stan pustej listy w `UpgradeShopPanel`, zeby sklep mial poprawny UI po dodaniu przyszlych kategorii bez ulepszen.
+- Sortowanie pozostaje poza komponentem UI, wiec sklep renderuje juz gotowy model widoku.
+
 - Pokazac liste ulepszen.
 - Dodac przycisk kupna.
 - Wylaczyc przycisk, gdy brakuje cashu.

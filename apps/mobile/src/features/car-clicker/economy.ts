@@ -147,7 +147,28 @@ export function getUpgradeViews(
 ) {
   return CAR_CLICKER_UPGRADES.filter(
     (upgrade) => category === undefined || upgrade.category === category,
-  ).map((upgrade) => getUpgradeView(state, upgrade));
+  )
+    .map((upgrade) => getUpgradeView(state, upgrade))
+    .sort(compareUpgradeViews);
+}
+
+export function compareUpgradeViews(
+  first: CarClickerUpgradeView,
+  second: CarClickerUpgradeView,
+) {
+  if (first.isMaxLevelReached !== second.isMaxLevelReached) {
+    return first.isMaxLevelReached ? 1 : -1;
+  }
+
+  if (first.isAffordable !== second.isAffordable) {
+    return first.isAffordable ? -1 : 1;
+  }
+
+  if (first.nextCost !== second.nextCost) {
+    return first.nextCost - second.nextCost;
+  }
+
+  return first.upgrade.name.localeCompare(second.upgrade.name);
 }
 
 export function recalculateCarClickerState(

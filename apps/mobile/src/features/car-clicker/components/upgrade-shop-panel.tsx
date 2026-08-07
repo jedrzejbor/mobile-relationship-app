@@ -55,13 +55,22 @@ export function UpgradeShopPanel({
       )}
 
       <View style={styles.list}>
-        {upgrades.map((upgradeView) => (
-          <UpgradeRow
-            key={upgradeView.upgrade.id}
-            onPurchase={onPurchase}
-            upgradeView={upgradeView}
-          />
-        ))}
+        {upgrades.length > 0 ? (
+          upgrades.map((upgradeView) => (
+            <UpgradeRow
+              key={upgradeView.upgrade.id}
+              onPurchase={onPurchase}
+              upgradeView={upgradeView}
+            />
+          ))
+        ) : (
+          <ThemedText
+            themeColor="textSecondary"
+            type="small"
+            style={styles.emptyState}>
+            Brak ulepszen w tej kategorii
+          </ThemedText>
+        )}
       </View>
     </ThemedView>
   );
@@ -222,6 +231,11 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: Spacing.two,
+  },
+  emptyState: {
+    minHeight: 56,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
   row: {
     minHeight: 124,

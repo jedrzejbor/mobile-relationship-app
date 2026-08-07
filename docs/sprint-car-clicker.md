@@ -625,7 +625,7 @@ Kryteria akceptacji:
 
 ### Zadanie 6: zapis lokalny
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta i siodma iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma i osma iteracja zrobione.
 
 Zaimplementowane:
 
@@ -692,6 +692,12 @@ Siodma iteracja:
 - `useCarClickerGame` wystawia akcje zamkniecia panelu offline razem z pozostalymi akcjami gry.
 - `OfflineIncomeFeedbackPanel` dostal przycisk zamkniecia z `accessibilityLabel` i bez lokalnego stanu UI.
 - Ekran gry przekazuje `onDismiss` do panelu, dzieki czemu informacja o zarobku po powrocie nie zostaje na ekranie na stale.
+
+Osma iteracja:
+
+- Dodano auto-dismiss feedbacku offline po 8 sekundach w `useCarClickerGame`.
+- Timer jest czyszczony przy zmianie feedbacku albo odmontowaniu hooka, wiec nie zostawia wiszacych timeoutow.
+- Reczne zamkniecie panelu dalej idzie przez te sama akcje reducera, a komponent panelu pozostaje bez lokalnego stanu.
 
 - Sprawdzic, jaki storage jest juz uzywany w aplikacji.
 - Jesli brak gotowego storage, dodac najprostszy lokalny zapis dopiero po decyzji technologicznej.

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from 'react';
+import { useCallback, useEffect, useMemo, useReducer } from 'react';
 
 import {
   getCarTierProgress,
@@ -17,6 +17,8 @@ import type {
   CarClickerUpgradeCategoryFilter,
   CarClickerUpgradeId,
 } from './types';
+
+const OFFLINE_INCOME_FEEDBACK_AUTO_DISMISS_MS = 8_000;
 
 export function useCarClickerGame() {
   const [sessionState, dispatch] = useReducer(
@@ -56,11 +58,29 @@ export function useCarClickerGame() {
     },
     [],
   );
+  const dismissOfflineIncomeFeedback = useCallback(() => {
+    dispatch({ type: 'dismiss_offline_income_feedback' });
+  }, []);
 
   useCarClickerSave({
     game,
     onHydrate: hydrateGame,
   });
+
+  useEffect(() => {
+    if (!offlineIncomeFeedback) {
+      return undefined;
+    }
+
+    const dismissTimeout = setTimeout(
+      dismissOfflineIncomeFeedback,
+      OFFLINE_INCOME_FEEDBACK_AUTO_DISMISS_MS,
+    );
+
+    return () => {
+      clearTimeout(dismissTimeout);
+    };
+  }, [dismissOfflineIncomeFeedback, offlineIncomeFeedback]);
 
   usePassiveIncomeTicker({
     isEnabled: game.perSecond > 0,
@@ -90,8 +110,7 @@ export function useCarClickerGame() {
     upgradeViews,
     actions: {
       collectClick,
-      dismissOfflineIncomeFeedback: () =>
-        dispatch({ type: 'dismiss_offline_income_feedback' }),
+      dismissOfflineIncomeFeedback,
       purchaseUpgrade,
       selectUpgradeCategory: (category: CarClickerUpgradeCategoryFilter) =>
         dispatch({ type: 'select_upgrade_category', category }),

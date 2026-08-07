@@ -215,6 +215,13 @@ Druga iteracja:
 - Dodano `formatCarClickerCash`, zeby formatowanie waluty bylo wspolne dla ekranu i przyszlego sklepu.
 - Dodano `ScrollView`, zeby podstawowy widok byl odporniejszy na nizsze ekrany telefonow.
 
+Trzecia iteracja:
+
+- Dodano `useCarClickerGame` jako hook feature zarzadzajacy stanem ekranu gry.
+- Przeniesiono inicjalizacje stanu, wyliczanie progresu tieru i akcje klikniecia poza plik routingu.
+- Uproszczono `apps/mobile/src/app/game.tsx`, zeby byl glownie kompozycja layoutu.
+- Przygotowano miejsce na kolejne akcje, np. zakup ulepszenia i dochod pasywny, bez rozbudowywania komponentu ekranu.
+
 - Dodac ekran lub rozbudowac istniejacy ekran gry.
 - Pokazac cash, `per click` i `per second`.
 - Dodac klikalny samochod.

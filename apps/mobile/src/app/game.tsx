@@ -1,4 +1,3 @@
-import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,22 +7,10 @@ import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { CarClickerStatsPanel } from '@/features/car-clicker/components/car-clicker-stats-panel';
 import { CarTapButton } from '@/features/car-clicker/components/car-tap-button';
 import { CarTierProgressPanel } from '@/features/car-clicker/components/car-tier-progress-panel';
-import {
-  collectClickIncome,
-  createInitialCarClickerState,
-  getCarTierProgress,
-} from '@/features/car-clicker';
+import { useCarClickerGame } from '@/features/car-clicker';
 
 export default function GameScreen() {
-  const [gameState, setGameState] = useState(createInitialCarClickerState);
-  const tierProgress = useMemo(
-    () => getCarTierProgress(gameState.upgrades),
-    [gameState.upgrades],
-  );
-
-  function handleCarPress() {
-    setGameState((currentState) => collectClickIncome(currentState));
-  }
+  const { actions, state, tierProgress } = useCarClickerGame();
 
   return (
     <ThemedView style={styles.screen}>
@@ -43,15 +30,15 @@ export default function GameScreen() {
             </ThemedView>
 
             <CarClickerStatsPanel
-              cash={gameState.cash}
-              perClick={gameState.perClick}
-              perSecond={gameState.perSecond}
+              cash={state.cash}
+              perClick={state.perClick}
+              perSecond={state.perSecond}
             />
 
             <CarTapButton
-              onPress={handleCarPress}
-              perClick={gameState.perClick}
-              tier={gameState.selectedCarTier}
+              onPress={actions.collectClick}
+              perClick={state.perClick}
+              tier={state.selectedCarTier}
             />
 
             <CarTierProgressPanel progress={tierProgress} />

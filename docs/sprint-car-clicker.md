@@ -389,6 +389,14 @@ Poza zakresem tej iteracji:
 - Animacje zakupu ulepszen.
 - Osobny feedback pasywnego dochodu.
 
+Druga iteracja:
+
+- Dodano `car-appearance.ts` z konfiguracja wygladu auta dla tierow.
+- `CarTapButton` pobiera wyglad przez `getCarAppearance(tier)`.
+- Auto zmienia nazwe wariantu, kolor nadwozia, kolor akcentu oraz dodatki wizualne po awansie tieru.
+- Dodano spoiler, akcent boczny i neon jako kontrolowane elementy React Native.
+- Wyglad auta jest danymi feature, wiec pozniej mozna podmienic renderer albo assety bez zmiany ekonomii gry.
+
 - Dodac animacje klikniecia samochodu.
 - Dodac plywajacy tekst z zarobkiem po kliknieciu.
 - Dodac progress do kolejnego tieru auta.

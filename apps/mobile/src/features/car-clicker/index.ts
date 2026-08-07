@@ -1,3 +1,4 @@
+export * from './car-appearance';
 export * from './economy';
 export * from './format';
 export * from './reducer';

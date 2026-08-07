@@ -3,6 +3,7 @@ import { Animated, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
+import { getCarAppearance } from '@/features/car-clicker/car-appearance';
 import { formatCarClickerCash } from '@/features/car-clicker/format';
 import { CAR_CLICKER_SCREEN } from '@/features/car-clicker/screen';
 import { useTheme } from '@/hooks/use-theme';
@@ -15,6 +16,7 @@ type CarTapButtonProps = {
 
 export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
   const theme = useTheme();
+  const appearance = getCarAppearance(tier);
   const scale = useRef(new Animated.Value(1)).current;
   const feedbackOpacity = useRef(new Animated.Value(0)).current;
   const feedbackTranslateY = useRef(new Animated.Value(0)).current;
@@ -67,7 +69,7 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
         pressed && styles.buttonPressed,
       ]}>
       <ThemedText themeColor="textSecondary" style={styles.tierLabel}>
-        Tier {tier}
+        Tier {tier} · {appearance.name}
       </ThemedText>
       <View style={styles.carStage}>
         <Animated.View
@@ -86,11 +88,42 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
         </Animated.View>
 
         <Animated.View style={[styles.car, { transform: [{ scale }] }]}>
-          <View style={[styles.carCabin, { backgroundColor: '#f6c445' }]} />
-          <View style={[styles.carBody, { backgroundColor: '#d14f27' }]}>
+          {appearance.hasSpoiler && (
+            <View
+              style={[
+                styles.spoiler,
+                { backgroundColor: appearance.accentColor },
+              ]}
+            />
+          )}
+          <View
+            style={[
+              styles.carCabin,
+              { backgroundColor: appearance.cabinColor },
+            ]}
+          />
+          <View
+            style={[
+              styles.carBody,
+              { backgroundColor: appearance.bodyColor },
+            ]}>
             <View style={[styles.carWindow, styles.carWindowLeft]} />
             <View style={[styles.carWindow, styles.carWindowRight]} />
+            <View
+              style={[
+                styles.sideAccent,
+                { backgroundColor: appearance.accentColor },
+              ]}
+            />
           </View>
+          {appearance.hasNeon && (
+            <View
+              style={[
+                styles.neon,
+                { backgroundColor: appearance.accentColor },
+              ]}
+            />
+          )}
           <View style={styles.wheels}>
             <View style={styles.wheel} />
             <View style={styles.wheel} />
@@ -150,6 +183,14 @@ const styles = StyleSheet.create({
     aspectRatio: 2.3,
     justifyContent: 'flex-end',
   },
+  spoiler: {
+    position: 'absolute',
+    right: '4%',
+    top: '26%',
+    width: '22%',
+    height: 8,
+    borderRadius: 4,
+  },
   carCabin: {
     position: 'absolute',
     left: '32%',
@@ -178,6 +219,23 @@ const styles = StyleSheet.create({
   },
   carWindowRight: {
     right: '24%',
+  },
+  sideAccent: {
+    position: 'absolute',
+    left: '14%',
+    right: '14%',
+    bottom: '18%',
+    height: 5,
+    borderRadius: 3,
+  },
+  neon: {
+    position: 'absolute',
+    left: '16%',
+    right: '16%',
+    bottom: -Spacing.one,
+    height: 5,
+    borderRadius: 3,
+    opacity: 0.72,
   },
   wheels: {
     position: 'absolute',

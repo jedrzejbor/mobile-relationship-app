@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -14,13 +15,49 @@ type CarTapButtonProps = {
 
 export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
   const theme = useTheme();
+  const scale = useRef(new Animated.Value(1)).current;
+  const feedbackOpacity = useRef(new Animated.Value(0)).current;
+  const feedbackTranslateY = useRef(new Animated.Value(0)).current;
+  const [feedbackKey, setFeedbackKey] = useState(0);
+
+  function handlePress() {
+    onPress();
+    setFeedbackKey((currentKey) => currentKey + 1);
+
+    scale.stopAnimation();
+    feedbackOpacity.stopAnimation();
+    feedbackTranslateY.stopAnimation();
+
+    scale.setValue(0.97);
+    feedbackOpacity.setValue(1);
+    feedbackTranslateY.setValue(0);
+
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: 1,
+        friction: 4,
+        tension: 140,
+        useNativeDriver: true,
+      }),
+      Animated.timing(feedbackOpacity, {
+        toValue: 0,
+        duration: 620,
+        useNativeDriver: true,
+      }),
+      Animated.timing(feedbackTranslateY, {
+        toValue: -34,
+        duration: 620,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }
 
   return (
     <Pressable
       accessibilityHint={`Dodaje ${perClick} cash`}
       accessibilityLabel={CAR_CLICKER_SCREEN.carButtonLabel}
       accessibilityRole="button"
-      onPress={onPress}
+      onPress={handlePress}
       style={({ pressed }) => [
         styles.button,
         {
@@ -32,16 +69,33 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
       <ThemedText themeColor="textSecondary" style={styles.tierLabel}>
         Tier {tier}
       </ThemedText>
-      <View style={styles.car}>
-        <View style={[styles.carCabin, { backgroundColor: '#f6c445' }]} />
-        <View style={[styles.carBody, { backgroundColor: '#d14f27' }]}>
-          <View style={[styles.carWindow, styles.carWindowLeft]} />
-          <View style={[styles.carWindow, styles.carWindowRight]} />
-        </View>
-        <View style={styles.wheels}>
-          <View style={styles.wheel} />
-          <View style={styles.wheel} />
-        </View>
+      <View style={styles.carStage}>
+        <Animated.View
+          key={feedbackKey}
+          pointerEvents="none"
+          style={[
+            styles.clickFeedback,
+            {
+              opacity: feedbackOpacity,
+              transform: [{ translateY: feedbackTranslateY }],
+            },
+          ]}>
+          <ThemedText type="smallBold" style={styles.clickFeedbackText}>
+            +{formatCarClickerCash(perClick)}
+          </ThemedText>
+        </Animated.View>
+
+        <Animated.View style={[styles.car, { transform: [{ scale }] }]}>
+          <View style={[styles.carCabin, { backgroundColor: '#f6c445' }]} />
+          <View style={[styles.carBody, { backgroundColor: '#d14f27' }]}>
+            <View style={[styles.carWindow, styles.carWindowLeft]} />
+            <View style={[styles.carWindow, styles.carWindowRight]} />
+          </View>
+          <View style={styles.wheels}>
+            <View style={styles.wheel} />
+            <View style={styles.wheel} />
+          </View>
+        </Animated.View>
       </View>
       <ThemedText type="smallBold" style={styles.tapHint}>
         +{formatCarClickerCash(perClick)} za klik
@@ -71,9 +125,28 @@ const styles = StyleSheet.create({
     minHeight: 24,
     textAlign: 'center',
   },
-  car: {
+  carStage: {
     width: '100%',
     maxWidth: 280,
+    minHeight: 138,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  clickFeedback: {
+    position: 'absolute',
+    top: 0,
+    zIndex: 1,
+    minHeight: 28,
+    borderRadius: Spacing.two,
+    paddingHorizontal: Spacing.two,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(31, 122, 236, 0.14)',
+  },
+  clickFeedbackText: {
+    color: '#1f7aec',
+  },
+  car: {
+    width: '100%',
     aspectRatio: 2.3,
     justifyContent: 'flex-end',
   },

@@ -373,6 +373,22 @@ Kryteria akceptacji:
 
 ### Zadanie 5: feedback i progres wizualny
 
+Status: pierwsza iteracja zrobiona.
+
+Zaimplementowane:
+
+- Dodano animacje klikniecia samochodu w `CarTapButton`.
+- Samochod po kliknieciu lekko skaluje sie i wraca sprężynowo do normalnego rozmiaru.
+- Dodano plywajacy tekst z wartoscia zarobku z klikniecia.
+- Animacja korzysta z natywnego `Animated` z React Native, bez dodawania nowych zaleznosci.
+- Efekt jest zamkniety w komponencie samochodu, wiec ekran gry nadal nie zna szczegolow animacji.
+
+Poza zakresem tej iteracji:
+
+- Zmiana wygladu auta po tierach.
+- Animacje zakupu ulepszen.
+- Osobny feedback pasywnego dochodu.
+
 - Dodac animacje klikniecia samochodu.
 - Dodac plywajacy tekst z zarobkiem po kliknieciu.
 - Dodac progress do kolejnego tieru auta.

@@ -369,7 +369,7 @@ Kryteria akceptacji:
 
 ### Zadanie 2: podstawowy ekran gry
 
-Status: pierwsza iteracja zrobiona.
+Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
 
 Zaimplementowane w `apps/mobile/src/app/game.tsx`:
 
@@ -624,6 +624,38 @@ Kryteria akceptacji:
 - Efekty nie zaslaniaja kluczowych przyciskow.
 
 ### Zadanie 6: zapis lokalny
+
+Status: pierwsza i druga iteracja zrobione.
+
+Zaimplementowane:
+
+- Sprawdzono storage aplikacji mobilnej: projekt nie mial osobnej warstwy persistencji dla gry, ale ma juz zaleznosc `expo-secure-store`.
+- Dodano `storage.ts` w feature `car-clicker` jako izolowana warstwe zapisu lokalnego bez dokladania nowych bibliotek.
+- Zapis ma `saveVersion`, `savedAt` i stan gry, zeby przyszle migracje byly mozliwe bez mieszania ich z reducerem albo UI.
+- Dodano bezpieczny parser zapisu: pusty, uszkodzony albo niezgodny wersja zapis zwraca `null` i gra startuje ze stanem domyslnym.
+- Parser odtwarza tylko znane poziomy ulepszen, klamruje wartosci liczbowe do zakresu nieujemnego i przelicza pochodne pola `perClick`, `perSecond` oraz tier auta.
+- Dodano akcje reducera `hydrate_game`, ktora podmienia stan gry po odczycie zapisu i czysci feedbacki sesyjne.
+- `useCarClickerGame` laduje zapis przy starcie, a po hydracji zapisuje kolejne zmiany stanu gry.
+
+Poza zakresem tej iteracji:
+
+- Bonus offline naliczany na podstawie `savedAt` i `lastActiveAt`.
+- Ekran informujacy gracza, ile zarobil po powrocie.
+- Migracja na AsyncStorage albo SQLite, jesli zapis urosnie poza maly stan MVP.
+
+Druga iteracja:
+
+- Wydzielono `useCarClickerSave`, zeby `useCarClickerGame` nie trzymal szczegolow persistencji, timeoutow i hydracji.
+- Dodano opozniony zapis po zmianach stanu gry, zeby szybkie klikanie i pasywny tick nie wykonywaly natychmiastowego zapisu po kazdej zmianie.
+- Dodano zapis ostatniego znanego stanu przy odmontowaniu hooka, jesli hydracja juz sie zakonczyla.
+- `loadCarClickerSave` i `saveCarClickerState` obsluguja bledy storage bez przerywania petli gameplayu.
+- Sprawdzono setup testow: aplikacja mobilna nie ma jeszcze runnera testow jednostkowych, wiec w tej iteracji nie dokladano nowej zaleznosci testowej.
+
+Poprawka UI po drugiej iteracji:
+
+- Usunieto nadmiarowy dolny inset z ekranu gry, ktory tworzyl duzy czarny odstep miedzy gra a dolnym menu.
+- Scroll ekranu gry zaczyna teraz uklad od gory zamiast centrowac cala zawartosc w pomniejszonym obszarze.
+- Dolny padding ekranu gry zostal ograniczony do malego odstepu, bo natywny tab bar sam zajmuje swoje miejsce w layoucie.
 
 - Sprawdzic, jaki storage jest juz uzywany w aplikacji.
 - Jesli brak gotowego storage, dodac najprostszy lokalny zapis dopiero po decyzji technologicznej.

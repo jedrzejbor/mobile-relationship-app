@@ -6,6 +6,7 @@ import {
   purchaseCarClickerUpgrade,
 } from './economy';
 import type {
+  CarClickerState,
   CarClickerSessionState,
   CarClickerUpgradeCategoryFilter,
   CarClickerUpgradeId,
@@ -26,6 +27,10 @@ export type CarClickerAction =
   | {
       type: 'select_upgrade_category';
       category: CarClickerUpgradeCategoryFilter;
+    }
+  | {
+      type: 'hydrate_game';
+      game: CarClickerState;
     };
 
 export function createInitialCarClickerSessionState(): CarClickerSessionState {
@@ -85,6 +90,14 @@ export function carClickerReducer(
       return {
         ...state,
         selectedUpgradeCategory: action.category,
+      };
+
+    case 'hydrate_game':
+      return {
+        ...state,
+        game: action.game,
+        purchaseFeedback: null,
+        tierFeedback: null,
       };
   }
 }

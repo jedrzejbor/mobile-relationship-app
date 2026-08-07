@@ -1,4 +1,4 @@
-import { useMemo, useReducer } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 
 import {
   getCarTierProgress,
@@ -8,8 +8,10 @@ import {
   carClickerReducer,
   createInitialCarClickerSessionState,
 } from './reducer';
+import { useCarClickerSave } from './use-car-clicker-save';
 import { usePassiveIncomeTicker } from './use-passive-income-ticker';
 import type {
+  CarClickerState,
   CarClickerUpgradeCategory,
   CarClickerUpgradeCategoryFilter,
   CarClickerUpgradeId,
@@ -35,6 +37,14 @@ export function useCarClickerGame() {
     () => getUpgradeViews(game, upgradeCategory),
     [game, upgradeCategory],
   );
+  const hydrateGame = useCallback((savedGame: CarClickerState) => {
+    dispatch({ type: 'hydrate_game', game: savedGame });
+  }, []);
+
+  useCarClickerSave({
+    game,
+    onHydrate: hydrateGame,
+  });
 
   usePassiveIncomeTicker({
     isEnabled: game.perSecond > 0,

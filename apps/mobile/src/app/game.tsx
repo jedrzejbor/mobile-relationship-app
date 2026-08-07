@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { CarClickerStatsPanel } from '@/features/car-clicker/components/car-clicker-stats-panel';
 import { CarTapButton } from '@/features/car-clicker/components/car-tap-button';
 import { CarTierProgressPanel } from '@/features/car-clicker/components/car-tier-progress-panel';
@@ -24,7 +24,7 @@ export default function GameScreen() {
 
   return (
     <ThemedView style={styles.screen}>
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
   },
   scrollView: {
     width: '100%',
@@ -85,8 +84,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.four,
+    justifyContent: 'flex-start',
+    paddingTop: Spacing.four,
+    paddingBottom: Spacing.three,
   },
   content: {
     width: '100%',

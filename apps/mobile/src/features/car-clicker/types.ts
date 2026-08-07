@@ -37,6 +37,12 @@ export type CarClickerState = {
   selectedCarTier: number;
 };
 
+export type CarClickerSaveData = {
+  saveVersion: number;
+  savedAt: number;
+  game: CarClickerState;
+};
+
 export type CarClickerUpgradePurchaseResult =
   | {
       status: 'purchased';

@@ -320,6 +320,13 @@ Poza zakresem tej iteracji:
 - Optymalizacja zatrzymywania timera, gdy `perSecond` wynosi 0.
 - Animacja albo osobny feedback dla pasywnego przychodu.
 
+Druga iteracja:
+
+- Timer pasywnego dochodu startuje dopiero wtedy, gdy `perSecond` jest wieksze od 0.
+- `useEffect` zalezy od `game.perSecond`, wiec po zakupie ulepszenia pasywnego interwal startuje automatycznie.
+- Cleanup dalej usuwa poprzedni interwal, wiec zmiana wartosci `perSecond` nie tworzy duplikatow timerow.
+- Usunieto niepotrzebna prace w tle na poczatku gry, gdy gracz nie ma jeszcze pasywnego dochodu.
+
 - Dodac timer naliczajacy `per second`.
 - Upewnic sie, ze naliczanie nie tworzy wielu timerow po rerenderach.
 - Pokazac aktualny `per second` w UI.

@@ -38,6 +38,10 @@ export function useCarClickerGame() {
   );
 
   useEffect(() => {
+    if (game.perSecond <= 0) {
+      return undefined;
+    }
+
     const intervalId = setInterval(() => {
       dispatch({
         type: 'collect_passive_income',
@@ -46,7 +50,7 @@ export function useCarClickerGame() {
     }, PASSIVE_INCOME_TICK_MS);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [game.perSecond]);
 
   function collectClick() {
     dispatch({ type: 'collect_click' });

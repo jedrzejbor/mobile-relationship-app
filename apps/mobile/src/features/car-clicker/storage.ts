@@ -75,12 +75,20 @@ function createPersistedGameState(
 
 export function createCarClickerSaveData(
   game: CarClickerState,
+  savedAt = Date.now(),
 ): CarClickerSaveData {
   return {
     saveVersion: CAR_CLICKER_SAVE_VERSION,
-    savedAt: Date.now(),
+    savedAt,
     game: createPersistedGameState(game),
   };
+}
+
+export function serializeCarClickerSaveData(
+  game: CarClickerState,
+  savedAt = Date.now(),
+) {
+  return JSON.stringify(createCarClickerSaveData(game, savedAt));
 }
 
 export function parseCarClickerSaveData(
@@ -131,9 +139,11 @@ export async function saveCarClickerState(game: CarClickerState) {
   try {
     await SecureStore.setItemAsync(
       CAR_CLICKER_SAVE_KEY,
-      JSON.stringify(createCarClickerSaveData(game)),
+      serializeCarClickerSaveData(game),
     );
+
+    return true;
   } catch {
-    // Storage failure should not block the gameplay loop.
+    return false;
   }
 }

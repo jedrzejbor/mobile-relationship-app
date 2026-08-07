@@ -29,6 +29,13 @@ export function useCarClickerSave({
   const lastSavedAtRef = useRef(0);
   const latestGameRef = useRef(game);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const persistLatestGame = useCallback(() => {
+    void saveCarClickerState(latestGameRef.current).then((didSave) => {
+      if (didSave) {
+        lastSavedAtRef.current = Date.now();
+      }
+    });
+  }, []);
   const clearPendingSave = useCallback(() => {
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
@@ -41,9 +48,8 @@ export function useCarClickerSave({
     }
 
     clearPendingSave();
-    lastSavedAtRef.current = Date.now();
-    void saveCarClickerState(latestGameRef.current);
-  }, [clearPendingSave]);
+    persistLatestGame();
+  }, [clearPendingSave, persistLatestGame]);
   const scheduleSave = useCallback(() => {
     if (!isHydratedRef.current) {
       return;
@@ -60,10 +66,9 @@ export function useCarClickerSave({
 
     saveTimeoutRef.current = setTimeout(() => {
       saveTimeoutRef.current = null;
-      lastSavedAtRef.current = Date.now();
-      void saveCarClickerState(latestGameRef.current);
+      persistLatestGame();
     }, saveDelay);
-  }, [clearPendingSave]);
+  }, [clearPendingSave, persistLatestGame]);
 
   useEffect(() => {
     let isMounted = true;

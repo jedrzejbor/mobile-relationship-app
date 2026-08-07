@@ -625,7 +625,7 @@ Kryteria akceptacji:
 
 ### Zadanie 6: zapis lokalny
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma i osma iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma i dziewiata iteracja zrobione.
 
 Zaimplementowane:
 
@@ -698,6 +698,13 @@ Osma iteracja:
 - Dodano auto-dismiss feedbacku offline po 8 sekundach w `useCarClickerGame`.
 - Timer jest czyszczony przy zmianie feedbacku albo odmontowaniu hooka, wiec nie zostawia wiszacych timeoutow.
 - Reczne zamkniecie panelu dalej idzie przez te sama akcje reducera, a komponent panelu pozostaje bez lokalnego stanu.
+
+Dziewiata iteracja:
+
+- Dodano `serializeCarClickerSaveData`, zeby serializacja lokalnego zapisu byla osobna, czysta granica gotowa do testow jednostkowych.
+- `createCarClickerSaveData` przyjmuje opcjonalne `savedAt`, wiec mozna deterministycznie testowac snapshot zapisu.
+- `saveCarClickerState` zwraca teraz `true` albo `false`, zamiast ukrywac wynik operacji.
+- `useCarClickerSave` aktualizuje `lastSavedAtRef` dopiero po udanym zapisie, dzieki czemu throttle nie zaklada sukcesu storage.
 
 - Sprawdzic, jaki storage jest juz uzywany w aplikacji.
 - Jesli brak gotowego storage, dodac najprostszy lokalny zapis dopiero po decyzji technologicznej.

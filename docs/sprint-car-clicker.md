@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga, trzecia, czwarta i piata iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata i szosta iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -774,6 +774,13 @@ Piata iteracja:
 - Ujednolicono `TierUpFeedbackPanel` z racing UI: pomaranczowy akcent, badge tieru i czytelny opis nowego wariantu auta.
 - Ujednolicono `OfflineIncomeFeedbackPanel`: zielony status money, ciemny panel, przycisk zamkniecia i subtelny glow.
 - Logika gry, zapis i animacje feedbackow pozostaly bez zmian; iteracja dotyczyla tylko prezentacji.
+
+Szosta iteracja:
+
+- Dodano `CarClickerScreenHeader` jako osobny komponent naglowka ekranu gry.
+- Przeniesiono racing chrome naglowka poza `game.tsx`, zeby routing nadal skladal widok z gotowych komponentow.
+- Naglowek dostal ciemny panel, subtelne track-marki i pomaranczowe pasy akcentu inspirowane referencjami UI.
+- Nie dodano jeszcze aktywnych ikon ustawien ani rankingu, bo to wymaga osobnego kontraktu funkcjonalnego.
 
 Zakres pierwszej iteracji:
 

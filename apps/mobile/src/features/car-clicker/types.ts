@@ -47,6 +47,11 @@ export type CarClickerUpgradePurchaseResult =
       state: CarClickerState;
     };
 
+export type CarClickerPurchaseFeedback = {
+  status: CarClickerUpgradePurchaseResult['status'];
+  upgradeName: string;
+};
+
 export type CarClickerUpgradeView = {
   upgrade: CarClickerUpgradeDefinition;
   level: number;

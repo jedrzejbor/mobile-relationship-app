@@ -6,6 +6,7 @@ import { Spacing } from '@/constants/theme';
 import {
   CAR_CLICKER_UPGRADE_CATEGORY_OPTIONS,
   formatCarClickerCash,
+  type CarClickerPurchaseFeedback,
   type CarClickerUpgradeCategoryFilter,
   type CarClickerUpgradeId,
   type CarClickerUpgradeView,
@@ -13,6 +14,7 @@ import {
 import { useTheme } from '@/hooks/use-theme';
 
 type UpgradeShopPanelProps = {
+  purchaseFeedback: CarClickerPurchaseFeedback | null;
   selectedCategory: CarClickerUpgradeCategoryFilter;
   upgrades: CarClickerUpgradeView[];
   onCategoryChange: (category: CarClickerUpgradeCategoryFilter) => void;
@@ -20,6 +22,7 @@ type UpgradeShopPanelProps = {
 };
 
 export function UpgradeShopPanel({
+  purchaseFeedback,
   selectedCategory,
   upgrades,
   onCategoryChange,
@@ -44,6 +47,12 @@ export function UpgradeShopPanel({
           />
         ))}
       </View>
+
+      {purchaseFeedback && (
+        <ThemedText type="small" style={styles.feedback}>
+          {getPurchaseFeedbackLabel(purchaseFeedback)}
+        </ThemedText>
+      )}
 
       <View style={styles.list}>
         {upgrades.map((upgradeView) => (
@@ -104,7 +113,9 @@ function UpgradeRow({
   const effectLabel = getUpgradeEffectLabel(upgradeView);
   const buttonLabel = upgradeView.isMaxLevelReached
     ? 'Max'
-    : formatCarClickerCash(upgradeView.nextCost);
+    : upgradeView.isAffordable
+      ? `Kup ${formatCarClickerCash(upgradeView.nextCost)}`
+      : formatCarClickerCash(upgradeView.nextCost);
 
   return (
     <View style={[styles.row, { borderColor: theme.backgroundSelected }]}>
@@ -133,6 +144,7 @@ function UpgradeRow({
       <Pressable
         accessibilityLabel={`Kup ${upgrade.name}`}
         accessibilityRole="button"
+        accessibilityState={{ disabled: !upgradeView.isAffordable }}
         disabled={!upgradeView.isAffordable}
         onPress={() => onPurchase(upgrade.id)}
         style={({ pressed }) => [
@@ -155,6 +167,18 @@ function UpgradeRow({
       </Pressable>
     </View>
   );
+}
+
+function getPurchaseFeedbackLabel(feedback: CarClickerPurchaseFeedback) {
+  if (feedback.status === 'purchased') {
+    return `Kupiono: ${feedback.upgradeName}`;
+  }
+
+  if (feedback.status === 'insufficient_cash') {
+    return `Za malo cashu: ${feedback.upgradeName}`;
+  }
+
+  return `Maksymalny poziom: ${feedback.upgradeName}`;
 }
 
 function getUpgradeEffectLabel({ upgrade }: CarClickerUpgradeView) {
@@ -192,6 +216,10 @@ const styles = StyleSheet.create({
   categoryButtonPressed: {
     opacity: 0.78,
   },
+  feedback: {
+    minHeight: 20,
+    color: '#1f7aec',
+  },
   list: {
     gap: Spacing.two,
   },
@@ -223,7 +251,7 @@ const styles = StyleSheet.create({
     color: '#1f7aec',
   },
   buyButton: {
-    minWidth: 84,
+    minWidth: 104,
     minHeight: 44,
     borderRadius: Spacing.two,
     alignItems: 'center',

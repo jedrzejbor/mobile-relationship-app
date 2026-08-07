@@ -13,6 +13,7 @@ import { CAR_CLICKER_SCREEN, useCarClickerGame } from '@/features/car-clicker';
 export default function GameScreen() {
   const {
     actions,
+    purchaseFeedback,
     selectedUpgradeCategory,
     state,
     tierProgress,
@@ -53,6 +54,7 @@ export default function GameScreen() {
             <UpgradeShopPanel
               onCategoryChange={actions.selectUpgradeCategory}
               onPurchase={actions.purchaseUpgrade}
+              purchaseFeedback={purchaseFeedback}
               selectedCategory={selectedUpgradeCategory}
               upgrades={upgradeViews}
             />

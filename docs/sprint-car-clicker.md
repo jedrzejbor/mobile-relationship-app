@@ -268,6 +268,14 @@ Druga iteracja:
 - `UpgradeShopPanel` renderuje segmenty kategorii i dostaje juz przefiltrowana liste ulepszen.
 - Przygotowano strukture pod pozniejsze kategorie `Styl` i `Automatyzacja`.
 
+Trzecia iteracja:
+
+- Dodano `CarClickerPurchaseFeedback` jako typ ostatniego wyniku zakupu.
+- `useCarClickerGame` przechowuje ostatni feedback zakupu i aktualizuje go przy kazdej probie kupna.
+- `UpgradeShopPanel` pokazuje komunikat po zakupie, braku cashu albo probie zakupu ulepszenia na max level.
+- Doprecyzowano etykiete przycisku zakupu: `Kup <koszt>`, sam koszt dla niedostepnych zakupow i `Max` dla limitu poziomu.
+- Dodano `accessibilityState` dla wylaczonych przyciskow zakupu.
+
 - Pokazac liste ulepszen.
 - Dodac przycisk kupna.
 - Wylaczyc przycisk, gdy brakuje cashu.

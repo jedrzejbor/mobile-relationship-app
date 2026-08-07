@@ -6,15 +6,12 @@ import {
   TabTriggerSlotProps,
   TabListProps,
 } from 'expo-router/ui';
-import { SymbolView } from 'expo-symbols';
-import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
+import { Pressable, View, StyleSheet } from 'react-native';
 
-import { ExternalLink } from './external-link';
 import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
 
-import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
-import { CAR_CLICKER_SCREEN } from '@/features/car-clicker';
+import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { CAR_CLICKER_SCREEN, CarClickerTheme } from '@/features/car-clicker';
 
 export default function AppTabs() {
   return (
@@ -40,41 +37,34 @@ export default function AppTabs() {
 export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
   return (
     <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
-      <ThemedView
-        type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
-        style={styles.tabButtonView}>
-        <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
+      <View
+        style={[
+          styles.tabButtonView,
+          isFocused && styles.tabButtonViewFocused,
+        ]}>
+        <ThemedText
+          type="smallBold"
+          style={[
+            styles.tabButtonText,
+            isFocused && styles.tabButtonTextFocused,
+          ]}>
           {children}
         </ThemedText>
-      </ThemedView>
+      </View>
     </Pressable>
   );
 }
 
 export function CustomTabList(props: TabListProps) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
-
   return (
     <View {...props} style={styles.tabListContainer}>
-      <ThemedView type="backgroundElement" style={styles.innerContainer}>
+      <View style={styles.innerContainer}>
         <ThemedText type="smallBold" style={styles.brandText}>
-          Expo Starter
+          Car Clicker
         </ThemedText>
 
         {props.children}
-
-        <ExternalLink href="https://docs.expo.dev" asChild>
-          <Pressable style={styles.externalPressable}>
-            <ThemedText type="link">Docs</ThemedText>
-            <SymbolView
-              tintColor={colors.text}
-              name="link"
-              size={12}
-            />
-          </Pressable>
-        </ExternalLink>
-      </ThemedView>
+      </View>
     </View>
   );
 }
@@ -82,6 +72,7 @@ export function CustomTabList(props: TabListProps) {
 const styles = StyleSheet.create({
   tabListContainer: {
     position: 'absolute',
+    bottom: 0,
     width: '100%',
     padding: Spacing.three,
     justifyContent: 'center',
@@ -89,9 +80,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   innerContainer: {
+    minHeight: 68,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
     paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.five,
-    borderRadius: Spacing.five,
+    paddingHorizontal: Spacing.three,
+    borderRadius: CarClickerTheme.radii.panel,
+    backgroundColor: CarClickerTheme.colors.panel,
     flexDirection: 'row',
     alignItems: 'center',
     flexGrow: 1,
@@ -100,20 +95,32 @@ const styles = StyleSheet.create({
   },
   brandText: {
     marginRight: 'auto',
+    color: CarClickerTheme.colors.accent,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
   },
   pressed: {
     opacity: 0.7,
   },
   tabButtonView: {
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.three,
-  },
-  externalPressable: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    minWidth: 84,
     alignItems: 'center',
-    gap: Spacing.one,
-    marginLeft: Spacing.three,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.three,
+    borderRadius: CarClickerTheme.radii.control,
+    backgroundColor: CarClickerTheme.colors.panelStrong,
+  },
+  tabButtonViewFocused: {
+    borderColor: CarClickerTheme.colors.borderStrong,
+    backgroundColor: CarClickerTheme.colors.accentDim,
+  },
+  tabButtonText: {
+    color: CarClickerTheme.colors.textDim,
+    fontStyle: 'italic',
+  },
+  tabButtonTextFocused: {
+    color: CarClickerTheme.colors.accent,
   },
 });

@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga, trzecia, czwarta, piata i szosta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta i siodma iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -781,6 +781,13 @@ Szosta iteracja:
 - Przeniesiono racing chrome naglowka poza `game.tsx`, zeby routing nadal skladal widok z gotowych komponentow.
 - Naglowek dostal ciemny panel, subtelne track-marki i pomaranczowe pasy akcentu inspirowane referencjami UI.
 - Nie dodano jeszcze aktywnych ikon ustawien ani rankingu, bo to wymaga osobnego kontraktu funkcjonalnego.
+
+Siodma iteracja:
+
+- Przebudowano native `AppTabs` na ciemny bottom HUD: panelowe tlo, pomaranczowy stan aktywny, techniczne etykiety i stale wymiary ikon.
+- Przebudowano webowy `AppTabs` w tym samym kierunku i usunieto starterowe elementy `Expo Starter` / `Docs`.
+- Ustawiono webowy tab bar na dole ekranu, zgodnie z referencjami UI dla aplikacji mobilnej.
+- Dodano platformowy dolny padding w `game.tsx`, zeby webowy tab bar nie przykrywal listy ulepszen, bez zwiekszania odstepu na native.
 
 Zakres pierwszej iteracji:
 

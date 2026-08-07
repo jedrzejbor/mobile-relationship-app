@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet } from 'react-native';
+import { Platform, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedView } from '@/components/themed-view';
@@ -94,7 +94,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingTop: Spacing.four,
-    paddingBottom: Spacing.three,
+    paddingBottom: Platform.select({
+      web: Spacing.six + Spacing.four,
+      default: Spacing.three,
+    }),
   },
   content: {
     width: '100%',

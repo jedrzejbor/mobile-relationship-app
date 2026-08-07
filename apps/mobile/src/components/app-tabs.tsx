@@ -1,23 +1,19 @@
 import { Tabs } from 'expo-router';
-import { Image, useColorScheme } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
-import { Colors } from '@/constants/theme';
-import { CAR_CLICKER_SCREEN } from '@/features/car-clicker';
+import { CAR_CLICKER_SCREEN, CarClickerTheme } from '@/features/car-clicker';
 
 export default function AppTabs() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
-
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.text,
-        tabBarInactiveTintColor: colors.textSecondary,
-        tabBarStyle: {
-          backgroundColor: colors.background,
-          borderTopColor: colors.backgroundElement,
-        },
+        tabBarActiveBackgroundColor: CarClickerTheme.colors.accentDim,
+        tabBarActiveTintColor: CarClickerTheme.colors.accent,
+        tabBarInactiveTintColor: CarClickerTheme.colors.textDim,
+        tabBarItemStyle: styles.tabBarItem,
+        tabBarLabelStyle: styles.tabBarLabel,
+        tabBarStyle: styles.tabBar,
       }}>
       <Tabs.Screen
         name="index"
@@ -26,7 +22,7 @@ export default function AppTabs() {
           tabBarIcon: ({ color }) => (
             <Image
               source={require('@/assets/images/tabIcons/home.png')}
-              style={{ width: 24, height: 24, tintColor: color }}
+              style={[styles.tabIcon, { tintColor: color }]}
             />
           ),
         }}
@@ -38,7 +34,7 @@ export default function AppTabs() {
           tabBarIcon: ({ color }) => (
             <Image
               source={require('@/assets/images/tabIcons/explore.png')}
-              style={{ width: 24, height: 24, tintColor: color }}
+              style={[styles.tabIcon, { tintColor: color }]}
             />
           ),
         }}
@@ -50,7 +46,7 @@ export default function AppTabs() {
           tabBarIcon: ({ color }) => (
             <Image
               source={require('@/assets/images/tabIcons/explore.png')}
-              style={{ width: 24, height: 24, tintColor: color }}
+              style={[styles.tabIcon, { tintColor: color }]}
             />
           ),
         }}
@@ -58,3 +54,27 @@ export default function AppTabs() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    height: 76,
+    borderTopWidth: CarClickerTheme.borders.hairline,
+    borderTopColor: CarClickerTheme.colors.border,
+    backgroundColor: CarClickerTheme.colors.panel,
+    paddingTop: 8,
+    paddingBottom: 12,
+  },
+  tabBarItem: {
+    marginHorizontal: 6,
+    borderRadius: CarClickerTheme.radii.control,
+  },
+  tabBarLabel: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    fontWeight: '700',
+  },
+  tabIcon: {
+    width: 24,
+    height: 24,
+  },
+});

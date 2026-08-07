@@ -276,6 +276,14 @@ Trzecia iteracja:
 - Doprecyzowano etykiete przycisku zakupu: `Kup <koszt>`, sam koszt dla niedostepnych zakupow i `Max` dla limitu poziomu.
 - Dodano `accessibilityState` dla wylaczonych przyciskow zakupu.
 
+Czwarta iteracja:
+
+- Dodano `CarClickerSessionState`, ktory laczy stan gry, wybrana kategorie sklepu i feedback zakupu.
+- Dodano pure reducer `carClickerReducer` z akcjami `collect_click`, `purchase_upgrade` i `select_upgrade_category`.
+- Przeniesiono logike zakupu z hooka do reducera, zeby kolejne zakupy bazowaly na najnowszym stanie Reacta.
+- `useCarClickerGame` odpowiada teraz za memoizowane selektory i dispatch akcji, a nie za reczne skladanie zmian stanu.
+- Reducer jest gotowy do testow jednostkowych bez renderowania komponentow.
+
 - Pokazac liste ulepszen.
 - Dodac przycisk kupna.
 - Wylaczyc przycisk, gdy brakuje cashu.

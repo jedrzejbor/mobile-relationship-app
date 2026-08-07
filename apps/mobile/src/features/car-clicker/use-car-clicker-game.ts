@@ -1,64 +1,58 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useReducer } from 'react';
 
 import {
-  collectClickIncome,
-  createInitialCarClickerState,
   getCarTierProgress,
-  getCarClickerUpgradeById,
   getUpgradeViews,
-  purchaseCarClickerUpgrade,
 } from './economy';
+import {
+  carClickerReducer,
+  createInitialCarClickerSessionState,
+} from './reducer';
 import type {
-  CarClickerPurchaseFeedback,
   CarClickerUpgradeCategory,
   CarClickerUpgradeCategoryFilter,
   CarClickerUpgradeId,
 } from './types';
 
 export function useCarClickerGame() {
-  const [state, setState] = useState(createInitialCarClickerState);
-  const [selectedUpgradeCategory, setSelectedUpgradeCategory] =
-    useState<CarClickerUpgradeCategoryFilter>('all');
-  const [purchaseFeedback, setPurchaseFeedback] =
-    useState<CarClickerPurchaseFeedback | null>(null);
+  const [sessionState, dispatch] = useReducer(
+    carClickerReducer,
+    undefined,
+    createInitialCarClickerSessionState,
+  );
+  const { game, purchaseFeedback, selectedUpgradeCategory } = sessionState;
   const tierProgress = useMemo(
-    () => getCarTierProgress(state.upgrades),
-    [state.upgrades],
+    () => getCarTierProgress(game.upgrades),
+    [game.upgrades],
   );
   const upgradeCategory: CarClickerUpgradeCategory | undefined =
     selectedUpgradeCategory === 'all'
       ? undefined
       : selectedUpgradeCategory;
   const upgradeViews = useMemo(
-    () => getUpgradeViews(state, upgradeCategory),
-    [state, upgradeCategory],
+    () => getUpgradeViews(game, upgradeCategory),
+    [game, upgradeCategory],
   );
 
   function collectClick() {
-    setState((currentState) => collectClickIncome(currentState));
+    dispatch({ type: 'collect_click' });
   }
 
   function purchaseUpgrade(upgradeId: CarClickerUpgradeId) {
-    const upgrade = getCarClickerUpgradeById(upgradeId);
-    const purchaseResult = purchaseCarClickerUpgrade(state, upgradeId);
-
-    setPurchaseFeedback({
-      status: purchaseResult.status,
-      upgradeName: upgrade.name,
-    });
-    setState(purchaseResult.state);
+    dispatch({ type: 'purchase_upgrade', upgradeId });
   }
 
   return {
     purchaseFeedback,
-    state,
+    state: game,
     selectedUpgradeCategory,
     tierProgress,
     upgradeViews,
     actions: {
       collectClick,
       purchaseUpgrade,
-      selectUpgradeCategory: setSelectedUpgradeCategory,
+      selectUpgradeCategory: (category: CarClickerUpgradeCategoryFilter) =>
+        dispatch({ type: 'select_upgrade_category', category }),
     },
   };
 }

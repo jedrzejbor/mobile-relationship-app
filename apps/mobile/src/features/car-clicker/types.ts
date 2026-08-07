@@ -52,6 +52,12 @@ export type CarClickerPurchaseFeedback = {
   upgradeName: string;
 };
 
+export type CarClickerSessionState = {
+  game: CarClickerState;
+  purchaseFeedback: CarClickerPurchaseFeedback | null;
+  selectedUpgradeCategory: CarClickerUpgradeCategoryFilter;
+};
+
 export type CarClickerUpgradeView = {
   upgrade: CarClickerUpgradeDefinition;
   level: number;

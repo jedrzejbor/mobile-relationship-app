@@ -10,7 +10,11 @@ import { CarTierProgressPanel } from '@/features/car-clicker/components/car-tier
 import { OfflineIncomeFeedbackPanel } from '@/features/car-clicker/components/offline-income-feedback-panel';
 import { TierUpFeedbackPanel } from '@/features/car-clicker/components/tier-up-feedback-panel';
 import { UpgradeShopPanel } from '@/features/car-clicker/components/upgrade-shop-panel';
-import { CAR_CLICKER_SCREEN, useCarClickerGame } from '@/features/car-clicker';
+import {
+  CAR_CLICKER_SCREEN,
+  CarClickerTheme,
+  useCarClickerGame,
+} from '@/features/car-clicker';
 
 export default function GameScreen() {
   const {
@@ -79,6 +83,7 @@ export default function GameScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    backgroundColor: CarClickerTheme.colors.background,
   },
   safeArea: {
     flex: 1,
@@ -105,9 +110,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
+    color: CarClickerTheme.colors.accent,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
     textAlign: 'center',
   },
   subtitle: {
+    color: CarClickerTheme.colors.textMuted,
     textAlign: 'center',
   },
 });

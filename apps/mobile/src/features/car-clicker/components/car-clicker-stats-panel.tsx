@@ -2,9 +2,9 @@ import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { formatCarClickerCash } from '@/features/car-clicker/format';
+import { CarClickerTheme } from '@/features/car-clicker/theme';
 
 type CarClickerStatsPanelProps = {
   cash: number;
@@ -54,11 +54,23 @@ export function CarClickerStatsPanel({
   }, [passivePulseOpacity, perSecond]);
 
   return (
-    <ThemedView type="backgroundElement" style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.statsRow}>
-        <StatItem label="Cash" value={formatCarClickerCash(cash)} />
-        <StatItem label="Per click" value={`+${formatCarClickerCash(perClick)}`} />
-        <StatItem label="Per second" value={`+${formatCarClickerCash(perSecond)}`} />
+        <StatItem
+          label="Cash"
+          tone="money"
+          value={formatCarClickerCash(cash)}
+        />
+        <StatItem
+          label="Za klik"
+          tone="click"
+          value={`+${formatCarClickerCash(perClick)}`}
+        />
+        <StatItem
+          label="Na sekunde"
+          tone="passive"
+          value={`+${formatCarClickerCash(perSecond)}`}
+        />
       </View>
 
       <View style={styles.passiveStatusRow}>
@@ -68,30 +80,43 @@ export function CarClickerStatsPanel({
               styles.passiveStatusDot,
               {
                 opacity: passivePulseOpacity,
-                backgroundColor: perSecond > 0 ? '#18a058' : '#8b8f97',
+                backgroundColor: perSecond > 0
+                  ? CarClickerTheme.colors.passive
+                  : CarClickerTheme.colors.textDim,
               },
             ]}
           />
-          <ThemedText type="smallBold">Pasywny dochod</ThemedText>
+          <ThemedText type="smallBold" style={styles.passiveStatusTitle}>
+            Pasywny dochod
+          </ThemedText>
         </View>
         <ThemedText
-          themeColor={perSecond > 0 ? 'text' : 'textSecondary'}
           type="small"
           style={styles.passiveStatus}>
           {passiveIncomeStatus}
         </ThemedText>
       </View>
-    </ThemedView>
+    </View>
   );
 }
 
-function StatItem({ label, value }: { label: string; value: string }) {
+function StatItem({
+  label,
+  tone,
+  value,
+}: {
+  label: string;
+  tone: 'click' | 'money' | 'passive';
+  value: string;
+}) {
+  const valueColor = CarClickerTheme.colors[tone];
+
   return (
     <View style={styles.item}>
-      <ThemedText themeColor="textSecondary" type="small">
+      <ThemedText type="smallBold" style={styles.label}>
         {label}
       </ThemedText>
-      <ThemedText type="smallBold" style={styles.value}>
+      <ThemedText type="smallBold" style={[styles.value, { color: valueColor }]}>
         {value}
       </ThemedText>
     </View>
@@ -100,9 +125,16 @@ function StatItem({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: Spacing.three,
+    borderRadius: CarClickerTheme.radii.panel,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    backgroundColor: CarClickerTheme.colors.panel,
     padding: Spacing.three,
     gap: Spacing.three,
+    shadowColor: CarClickerTheme.colors.accent,
+    shadowOpacity: 0.18,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
   },
   statsRow: {
     flexDirection: 'row',
@@ -110,13 +142,23 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    minHeight: 56,
+    minHeight: 64,
     justifyContent: 'center',
+    borderRadius: CarClickerTheme.radii.control,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    backgroundColor: CarClickerTheme.colors.panelStrong,
+    paddingHorizontal: Spacing.two,
     gap: Spacing.one,
   },
+  label: {
+    color: CarClickerTheme.colors.textMuted,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
   value: {
-    fontSize: 18,
-    lineHeight: 24,
+    fontSize: 22,
+    lineHeight: 28,
   },
   passiveStatusRow: {
     minHeight: 24,
@@ -134,8 +176,12 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
+  passiveStatusTitle: {
+    color: CarClickerTheme.colors.text,
+  },
   passiveStatus: {
     flexShrink: 1,
+    color: CarClickerTheme.colors.textMuted,
     textAlign: 'right',
   },
 });

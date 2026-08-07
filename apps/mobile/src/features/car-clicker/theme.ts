@@ -1,0 +1,30 @@
+export const CarClickerTheme = {
+  colors: {
+    background: '#05070b',
+    panel: '#0b1118',
+    panelStrong: '#101720',
+    panelMuted: '#151a22',
+    border: '#26313d',
+    borderStrong: '#ff7a18',
+    accent: '#ff7a18',
+    accentDim: 'rgba(255, 122, 24, 0.18)',
+    accentGlow: 'rgba(255, 122, 24, 0.36)',
+    money: '#9be23d',
+    click: '#2fb9ff',
+    passive: '#b45cff',
+    success: '#78df45',
+    danger: '#ff5c70',
+    text: '#f5f7fb',
+    textMuted: '#a8b0bd',
+    textDim: '#717986',
+  },
+  radii: {
+    panel: 12,
+    control: 10,
+    badge: 8,
+  },
+  borders: {
+    hairline: 1,
+    active: 2,
+  },
+} as const;

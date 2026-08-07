@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza i druga iteracja zrobione.
+Status: pierwsza, druga i trzecia iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -750,6 +750,14 @@ Druga iteracja:
   - locked/error: szary i czerwien.
 - Layout clickera powinien zostac komponentowy: top HUD, segmenty kategorii, karty upgrade, asset auta, bottom tab. Referencje sa kierunkiem wizualnym, nie gotowym ekranem do wklejenia.
 - W kolejnej iteracji UI zaczynamy od tokenow wizualnych i przebudowy `CarClickerStatsPanel` oraz `UpgradeShopPanel`; dopiero potem podmieniamy auto na asset.
+
+Trzecia iteracja:
+
+- Dodano `theme.ts` z lokalnymi tokenami wizualnymi Car Clicker: kolory paneli, akcentow, statusow, borderow i promieni.
+- Przebudowano `CarClickerStatsPanel` w kierunku top HUD: ciemne karty, role kolorow dla cash, za klik i na sekunde, techniczne etykiety uppercase.
+- Przebudowano `UpgradeShopPanel`: ciemne karty, pomaranczowy aktywny segment, statusy zakupu, kolory per click i passive income zgodne z referencja.
+- Ekran gry dostal ciemne tlo i pomaranczowy tytul bez zmiany przeplywu danych ani mechaniki gry.
+- UI nadal jest komponentowy i nie uzywa referencji jako statycznego screena.
 
 Zakres pierwszej iteracji:
 

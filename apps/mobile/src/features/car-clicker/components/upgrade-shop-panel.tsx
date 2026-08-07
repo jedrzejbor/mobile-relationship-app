@@ -1,17 +1,16 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import {
   CAR_CLICKER_UPGRADE_CATEGORY_OPTIONS,
+  CarClickerTheme,
   formatCarClickerCash,
   type CarClickerPurchaseFeedback,
   type CarClickerUpgradeCategoryFilter,
   type CarClickerUpgradeId,
   type CarClickerUpgradeView,
 } from '@/features/car-clicker';
-import { useTheme } from '@/hooks/use-theme';
 
 type UpgradeShopPanelProps = {
   purchaseFeedback: CarClickerPurchaseFeedback | null;
@@ -29,10 +28,12 @@ export function UpgradeShopPanel({
   onPurchase,
 }: UpgradeShopPanelProps) {
   return (
-    <ThemedView type="backgroundElement" style={styles.panel}>
+    <View style={styles.panel}>
       <View style={styles.header}>
-        <ThemedText type="smallBold">Ulepszenia</ThemedText>
-        <ThemedText themeColor="textSecondary" type="small">
+        <ThemedText type="smallBold" style={styles.title}>
+          Ulepszenia
+        </ThemedText>
+        <ThemedText type="small" style={styles.subtitle}>
           Kup tuning i zwieksz zarobek
         </ThemedText>
       </View>
@@ -69,14 +70,13 @@ export function UpgradeShopPanel({
           ))
         ) : (
           <ThemedText
-            themeColor="textSecondary"
             type="small"
             style={styles.emptyState}>
             Brak ulepszen w tej kategorii
           </ThemedText>
         )}
       </View>
-    </ThemedView>
+    </View>
   );
 }
 
@@ -89,8 +89,6 @@ function CategoryButton({
   label: string;
   onPress: () => void;
 }) {
-  const theme = useTheme();
-
   return (
     <Pressable
       accessibilityRole="tab"
@@ -98,16 +96,15 @@ function CategoryButton({
       onPress={onPress}
       style={({ pressed }) => [
         styles.categoryButton,
-        {
-          backgroundColor: isSelected ? theme.text : theme.backgroundSelected,
-        },
+        isSelected && styles.categoryButtonSelected,
         pressed && styles.categoryButtonPressed,
       ]}>
       <ThemedText
         type="smallBold"
-        style={{
-          color: isSelected ? theme.background : theme.textSecondary,
-        }}>
+        style={[
+          styles.categoryButtonText,
+          isSelected && styles.categoryButtonTextSelected,
+        ]}>
         {label}
       </ThemedText>
     </Pressable>
@@ -123,9 +120,11 @@ function UpgradeRow({
   upgradeView: CarClickerUpgradeView;
   onPurchase: (upgradeId: CarClickerUpgradeId) => void;
 }) {
-  const theme = useTheme();
   const { upgrade } = upgradeView;
   const effectLabel = getUpgradeEffectLabel(upgradeView);
+  const effectTone = upgrade.perSecondBonus
+    ? CarClickerTheme.colors.passive
+    : CarClickerTheme.colors.click;
   const buttonLabel = upgradeView.isMaxLevelReached
     ? 'Max'
     : upgradeView.isAffordable
@@ -138,11 +137,11 @@ function UpgradeRow({
         styles.row,
         {
           backgroundColor: isRecentlyPurchased
-            ? 'rgba(31, 122, 236, 0.1)'
-            : 'transparent',
+            ? CarClickerTheme.colors.accentDim
+            : CarClickerTheme.colors.panel,
           borderColor: isRecentlyPurchased
-            ? '#1f7aec'
-            : theme.backgroundSelected,
+            ? CarClickerTheme.colors.borderStrong
+            : CarClickerTheme.colors.border,
         },
       ]}>
       <View style={styles.rowContent}>
@@ -150,14 +149,14 @@ function UpgradeRow({
           <ThemedText type="smallBold" style={styles.upgradeName}>
             {upgrade.name}
           </ThemedText>
-          <ThemedText themeColor="textSecondary" type="small">
+          <ThemedText type="smallBold" style={styles.levelBadge}>
             Lv. {upgradeView.level}
           </ThemedText>
         </View>
-        <ThemedText themeColor="textSecondary" type="small" style={styles.description}>
+        <ThemedText type="small" style={styles.description}>
           {upgrade.description}
         </ThemedText>
-        <ThemedText type="small" style={styles.effect}>
+        <ThemedText type="smallBold" style={[styles.effect, { color: effectTone }]}>
           {effectLabel}
         </ThemedText>
         {isRecentlyPurchased && (
@@ -166,7 +165,7 @@ function UpgradeRow({
           </ThemedText>
         )}
         {!upgradeView.isAffordable && !upgradeView.isMaxLevelReached && (
-          <ThemedText themeColor="textSecondary" type="small">
+          <ThemedText type="small" style={styles.missingCash}>
             Brakuje {formatCarClickerCash(upgradeView.missingCash)}
           </ThemedText>
         )}
@@ -180,18 +179,18 @@ function UpgradeRow({
         onPress={() => onPurchase(upgrade.id)}
         style={({ pressed }) => [
           styles.buyButton,
-          {
-            backgroundColor: upgradeView.isAffordable
-              ? theme.text
-              : theme.backgroundSelected,
-          },
+          upgradeView.isAffordable
+            ? styles.buyButtonAvailable
+            : styles.buyButtonDisabled,
           pressed && styles.buyButtonPressed,
         ]}>
         <ThemedText
           type="smallBold"
           style={[
             styles.buyButtonText,
-            { color: upgradeView.isAffordable ? theme.background : theme.textSecondary },
+            upgradeView.isAffordable
+              ? styles.buyButtonTextAvailable
+              : styles.buyButtonTextDisabled,
           ]}>
           {buttonLabel}
         </ThemedText>
@@ -226,44 +225,78 @@ function getUpgradeEffectLabel({ upgrade }: CarClickerUpgradeView) {
 
 const styles = StyleSheet.create({
   panel: {
-    borderRadius: Spacing.three,
+    borderRadius: CarClickerTheme.radii.panel,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    backgroundColor: CarClickerTheme.colors.panel,
     padding: Spacing.three,
     gap: Spacing.three,
   },
   header: {
     gap: Spacing.one,
   },
+  title: {
+    color: CarClickerTheme.colors.text,
+    fontSize: 20,
+    lineHeight: 26,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
+  subtitle: {
+    color: CarClickerTheme.colors.textMuted,
+  },
   categoryList: {
     flexDirection: 'row',
     gap: Spacing.two,
   },
   categoryButton: {
+    flex: 1,
     minHeight: 36,
-    borderRadius: Spacing.two,
+    borderRadius: CarClickerTheme.radii.control,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    backgroundColor: CarClickerTheme.colors.panelStrong,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.three,
+    paddingHorizontal: Spacing.two,
+  },
+  categoryButtonSelected: {
+    borderColor: CarClickerTheme.colors.borderStrong,
+    backgroundColor: CarClickerTheme.colors.accentDim,
+    shadowColor: CarClickerTheme.colors.accent,
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  categoryButtonText: {
+    color: CarClickerTheme.colors.textMuted,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
+  categoryButtonTextSelected: {
+    color: CarClickerTheme.colors.accent,
   },
   categoryButtonPressed: {
     opacity: 0.78,
   },
   feedback: {
     minHeight: 20,
-    color: '#1f7aec',
+    color: CarClickerTheme.colors.accent,
   },
   list: {
     gap: Spacing.two,
   },
   emptyState: {
     minHeight: 56,
+    color: CarClickerTheme.colors.textMuted,
     textAlign: 'center',
     textAlignVertical: 'center',
   },
   row: {
     minHeight: 124,
     borderWidth: 1,
-    borderRadius: Spacing.two,
-    padding: Spacing.two,
+    borderRadius: CarClickerTheme.radii.panel,
+    padding: Spacing.three,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.two,
@@ -279,28 +312,55 @@ const styles = StyleSheet.create({
   },
   upgradeName: {
     flex: 1,
+    color: CarClickerTheme.colors.text,
+    fontSize: 18,
+    lineHeight: 24,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
+  levelBadge: {
+    color: CarClickerTheme.colors.textMuted,
   },
   description: {
     flexShrink: 1,
+    color: CarClickerTheme.colors.textMuted,
   },
   effect: {
-    color: '#1f7aec',
+    textTransform: 'uppercase',
   },
   recentlyPurchased: {
-    color: '#1f7aec',
+    color: CarClickerTheme.colors.accent,
+  },
+  missingCash: {
+    color: CarClickerTheme.colors.danger,
   },
   buyButton: {
     minWidth: 104,
     minHeight: 44,
-    borderRadius: Spacing.two,
+    borderRadius: CarClickerTheme.radii.control,
+    borderWidth: CarClickerTheme.borders.active,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: Spacing.two,
+  },
+  buyButtonAvailable: {
+    borderColor: CarClickerTheme.colors.borderStrong,
+    backgroundColor: CarClickerTheme.colors.accentDim,
+  },
+  buyButtonDisabled: {
+    borderColor: CarClickerTheme.colors.border,
+    backgroundColor: CarClickerTheme.colors.panelMuted,
   },
   buyButtonPressed: {
     opacity: 0.78,
   },
   buyButtonText: {
     textAlign: 'center',
+  },
+  buyButtonTextAvailable: {
+    color: CarClickerTheme.colors.accent,
+  },
+  buyButtonTextDisabled: {
+    color: CarClickerTheme.colors.textDim,
   },
 });

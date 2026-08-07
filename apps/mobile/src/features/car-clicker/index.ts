@@ -5,6 +5,7 @@ export * from './format';
 export * from './reducer';
 export * from './screen';
 export * from './storage';
+export * from './theme';
 export * from './types';
 export * from './use-car-clicker-save';
 export * from './use-car-clicker-game';

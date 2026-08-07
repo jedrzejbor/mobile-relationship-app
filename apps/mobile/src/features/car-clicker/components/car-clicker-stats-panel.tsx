@@ -138,10 +138,12 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.two,
   },
   item: {
     flex: 1,
+    minWidth: 104,
     minHeight: 64,
     justifyContent: 'center',
     borderRadius: CarClickerTheme.radii.control,
@@ -163,6 +165,8 @@ const styles = StyleSheet.create({
   passiveStatusRow: {
     minHeight: 24,
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
     justifyContent: 'space-between',
     gap: Spacing.two,
   },

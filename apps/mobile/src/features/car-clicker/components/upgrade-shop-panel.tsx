@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -29,6 +29,9 @@ export function UpgradeShopPanel({
   onCategoryChange,
   onPurchase,
 }: UpgradeShopPanelProps) {
+  const { width } = useWindowDimensions();
+  const isCompactLayout = width < 420;
+
   return (
     <View style={styles.panel}>
       <View style={styles.header}>
@@ -65,6 +68,7 @@ export function UpgradeShopPanel({
                 purchaseFeedback?.status === 'purchased' &&
                 purchaseFeedback.upgradeId === upgradeView.upgrade.id
               }
+              isCompactLayout={isCompactLayout}
               key={upgradeView.upgrade.id}
               onPurchase={onPurchase}
               upgradeView={upgradeView}
@@ -114,10 +118,12 @@ function CategoryButton({
 }
 
 function UpgradeRow({
+  isCompactLayout,
   isRecentlyPurchased,
   onPurchase,
   upgradeView,
 }: {
+  isCompactLayout: boolean;
   isRecentlyPurchased: boolean;
   upgradeView: CarClickerUpgradeView;
   onPurchase: (upgradeId: CarClickerUpgradeId) => void;
@@ -137,6 +143,7 @@ function UpgradeRow({
     <View
       style={[
         styles.row,
+        isCompactLayout && styles.rowCompact,
         {
           backgroundColor: isRecentlyPurchased
             ? CarClickerTheme.colors.accentDim
@@ -146,7 +153,11 @@ function UpgradeRow({
             : CarClickerTheme.colors.border,
         },
       ]}>
-      <View style={styles.assetFrame}>
+      <View
+        style={[
+          styles.assetFrame,
+          isCompactLayout && styles.assetFrameCompact,
+        ]}>
         <Image
           accessibilityIgnoresInvertColors
           contentFit="cover"
@@ -192,6 +203,7 @@ function UpgradeRow({
         onPress={() => onPurchase(upgrade.id)}
         style={({ pressed }) => [
           styles.buyButton,
+          isCompactLayout && styles.buyButtonCompact,
           upgradeView.isAffordable
             ? styles.buyButtonAvailable
             : styles.buyButtonDisabled,
@@ -314,6 +326,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.two,
   },
+  rowCompact: {
+    minHeight: 148,
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+  },
   assetFrame: {
     width: 94,
     height: 94,
@@ -322,6 +339,10 @@ const styles = StyleSheet.create({
     borderColor: CarClickerTheme.colors.border,
     overflow: 'hidden',
     backgroundColor: CarClickerTheme.colors.panelStrong,
+  },
+  assetFrameCompact: {
+    width: 78,
+    height: 78,
   },
   assetImage: {
     width: '100%',
@@ -342,6 +363,7 @@ const styles = StyleSheet.create({
   },
   rowContent: {
     flex: 1,
+    minWidth: 0,
     gap: Spacing.one,
   },
   rowTitleLine: {
@@ -378,6 +400,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: Spacing.two,
+  },
+  buyButtonCompact: {
+    width: '100%',
   },
   buyButtonAvailable: {
     borderColor: CarClickerTheme.colors.borderStrong,

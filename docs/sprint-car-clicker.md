@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta i siodma iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma i osma iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -788,6 +788,14 @@ Siodma iteracja:
 - Przebudowano webowy `AppTabs` w tym samym kierunku i usunieto starterowe elementy `Expo Starter` / `Docs`.
 - Ustawiono webowy tab bar na dole ekranu, zgodnie z referencjami UI dla aplikacji mobilnej.
 - Dodano platformowy dolny padding w `game.tsx`, zeby webowy tab bar nie przykrywal listy ulepszen, bez zwiekszania odstepu na native.
+
+Osma iteracja:
+
+- Dodano kompaktowy layout rzedow ulepszen w `UpgradeShopPanel` dla waskich ekranow.
+- Na kompaktowym ekranie miniatura ulepszenia jest mniejsza, a przycisk zakupu przechodzi pod opis, zeby nie sciskac tresci.
+- Dodano `minWidth: 0` dla tresci rzedu ulepszenia, zeby tekst mogl poprawnie zawijac sie w ukladzie flex.
+- Panel statystyk moze teraz zawijac kafelki i status pasywnego dochodu, co zmniejsza ryzyko uciekania dlugich wartosci poza kontener.
+- Mechanika zakupow, ekonomia i zapis pozostaly bez zmian; iteracja dotyczyla odpornosci layoutu.
 
 Zakres pierwszej iteracji:
 

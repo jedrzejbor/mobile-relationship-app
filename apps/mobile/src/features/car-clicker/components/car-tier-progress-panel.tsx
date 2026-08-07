@@ -1,4 +1,5 @@
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -13,6 +14,21 @@ type CarTierProgressPanelProps = {
 export function CarTierProgressPanel({ progress }: CarTierProgressPanelProps) {
   const theme = useTheme();
   const progressPercent = Math.round(progress.progressRatio * 100);
+  const animatedProgress = useRef(
+    new Animated.Value(progress.progressRatio),
+  ).current;
+  const animatedWidth = animatedProgress.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '100%'],
+  });
+
+  useEffect(() => {
+    Animated.timing(animatedProgress, {
+      toValue: progress.progressRatio,
+      duration: 260,
+      useNativeDriver: false,
+    }).start();
+  }, [animatedProgress, progress.progressRatio]);
 
   return (
     <ThemedView type="backgroundElement" style={styles.panel}>
@@ -28,12 +44,12 @@ export function CarTierProgressPanel({ progress }: CarTierProgressPanelProps) {
         accessibilityLabel={`Postep auta ${progressPercent} procent`}
         accessibilityRole="progressbar"
         style={[styles.track, { backgroundColor: theme.backgroundSelected }]}>
-        <View
+        <Animated.View
           style={[
             styles.fill,
             {
               backgroundColor: '#1f7aec',
-              width: `${progressPercent}%`,
+              width: animatedWidth,
             },
           ]}
         />

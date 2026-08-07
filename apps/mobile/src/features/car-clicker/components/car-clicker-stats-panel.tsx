@@ -1,4 +1,5 @@
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -16,10 +17,41 @@ export function CarClickerStatsPanel({
   perClick,
   perSecond,
 }: CarClickerStatsPanelProps) {
+  const passivePulseOpacity = useRef(new Animated.Value(0.35)).current;
   const passiveIncomeStatus =
     perSecond > 0
       ? `Aktywny: +${formatCarClickerCash(perSecond)} / s`
       : 'Kup ulepszenie w Garazu';
+
+  useEffect(() => {
+    if (perSecond <= 0) {
+      passivePulseOpacity.stopAnimation();
+      passivePulseOpacity.setValue(0.35);
+      return undefined;
+    }
+
+    const pulseAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(passivePulseOpacity, {
+          toValue: 1,
+          duration: 650,
+          useNativeDriver: true,
+        }),
+        Animated.timing(passivePulseOpacity, {
+          toValue: 0.35,
+          duration: 650,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+
+    pulseAnimation.start();
+
+    return () => {
+      pulseAnimation.stop();
+      passivePulseOpacity.setValue(0.35);
+    };
+  }, [passivePulseOpacity, perSecond]);
 
   return (
     <ThemedView type="backgroundElement" style={styles.container}>
@@ -30,7 +62,18 @@ export function CarClickerStatsPanel({
       </View>
 
       <View style={styles.passiveStatusRow}>
-        <ThemedText type="smallBold">Pasywny dochod</ThemedText>
+        <View style={styles.passiveStatusLabel}>
+          <Animated.View
+            style={[
+              styles.passiveStatusDot,
+              {
+                opacity: passivePulseOpacity,
+                backgroundColor: perSecond > 0 ? '#18a058' : '#8b8f97',
+              },
+            ]}
+          />
+          <ThemedText type="smallBold">Pasywny dochod</ThemedText>
+        </View>
         <ThemedText
           themeColor={perSecond > 0 ? 'text' : 'textSecondary'}
           type="small"
@@ -80,6 +123,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: Spacing.two,
+  },
+  passiveStatusLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  passiveStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   passiveStatus: {
     flexShrink: 1,

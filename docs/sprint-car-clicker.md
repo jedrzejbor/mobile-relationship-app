@@ -418,6 +418,20 @@ Piata iteracja:
 - Animacja jest zamknieta w komponencie panelu i korzysta z natywnego `Animated`.
 - Efekt uruchamia sie przy zmianie feedbacku awansu, bez dodatkowej logiki w ekranie gry.
 
+Szosta iteracja:
+
+- Dodano animacje wypelnienia paska progresu w `CarTierProgressPanel`.
+- Pasek plynnie przechodzi do nowej wartosci po zmianie `progressRatio`.
+- Animacja jest zamknieta w komponencie progresu, wiec ekran gry nadal przekazuje tylko model danych.
+- Uzyto `Animated.Value` i interpolacji szerokosci bez dodawania zaleznosci.
+
+Siodma iteracja:
+
+- Dodano pulsujacy wskaznik aktywnego pasywnego dochodu w `CarClickerStatsPanel`.
+- Animacja startuje tylko, gdy `perSecond` jest wieksze od 0.
+- Cleanup zatrzymuje petle animacji i resetuje opacity wskaznika.
+- Feedback pasywnego dochodu pozostaje w panelu statystyk, bez dodatkowej logiki w ekranie gry.
+
 - Dodac animacje klikniecia samochodu.
 - Dodac plywajacy tekst z zarobkiem po kliknieciu.
 - Dodac progress do kolejnego tieru auta.

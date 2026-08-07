@@ -90,6 +90,8 @@ export function useCarClickerGame() {
     upgradeViews,
     actions: {
       collectClick,
+      dismissOfflineIncomeFeedback: () =>
+        dispatch({ type: 'dismiss_offline_income_feedback' }),
       purchaseUpgrade,
       selectUpgradeCategory: (category: CarClickerUpgradeCategoryFilter) =>
         dispatch({ type: 'select_upgrade_category', category }),

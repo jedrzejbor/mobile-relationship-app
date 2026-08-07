@@ -47,7 +47,10 @@ export default function GameScreen() {
               perSecond={state.perSecond}
             />
 
-            <OfflineIncomeFeedbackPanel feedback={offlineIncomeFeedback} />
+            <OfflineIncomeFeedbackPanel
+              feedback={offlineIncomeFeedback}
+              onDismiss={actions.dismissOfflineIncomeFeedback}
+            />
 
             <CarTapButton
               onPress={actions.collectClick}

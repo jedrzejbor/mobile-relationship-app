@@ -33,6 +33,9 @@ export type CarClickerAction =
       type: 'hydrate_game';
       game: CarClickerState;
       offlineIncomeFeedback?: CarClickerOfflineIncomeFeedback | null;
+    }
+  | {
+      type: 'dismiss_offline_income_feedback';
     };
 
 export function createInitialCarClickerSessionState(): CarClickerSessionState {
@@ -102,6 +105,12 @@ export function carClickerReducer(
         offlineIncomeFeedback: action.offlineIncomeFeedback ?? null,
         purchaseFeedback: null,
         tierFeedback: null,
+      };
+
+    case 'dismiss_offline_income_feedback':
+      return {
+        ...state,
+        offlineIncomeFeedback: null,
       };
   }
 }

@@ -625,7 +625,7 @@ Kryteria akceptacji:
 
 ### Zadanie 6: zapis lokalny
 
-Status: pierwsza, druga, trzecia, czwarta, piata i szosta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta i siodma iteracja zrobione.
 
 Zaimplementowane:
 
@@ -685,6 +685,13 @@ Szosta iteracja:
 - `perClick` i `perSecond` nie sa juz zapisywane jako dane zrodlowe, tylko sa odtwarzane przez `recalculateCarClickerState` po odczycie.
 - Dodano osobny typ `CarClickerLoadedSaveData`, zeby rozdzielic surowy snapshot zapisu od stanu gotowego do hydracji gry.
 - `createCarClickerSaveData` buduje kontrolowany snapshot, co zmniejsza ryzyko przypadkowego utrwalenia pol UI albo przyszlych pol sesyjnych.
+
+Siodma iteracja:
+
+- Dodano akcje reducera `dismiss_offline_income_feedback`, zeby feedback offline byl czescia kontrolowanego stanu sesji.
+- `useCarClickerGame` wystawia akcje zamkniecia panelu offline razem z pozostalymi akcjami gry.
+- `OfflineIncomeFeedbackPanel` dostal przycisk zamkniecia z `accessibilityLabel` i bez lokalnego stanu UI.
+- Ekran gry przekazuje `onDismiss` do panelu, dzieki czemu informacja o zarobku po powrocie nie zostaje na ekranie na stale.
 
 - Sprawdzic, jaki storage jest juz uzywany w aplikacji.
 - Jesli brak gotowego storage, dodac najprostszy lokalny zapis dopiero po decyzji technologicznej.

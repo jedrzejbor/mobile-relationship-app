@@ -33,6 +33,7 @@ export function createInitialCarClickerSessionState(): CarClickerSessionState {
     game: createInitialCarClickerState(),
     purchaseFeedback: null,
     selectedUpgradeCategory: 'all',
+    tierFeedback: null,
   };
 }
 
@@ -59,6 +60,9 @@ export function carClickerReducer(
         state.game,
         action.upgradeId,
       );
+      const didTierIncrease =
+        purchaseResult.status === 'purchased' &&
+        purchaseResult.state.selectedCarTier > state.game.selectedCarTier;
 
       return {
         ...state,
@@ -67,6 +71,12 @@ export function carClickerReducer(
           status: purchaseResult.status,
           upgradeName: upgrade.name,
         },
+        tierFeedback: didTierIncrease
+          ? {
+              previousTier: state.game.selectedCarTier,
+              currentTier: purchaseResult.state.selectedCarTier,
+            }
+          : state.tierFeedback,
       };
     }
 

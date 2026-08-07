@@ -21,7 +21,8 @@ export function useCarClickerGame() {
     undefined,
     createInitialCarClickerSessionState,
   );
-  const { game, purchaseFeedback, selectedUpgradeCategory } = sessionState;
+  const { game, purchaseFeedback, selectedUpgradeCategory, tierFeedback } =
+    sessionState;
   const tierProgress = useMemo(
     () => getCarTierProgress(game.upgrades),
     [game.upgrades],
@@ -57,6 +58,7 @@ export function useCarClickerGame() {
     purchaseFeedback,
     state: game,
     selectedUpgradeCategory,
+    tierFeedback,
     tierProgress,
     upgradeViews,
     actions: {

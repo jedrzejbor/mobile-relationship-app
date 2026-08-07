@@ -397,6 +397,13 @@ Druga iteracja:
 - Dodano spoiler, akcent boczny i neon jako kontrolowane elementy React Native.
 - Wyglad auta jest danymi feature, wiec pozniej mozna podmienic renderer albo assety bez zmiany ekonomii gry.
 
+Trzecia iteracja:
+
+- Dodano `CarClickerTierFeedback` do stanu sesji gry.
+- Reducer ustawia feedback tylko wtedy, gdy zakup ulepszenia realnie podniesie tier auta.
+- Dodano `TierUpFeedbackPanel`, ktory pokazuje awans tieru i nazwe nowego wariantu auta.
+- Panel jest renderowany pod progresem auta i nie zaslania samochodu ani sklepu.
+
 - Dodac animacje klikniecia samochodu.
 - Dodac plywajacy tekst z zarobkiem po kliknieciu.
 - Dodac progress do kolejnego tieru auta.

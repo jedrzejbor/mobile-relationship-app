@@ -625,7 +625,7 @@ Kryteria akceptacji:
 
 ### Zadanie 6: zapis lokalny
 
-Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta i piata iteracja zrobione.
 
 Zaimplementowane:
 
@@ -671,6 +671,13 @@ Czwarta iteracja:
 - Wydzielono `clearPendingSave` i `flushSave`, zeby debounce, background save i cleanup korzystaly z jednej sciezki zapisu.
 - Przy flushu anulowany jest oczekujacy debounce, wiec nie zapisujemy tego samego stanu niepotrzebnie dwa razy.
 - Zapis przy przejsciu w tlo aktualizuje `savedAt`, co poprawia dokladnosc pozniejszego bonusu offline.
+
+Piata iteracja:
+
+- Dodano throttle zapisu w `useCarClickerSave`, zeby pasywny tick co sekunde nie wymuszal zapisu do storage co sekunde.
+- Zachowano debounce dla szybkich klikniec, a minimalny odstep miedzy zapisami ustawiono na 5 sekund.
+- `flushSave` przy przejsciu aplikacji w tlo i cleanup dalej zapisuje natychmiast, omijajac throttle tam, gdzie utrata stanu bylaby bardziej ryzykowna.
+- Po hydracji z offline income `latestGameRef` dostaje stan po naliczeniu bonusu od razu, zanim React wykona kolejny render.
 
 - Sprawdzic, jaki storage jest juz uzywany w aplikacji.
 - Jesli brak gotowego storage, dodac najprostszy lokalny zapis dopiero po decyzji technologicznej.

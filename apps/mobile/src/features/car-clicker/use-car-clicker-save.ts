@@ -9,6 +9,7 @@ import type {
 } from './types';
 
 const SAVE_DEBOUNCE_MS = 750;
+const SAVE_THROTTLE_MS = 5_000;
 const INACTIVE_APP_STATE_PATTERN = /inactive|background/;
 
 type UseCarClickerSaveParams = {
@@ -25,6 +26,7 @@ export function useCarClickerSave({
 }: UseCarClickerSaveParams) {
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
   const isHydratedRef = useRef(false);
+  const lastSavedAtRef = useRef(0);
   const latestGameRef = useRef(game);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clearPendingSave = useCallback(() => {
@@ -39,7 +41,28 @@ export function useCarClickerSave({
     }
 
     clearPendingSave();
+    lastSavedAtRef.current = Date.now();
     void saveCarClickerState(latestGameRef.current);
+  }, [clearPendingSave]);
+  const scheduleSave = useCallback(() => {
+    if (!isHydratedRef.current) {
+      return;
+    }
+
+    const elapsedSinceLastSave = Date.now() - lastSavedAtRef.current;
+    const throttleDelay = Math.max(
+      SAVE_THROTTLE_MS - elapsedSinceLastSave,
+      0,
+    );
+    const saveDelay = Math.max(SAVE_DEBOUNCE_MS, throttleDelay);
+
+    clearPendingSave();
+
+    saveTimeoutRef.current = setTimeout(() => {
+      saveTimeoutRef.current = null;
+      lastSavedAtRef.current = Date.now();
+      void saveCarClickerState(latestGameRef.current);
+    }, saveDelay);
   }, [clearPendingSave]);
 
   useEffect(() => {
@@ -54,6 +77,7 @@ export function useCarClickerSave({
           saveData.savedAt,
         );
 
+        latestGameRef.current = offlineIncome.state;
         onHydrate(offlineIncome.state, offlineIncome.feedback);
       }
 
@@ -76,15 +100,10 @@ export function useCarClickerSave({
       return;
     }
 
-    clearPendingSave();
-
-    saveTimeoutRef.current = setTimeout(() => {
-      saveTimeoutRef.current = null;
-      void saveCarClickerState(latestGameRef.current);
-    }, SAVE_DEBOUNCE_MS);
+    scheduleSave();
 
     return clearPendingSave;
-  }, [clearPendingSave, game]);
+  }, [clearPendingSave, game, scheduleSave]);
 
   useEffect(() => {
     function handleAppStateChange(nextAppState: AppStateStatus) {

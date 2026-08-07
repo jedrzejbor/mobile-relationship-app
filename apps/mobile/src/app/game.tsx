@@ -7,10 +7,11 @@ import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { CarClickerStatsPanel } from '@/features/car-clicker/components/car-clicker-stats-panel';
 import { CarTapButton } from '@/features/car-clicker/components/car-tap-button';
 import { CarTierProgressPanel } from '@/features/car-clicker/components/car-tier-progress-panel';
+import { UpgradeShopPanel } from '@/features/car-clicker/components/upgrade-shop-panel';
 import { CAR_CLICKER_SCREEN, useCarClickerGame } from '@/features/car-clicker';
 
 export default function GameScreen() {
-  const { actions, state, tierProgress } = useCarClickerGame();
+  const { actions, state, tierProgress, upgradeViews } = useCarClickerGame();
 
   return (
     <ThemedView style={styles.screen}>
@@ -42,6 +43,11 @@ export default function GameScreen() {
             />
 
             <CarTierProgressPanel progress={tierProgress} />
+
+            <UpgradeShopPanel
+              onPurchase={actions.purchaseUpgrade}
+              upgrades={upgradeViews}
+            />
           </ThemedView>
         </ScrollView>
       </SafeAreaView>

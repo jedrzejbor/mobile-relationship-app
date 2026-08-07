@@ -242,6 +242,23 @@ Kryteria akceptacji:
 
 ### Zadanie 3: sklep ulepszen
 
+Status: pierwsza iteracja zrobiona.
+
+Zaimplementowane:
+
+- Dodano `UpgradeShopPanel` jako komponent listy ulepszen.
+- Podpieto `upgradeViews` w `useCarClickerGame`, korzystajac z selektora `getUpgradeViews`.
+- Dodano akcje `purchaseUpgrade`, ktora korzysta z `purchaseCarClickerUpgrade`.
+- Pokazano nazwe, opis, poziom, koszt, efekt i brakujaca kwote dla kazdego ulepszenia.
+- Przyciski zakupu sa wylaczone, gdy gracz ma za malo cashu albo ulepszenie jest na max level.
+- Zakup odejmuje cash, zwieksza poziom i od razu aktualizuje `per click`, `per second` oraz progres tieru.
+
+Poza zakresem tej iteracji:
+
+- Filtrowanie po kategoriach i segmenty `Moc` / `Garaz`.
+- Lepsze sortowanie sklepu i stany pustej listy.
+- Animacje zakupu i feedback po zakupie.
+
 - Pokazac liste ulepszen.
 - Dodac przycisk kupna.
 - Wylaczyc przycisk, gdy brakuje cashu.

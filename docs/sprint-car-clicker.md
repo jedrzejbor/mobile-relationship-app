@@ -189,6 +189,23 @@ Kryteria akceptacji:
 
 ### Zadanie 2: podstawowy ekran gry
 
+Status: pierwsza iteracja zrobiona.
+
+Zaimplementowane w `apps/mobile/src/app/game.tsx`:
+
+- Podmieniono ekran gry na podstawowy widok Car Clicker.
+- Podpieto stan poczatkowy z `createInitialCarClickerState`.
+- Podpieto akcje klikniecia samochodu przez `collectClickIncome`.
+- Pokazano `cash`, `per click`, `per second` i aktualny tier auta.
+- Dodano prosty samochod zbudowany z komponentow React Native jako tymczasowy, kontrolowany wizual.
+- Dodano pasek progresu do kolejnego tieru przez `getCarTierProgress`.
+
+Poza zakresem tej iteracji:
+
+- Sklep ulepszen zostaje w Zadaniu 3.
+- Dochod pasywny z timerem zostaje w Zadaniu 4.
+- Zaawansowane animacje i plywajacy tekst zostaja w Zadaniu 5.
+
 - Dodac ekran lub rozbudowac istniejacy ekran gry.
 - Pokazac cash, `per click` i `per second`.
 - Dodac klikalny samochod.

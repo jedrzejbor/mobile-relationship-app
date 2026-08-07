@@ -135,6 +135,186 @@ Progi mozna liczyc po sumie poziomow ulepszen albo po lacznym zarobionym cashu. 
 
 Widok powinien byc gesty i czytelny, bo to ekran gry uzywany wielokrotnie. Nie robimy landing page ani ekranu opisowego.
 
+## UI improvement: kierunek przebudowy wizualnej
+
+Temat UI rozdzielamy na dwie warstwy:
+
+- UI aplikacji implementowane natywnie w kodzie: layout, karty, przyciski, taby, progress bary, bottom navigation, teksty, listy ulepszen, badges i stany interakcji.
+- Assety graficzne jako osobne pliki: samochody i etapy tuningu, tla lokacji, ikony czesci, efekty klikniecia, skrzynki, nagrody i inne elementy, ktorych nie warto odtwarzac samym kodem.
+
+Nie budujemy ekranow jako jednej duzej grafiki. Grafiki maja wspierac gameplay, a nie zastapic system UI.
+
+### Kierunek wizualny
+
+Docelowy ekran clickera powinien isc w strone mobilnego game UI:
+
+- dark UI,
+- street racing i nocny tuning,
+- klimat inspirowany grami wyscigowymi, ale bez kopiowania ich identyfikacji,
+- nowoczesny interfejs mobilnej gry,
+- lekko komiksowy charakter,
+- samochody stosunkowo realistyczne,
+- subtelne speed lines, halftone, spark effects i click effects,
+- pomaranczowy jako glowny accent,
+- electric blue jako drugi accent,
+- zielony dla pieniedzy,
+- fioletowy dla passive income albo specjalnych elementow,
+- glow uzywany oszczednie.
+
+UI nie moze wygladac jak przeladowany koncept AI. Ma wygladac jak interfejs, ktory da sie realnie wdrozyc, utrzymac i rozwijac w React Native.
+
+### Clicker screen po UI improvement
+
+Docelowo glowny ekran gameplayu powinien zawierac:
+
+- top stats:
+  - `CASH`,
+  - `ZA KLIK`,
+  - `NA SEKUNDE`.
+- duza grafika aktualnego auta jako glowny obiekt klikany,
+- aktualny tier i nazwe stage auta,
+- pasek progresu aktualnego samochodu,
+- informacje ile poziomow brakuje do nastepnego tieru albo auta,
+- teaser nastepnego auta,
+- liste lub panel ulepszen,
+- subtelny feedback po kliknieciu:
+  - skalowanie auta,
+  - floating `+X`,
+  - particle albo spark effect,
+  - opcjonalnie haptic,
+  - bez ciezkich animacji obnizajacych FPS.
+
+### Progresja auta i kolekcja
+
+Kazdy samochod powinien docelowo miec wlasna progresje:
+
+```txt
+Starter
+Tier 1
+level 1 -> 2 -> 3 -> ... -> MAX
+```
+
+Proponowany model wizualny:
+
+- Stage 0: seryjne auto.
+- Stage 1: nowe felgi.
+- Stage 2: obnizenie / stance.
+- Stage 3: spoiler.
+- Stage 4: body kit.
+- Stage 5: nowy lakier i agresywniejszy wyglad.
+- Stage MAX: kompletnie zmodyfikowane auto.
+
+Nie kazdy upgrade musi miec osobny asset. Rozsadniejszy model to kilka `visualStage` na samochod, a ulepszenia podbijaja progres do kolejnych stage.
+
+Po osiagnieciu maksimum:
+
+```txt
+current car max -> unlock next car -> new car starts low -> new progression
+```
+
+Stare auta zostaja w kolekcji.
+
+### Garage i kolekcja aut
+
+Docelowy ekran Garage powinien zawierac:
+
+- duza karte aktualnego auta,
+- aktualny tier, rarity i progress,
+- bonus `+X za klik`,
+- bonus `+Y na sekunde`,
+- liste/karty odblokowanych i zablokowanych samochodow,
+- miniatury samochodow,
+- status `locked/unlocked`,
+- wymagania odblokowania.
+
+Nazwy samochodow maja byc fikcyjne, np.:
+
+- Starter,
+- Blaze,
+- Striker,
+- Phantom,
+- Vortex.
+
+Nie uzywamy prawdziwych marek, logo ani kopii konkretnych modeli. Samochody moga reprezentowac archetypy:
+
+- hot hatch,
+- JDM coupe,
+- muscle car,
+- sport sedan,
+- supercar,
+- hypercar.
+
+### Lokacje
+
+Lokacja bedzie osobnym systemem:
+
+```txt
+lokacja = tlo clicker screena + bonus do passive income
+```
+
+Przykladowe lokacje:
+
+- Stary garaz: `+1/sec`,
+- Warsztat: `+8/sec`,
+- Parking podziemny: `+18/sec`,
+- Nocne miasto: `+35/sec`,
+- Salon dealera: `+45/sec`.
+
+Lokacje powinny byc odblokowywane progresja, np.:
+
+- parking: Tier 2,
+- city: Tier 3,
+- dealer: Tier 4.
+
+Wybrana lokacja docelowo zmienia background clicker screena.
+
+### Assety
+
+Proponowana struktura assetow do pozniejszego wdrozenia:
+
+```txt
+apps/mobile/assets/game/
+  cars/
+    starter/
+      stage-0.webp
+      stage-1.webp
+      stage-2.webp
+      stage-3.webp
+      stage-max.webp
+    blaze/
+    striker/
+  locations/
+    old-garage.webp
+    workshop.webp
+    underground.webp
+    night-city.webp
+    dealership.webp
+  upgrades/
+    tires.webp
+    chip.webp
+    turbo.webp
+    mechanic.webp
+    workshop.webp
+    dealer.webp
+  rewards/
+    daily-crate.webp
+  effects/
+```
+
+W aplikacji Expo assety powinny byc importowane jako konkretne pliki albo przez stabilna mape konfiguracji, a nie przez dynamiczne stringi trudne dla bundlera.
+
+### Performance
+
+Clicker musi dzialac plynnie przy szybkim klikaniu. Przy UI improvement pilnujemy:
+
+- ograniczenia niepotrzebnych rerenderow,
+- animacji opartych o native driver tam, gdzie to mozliwe,
+- lekkich efektow klikniecia,
+- preloadu ciezszych assetow,
+- rozsadnego rozmiaru grafik,
+- braku duzych PNG udajacych caly ekran,
+- rozdzielenia game state, ekonomii, persistence, animacji i UI.
+
 ## Pomysly na dodatkowe funkcje
 
 - Combo za szybkie klikanie.
@@ -454,6 +634,56 @@ Kryteria akceptacji:
 - Po zamknieciu i ponownym otwarciu aplikacji stan gry wraca.
 - Bledny albo pusty zapis nie psuje startu gry.
 
+### Zadanie 7: UI improvement clicker screena
+
+Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
+
+Zakres pierwszej iteracji:
+
+- Zdefiniowac lokalne tokeny wizualne Car Clicker: kolory accentow, statusow i glow.
+- Przebudowac panel statystyk na ciemniejszy, bardziej growy top HUD.
+- Wzmocnic hierarchie clicker screena: stats -> car stage -> progress -> upgrades.
+- Ujednolicic style przyciskow, segmentow, paneli i feedbackow.
+- Upewnic sie, ze UI miesci sie na malych telefonach i nie zaslania elementow interakcji.
+
+Kryteria akceptacji:
+
+- UI jest nadal implementowane komponentami React Native, nie jako jeden obraz.
+- Glow i efekty sa subtelne.
+- Kolory maja czytelne role: money, click, passive, accent.
+- Ekran wyglada bardziej jak gra, ale pozostaje utrzymywalny.
+- `typecheck` i `lint` przechodza.
+
+### Zadanie 8: plan assetow gry
+
+Cel: przygotowac strukture i kontrakt assetow, zanim zaczniemy podmieniac placeholder samochodu na grafiki.
+
+Zakres:
+
+- Dodac docelowa strukture `apps/mobile/assets/game`.
+- Przygotowac konwencje nazw plikow dla aut, stage, lokacji, upgrade i efektow.
+- Zaprojektowac mape konfiguracji assetow dla Expo.
+- Okreslic minimalny zestaw assetow dla pierwszego auta `starter`.
+- Okreslic minimalny zestaw tla dla pierwszej lokacji `old-garage`.
+
+Kryteria akceptacji:
+
+- Kod UI nie zaklada dynamicznych stringow assetow.
+- Assety samochodow sa rozdzielone od UI.
+- Mozna dodac kolejne auto bez przebudowy komponentu clickera.
+
+### Zadanie 9: garage, cars i locations jako kolejne sprinty
+
+Zakres koncepcyjny:
+
+- Rozszerzyc model gry o `currentCar`, `currentCarLevel`, `currentLocation`, `unlockedCars`.
+- Dodac ekran lub sekcje Garage.
+- Dodac kolekcje fikcyjnych samochodow.
+- Dodac lokacje jako tlo clicker screena i bonus do passive income.
+- Przygotowac save pod `selectedCar`, `selectedLocation`, `carProgress`, `lastActiveAt` i `saveVersion`.
+
+To nie wchodzi do obecnego MVP clickera, ale architektura nie powinna blokowac tych systemow.
+
 ## Definicja ukonczenia sprintu
 
 - Widok car clickera jest dostepny w aplikacji.
@@ -470,6 +700,9 @@ Kryteria akceptacji:
 - Czy samochod ma byc grafika z assetow, prosty komponent UI, czy tymczasowy placeholder.
 - Czy progres ma byc zapisywany tylko lokalnie, czy docelowo synchronizowany z backendem.
 - Czy widok gry ma byc osobna zakladka, czy ekran otwierany z obecnego `game.tsx`.
+- Czy pierwsza iteracja UI improvement ma uzywac tylko komponentowego placeholdera auta, czy od razu przygotowujemy asset `starter/stage-0.webp`.
+- Czy `Explore` ma docelowo stac sie hubem dla `Garage`, `Cars` i `Locations`.
+- Jaki maksymalny czas offline income przyjmujemy, zeby uniknac zbyt duzego naliczania po dlugiej przerwie.
 
 ## Rekomendacja na pierwszy build
 

@@ -16,11 +16,28 @@ export function CarClickerStatsPanel({
   perClick,
   perSecond,
 }: CarClickerStatsPanelProps) {
+  const passiveIncomeStatus =
+    perSecond > 0
+      ? `Aktywny: +${formatCarClickerCash(perSecond)} / s`
+      : 'Kup ulepszenie w Garazu';
+
   return (
-    <ThemedView type="backgroundElement" style={styles.panel}>
-      <StatItem label="Cash" value={formatCarClickerCash(cash)} />
-      <StatItem label="Per click" value={`+${formatCarClickerCash(perClick)}`} />
-      <StatItem label="Per second" value={`+${formatCarClickerCash(perSecond)}`} />
+    <ThemedView type="backgroundElement" style={styles.container}>
+      <View style={styles.statsRow}>
+        <StatItem label="Cash" value={formatCarClickerCash(cash)} />
+        <StatItem label="Per click" value={`+${formatCarClickerCash(perClick)}`} />
+        <StatItem label="Per second" value={`+${formatCarClickerCash(perSecond)}`} />
+      </View>
+
+      <View style={styles.passiveStatusRow}>
+        <ThemedText type="smallBold">Pasywny dochod</ThemedText>
+        <ThemedText
+          themeColor={perSecond > 0 ? 'text' : 'textSecondary'}
+          type="small"
+          style={styles.passiveStatus}>
+          {passiveIncomeStatus}
+        </ThemedText>
+      </View>
     </ThemedView>
   );
 }
@@ -39,9 +56,12 @@ function StatItem({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
-  panel: {
+  container: {
     borderRadius: Spacing.three,
     padding: Spacing.three,
+    gap: Spacing.three,
+  },
+  statsRow: {
     flexDirection: 'row',
     gap: Spacing.two,
   },
@@ -54,5 +74,15 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 18,
     lineHeight: 24,
+  },
+  passiveStatusRow: {
+    minHeight: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: Spacing.two,
+  },
+  passiveStatus: {
+    flexShrink: 1,
+    textAlign: 'right',
   },
 });

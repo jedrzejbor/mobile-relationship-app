@@ -348,6 +348,13 @@ Piata iteracja:
 - Hook timera trzyma aktualny callback w refie, wiec nie restartuje interwalu przy kazdym renderze.
 - Separacja ulatwia testowanie i dalsze uzycie timera, np. przy zapisie lokalnym albo osobnym feedbacku pasywnego przychodu.
 
+Szosta iteracja:
+
+- Rozbudowano `CarClickerStatsPanel` o status pasywnego dochodu.
+- Gdy `perSecond` wynosi 0, panel podpowiada zakup ulepszenia w `Garazu`.
+- Gdy pasywny dochod jest aktywny, panel pokazuje aktualne `+cash / s`.
+- Status jest czescia istniejacego panelu statystyk, wiec ekran nie dostal kolejnego osobnego elementu layoutu.
+
 - Dodac timer naliczajacy `per second`.
 - Upewnic sie, ze naliczanie nie tworzy wielu timerow po rerenderach.
 - Pokazac aktualny `per second` w UI.

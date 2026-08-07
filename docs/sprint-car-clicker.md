@@ -355,6 +355,13 @@ Szosta iteracja:
 - Gdy pasywny dochod jest aktywny, panel pokazuje aktualne `+cash / s`.
 - Status jest czescia istniejacego panelu statystyk, wiec ekran nie dostal kolejnego osobnego elementu layoutu.
 
+Siodma iteracja:
+
+- Dodano `calculatePassiveIncome` jako czysta funkcje liczaca przychod z `perSecond` i `elapsedSeconds`.
+- `collectPassiveIncome` uzywa teraz tej funkcji i odpowiada tylko za zlozenie nowego stanu.
+- Funkcja zabezpiecza sie przed ujemnym `perSecond` i ujemnym czasem.
+- Logika jest gotowa do testow balansu oraz przyszlego pokazania przychodu offline bez zmiany stanu gry.
+
 - Dodac timer naliczajacy `per second`.
 - Upewnic sie, ze naliczanie nie tworzy wielu timerow po rerenderach.
 - Pokazac aktualny `per second` w UI.

@@ -190,11 +190,18 @@ export function collectClickIncome(state: CarClickerState): CarClickerState {
   };
 }
 
+export function calculatePassiveIncome(
+  perSecond: number,
+  elapsedSeconds: number,
+) {
+  return Math.max(perSecond, 0) * Math.max(elapsedSeconds, 0);
+}
+
 export function collectPassiveIncome(
   state: CarClickerState,
   elapsedSeconds: number,
 ): CarClickerState {
-  const income = state.perSecond * Math.max(elapsedSeconds, 0);
+  const income = calculatePassiveIncome(state.perSecond, elapsedSeconds);
 
   if (income <= 0) {
     return state;

@@ -2,17 +2,14 @@ import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
-import type { CarClickerTierProgress } from '@/features/car-clicker';
-import { useTheme } from '@/hooks/use-theme';
+import { CarClickerTheme, type CarClickerTierProgress } from '@/features/car-clicker';
 
 type CarTierProgressPanelProps = {
   progress: CarClickerTierProgress;
 };
 
 export function CarTierProgressPanel({ progress }: CarTierProgressPanelProps) {
-  const theme = useTheme();
   const progressPercent = Math.round(progress.progressRatio * 100);
   const animatedProgress = useRef(
     new Animated.Value(progress.progressRatio),
@@ -31,10 +28,12 @@ export function CarTierProgressPanel({ progress }: CarTierProgressPanelProps) {
   }, [animatedProgress, progress.progressRatio]);
 
   return (
-    <ThemedView type="backgroundElement" style={styles.panel}>
+    <View style={styles.panel}>
       <View style={styles.header}>
-        <ThemedText type="smallBold">Progres auta</ThemedText>
-        <ThemedText themeColor="textSecondary" type="small" style={styles.status}>
+        <ThemedText type="smallBold" style={styles.title}>
+          Progres auta
+        </ThemedText>
+        <ThemedText type="small" style={styles.status}>
           {progress.nextTier
             ? `${progress.levelsToNextTier} poziomow do Tier ${progress.nextTier}`
             : 'Maksymalny tier'}
@@ -43,24 +42,19 @@ export function CarTierProgressPanel({ progress }: CarTierProgressPanelProps) {
       <View
         accessibilityLabel={`Postep auta ${progressPercent} procent`}
         accessibilityRole="progressbar"
-        style={[styles.track, { backgroundColor: theme.backgroundSelected }]}>
-        <Animated.View
-          style={[
-            styles.fill,
-            {
-              backgroundColor: '#1f7aec',
-              width: animatedWidth,
-            },
-          ]}
-        />
+        style={styles.track}>
+        <Animated.View style={[styles.fill, { width: animatedWidth }]} />
       </View>
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   panel: {
-    borderRadius: Spacing.three,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    borderRadius: CarClickerTheme.radii.panel,
+    backgroundColor: CarClickerTheme.colors.panel,
     padding: Spacing.three,
     gap: Spacing.two,
   },
@@ -70,17 +64,31 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: Spacing.two,
   },
+  title: {
+    color: CarClickerTheme.colors.text,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
   status: {
     flexShrink: 1,
+    color: CarClickerTheme.colors.textMuted,
     textAlign: 'right',
   },
   track: {
-    height: 10,
-    borderRadius: 5,
+    height: 12,
     overflow: 'hidden',
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    borderRadius: 6,
+    backgroundColor: CarClickerTheme.colors.panelMuted,
+    shadowColor: CarClickerTheme.colors.click,
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 0 },
   },
   fill: {
     height: '100%',
-    borderRadius: 5,
+    borderRadius: 6,
+    backgroundColor: CarClickerTheme.colors.click,
   },
 });

@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta i piata iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -766,6 +766,14 @@ Czwarta iteracja:
 - Zachowano animacje klikniecia i floating `+cash`, ale przeniesiono je na ramke z obrazem auta.
 - Dodano miniatury ulepszen w `UpgradeShopPanel` na podstawie `CAR_CLICKER_UPGRADE_ASSETS`.
 - Poziom ulepszenia jest teraz widoczny jako badge na miniaturze, zgodnie z kierunkiem referencji UI.
+
+Piata iteracja:
+
+- Przebudowano `CarTierProgressPanel` na ciemny panel HUD z lokalnych tokenow `CarClickerTheme`.
+- Usunieto zaleznosc progresu od ogolnego `useTheme`, zeby ekran clickera mial spojna lokalna warstwe wizualna.
+- Ujednolicono `TierUpFeedbackPanel` z racing UI: pomaranczowy akcent, badge tieru i czytelny opis nowego wariantu auta.
+- Ujednolicono `OfflineIncomeFeedbackPanel`: zielony status money, ciemny panel, przycisk zamkniecia i subtelny glow.
+- Logika gry, zapis i animacje feedbackow pozostaly bez zmian; iteracja dotyczyla tylko prezentacji.
 
 Zakres pierwszej iteracji:
 

@@ -1,5 +1,6 @@
 import {
   collectClickIncome,
+  collectPassiveIncome,
   createInitialCarClickerState,
   getCarClickerUpgradeById,
   purchaseCarClickerUpgrade,
@@ -13,6 +14,10 @@ import type {
 export type CarClickerAction =
   | {
       type: 'collect_click';
+    }
+  | {
+      type: 'collect_passive_income';
+      elapsedSeconds: number;
     }
   | {
       type: 'purchase_upgrade';
@@ -40,6 +45,12 @@ export function carClickerReducer(
       return {
         ...state,
         game: collectClickIncome(state.game),
+      };
+
+    case 'collect_passive_income':
+      return {
+        ...state,
+        game: collectPassiveIncome(state.game, action.elapsedSeconds),
       };
 
     case 'purchase_upgrade': {

@@ -1,4 +1,4 @@
-import { useMemo, useReducer } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 
 import {
   getCarTierProgress,
@@ -13,6 +13,9 @@ import type {
   CarClickerUpgradeCategoryFilter,
   CarClickerUpgradeId,
 } from './types';
+
+const PASSIVE_INCOME_TICK_SECONDS = 1;
+const PASSIVE_INCOME_TICK_MS = PASSIVE_INCOME_TICK_SECONDS * 1000;
 
 export function useCarClickerGame() {
   const [sessionState, dispatch] = useReducer(
@@ -33,6 +36,17 @@ export function useCarClickerGame() {
     () => getUpgradeViews(game, upgradeCategory),
     [game, upgradeCategory],
   );
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      dispatch({
+        type: 'collect_passive_income',
+        elapsedSeconds: PASSIVE_INCOME_TICK_SECONDS,
+      });
+    }, PASSIVE_INCOME_TICK_MS);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   function collectClick() {
     dispatch({ type: 'collect_click' });

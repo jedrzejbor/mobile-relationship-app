@@ -304,6 +304,22 @@ Kryteria akceptacji:
 
 ### Zadanie 4: pasywny dochod
 
+Status: pierwsza iteracja zrobiona.
+
+Zaimplementowane:
+
+- Dodano akcje reducera `collect_passive_income` z jawnym `elapsedSeconds`.
+- Akcja korzysta z istniejacej czystej funkcji `collectPassiveIncome`.
+- `useCarClickerGame` uruchamia jeden interwal naliczajacy dochod pasywny co sekunde.
+- Interwal jest czyszczony przy odmontowaniu hooka przez cleanup w `useEffect`.
+- Aktualny `per second` byl juz widoczny w panelu statystyk, wiec po zakupie ulepszen pasywnych cash rosnie automatycznie.
+
+Poza zakresem tej iteracji:
+
+- Naliczanie dochodu offline po powrocie do gry.
+- Optymalizacja zatrzymywania timera, gdy `perSecond` wynosi 0.
+- Animacja albo osobny feedback dla pasywnego przychodu.
+
 - Dodac timer naliczajacy `per second`.
 - Upewnic sie, ze naliczanie nie tworzy wielu timerow po rerenderach.
 - Pokazac aktualny `per second` w UI.

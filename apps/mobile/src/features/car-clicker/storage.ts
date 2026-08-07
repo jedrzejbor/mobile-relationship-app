@@ -6,6 +6,8 @@ import {
   INITIAL_CAR_CLICKER_UPGRADE_LEVELS,
 } from './upgrades';
 import type {
+  CarClickerLoadedSaveData,
+  CarClickerPersistedGameState,
   CarClickerSaveData,
   CarClickerState,
   CarClickerUpgradeLevels,
@@ -53,11 +55,22 @@ function parseGameState(value: unknown): CarClickerState | null {
   return recalculateCarClickerState({
     cash: toNonNegativeNumber(value.cash),
     totalEarnedCash: toNonNegativeNumber(value.totalEarnedCash),
-    perClick: toNonNegativeNumber(value.perClick, 1),
-    perSecond: toNonNegativeNumber(value.perSecond),
     upgrades: parseUpgradeLevels(value.upgrades),
+    perClick: 1,
+    perSecond: 0,
     selectedCarTier: toNonNegativeInteger(value.selectedCarTier, 1),
   });
+}
+
+function createPersistedGameState(
+  game: CarClickerState,
+): CarClickerPersistedGameState {
+  return {
+    cash: game.cash,
+    totalEarnedCash: game.totalEarnedCash,
+    upgrades: game.upgrades,
+    selectedCarTier: game.selectedCarTier,
+  };
 }
 
 export function createCarClickerSaveData(
@@ -66,13 +79,13 @@ export function createCarClickerSaveData(
   return {
     saveVersion: CAR_CLICKER_SAVE_VERSION,
     savedAt: Date.now(),
-    game,
+    game: createPersistedGameState(game),
   };
 }
 
 export function parseCarClickerSaveData(
   rawSave: string | null,
-): CarClickerSaveData | null {
+): CarClickerLoadedSaveData | null {
   if (!rawSave) {
     return null;
   }

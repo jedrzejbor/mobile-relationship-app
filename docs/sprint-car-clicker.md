@@ -625,7 +625,7 @@ Kryteria akceptacji:
 
 ### Zadanie 6: zapis lokalny
 
-Status: pierwsza, druga, trzecia, czwarta i piata iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata i szosta iteracja zrobione.
 
 Zaimplementowane:
 
@@ -678,6 +678,13 @@ Piata iteracja:
 - Zachowano debounce dla szybkich klikniec, a minimalny odstep miedzy zapisami ustawiono na 5 sekund.
 - `flushSave` przy przejsciu aplikacji w tlo i cleanup dalej zapisuje natychmiast, omijajac throttle tam, gdzie utrata stanu bylaby bardziej ryzykowna.
 - Po hydracji z offline income `latestGameRef` dostaje stan po naliczeniu bonusu od razu, zanim React wykona kolejny render.
+
+Szosta iteracja:
+
+- Zawezono format zapisu do jawnego `CarClickerPersistedGameState`: `cash`, `totalEarnedCash`, `upgrades` i `selectedCarTier`.
+- `perClick` i `perSecond` nie sa juz zapisywane jako dane zrodlowe, tylko sa odtwarzane przez `recalculateCarClickerState` po odczycie.
+- Dodano osobny typ `CarClickerLoadedSaveData`, zeby rozdzielic surowy snapshot zapisu od stanu gotowego do hydracji gry.
+- `createCarClickerSaveData` buduje kontrolowany snapshot, co zmniejsza ryzyko przypadkowego utrwalenia pol UI albo przyszlych pol sesyjnych.
 
 - Sprawdzic, jaki storage jest juz uzywany w aplikacji.
 - Jesli brak gotowego storage, dodac najprostszy lokalny zapis dopiero po decyzji technologicznej.

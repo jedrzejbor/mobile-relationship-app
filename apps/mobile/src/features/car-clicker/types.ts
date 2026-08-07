@@ -40,7 +40,20 @@ export type CarClickerState = {
 export type CarClickerSaveData = {
   saveVersion: number;
   savedAt: number;
+  game: CarClickerPersistedGameState;
+};
+
+export type CarClickerLoadedSaveData = {
+  saveVersion: number;
+  savedAt: number;
   game: CarClickerState;
+};
+
+export type CarClickerPersistedGameState = {
+  cash: number;
+  totalEarnedCash: number;
+  upgrades: CarClickerUpgradeLevels;
+  selectedCarTier: number;
 };
 
 export type CarClickerUpgradePurchaseResult =

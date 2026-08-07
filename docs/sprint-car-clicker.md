@@ -334,6 +334,13 @@ Trzecia iteracja:
 - Przy zmianie `perSecond` albo czyszczeniu interwalu timestamp jest resetowany.
 - Naliczanie jest bardziej odporne na opoznienia JS thread i chwilowe przyciecia aplikacji.
 
+Czwarta iteracja:
+
+- Dodano obsluge `AppState`, zeby po powrocie aplikacji na foreground doliczyc pasywny dochod za realny czas od ostatniego ticka.
+- Interwal nalicza dochod tylko, gdy aplikacja jest aktywna.
+- Cleanup usuwa teraz zarowno interwal, jak i subskrypcje `AppState`.
+- `collectPassiveIncome` nie ucina juz dochodu przez `floor` na kazdym ticku, wiec opoznione ticki nie gubia ulamkow przychodu.
+
 - Dodac timer naliczajacy `per second`.
 - Upewnic sie, ze naliczanie nie tworzy wielu timerow po rerenderach.
 - Pokazac aktualny `per second` w UI.

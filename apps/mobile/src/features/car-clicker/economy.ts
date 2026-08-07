@@ -194,7 +194,7 @@ export function collectPassiveIncome(
   state: CarClickerState,
   elapsedSeconds: number,
 ): CarClickerState {
-  const income = Math.floor(state.perSecond * Math.max(elapsedSeconds, 0));
+  const income = state.perSecond * Math.max(elapsedSeconds, 0);
 
   if (income <= 0) {
     return state;

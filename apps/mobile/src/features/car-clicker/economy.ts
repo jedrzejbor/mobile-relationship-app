@@ -1,13 +1,17 @@
 import {
   CAR_CLICKER_UPGRADES,
+  CAR_CLICKER_UPGRADES_BY_ID,
   INITIAL_CAR_CLICKER_UPGRADE_LEVELS,
 } from './upgrades';
 import type {
   CarClickerState,
+  CarClickerTierProgress,
+  CarClickerUpgradeCategory,
   CarClickerUpgradeDefinition,
   CarClickerUpgradeId,
   CarClickerUpgradeLevels,
   CarClickerUpgradePurchaseResult,
+  CarClickerUpgradeView,
 } from './types';
 
 const BASE_PER_CLICK = 1;
@@ -15,6 +19,7 @@ const BASE_PER_SECOND = 0;
 const BASE_CAR_TIER = 1;
 
 const CAR_TIER_THRESHOLDS = [0, 8, 20, 40, 70] as const;
+const MAX_CAR_TIER = CAR_TIER_THRESHOLDS.length;
 
 export function createInitialCarClickerState(): CarClickerState {
   return recalculateCarClickerState({
@@ -35,7 +40,7 @@ export function calculateUpgradeCost(
 }
 
 export function getCarClickerUpgradeById(upgradeId: CarClickerUpgradeId) {
-  return CAR_CLICKER_UPGRADES.find((upgrade) => upgrade.id === upgradeId);
+  return CAR_CLICKER_UPGRADES_BY_ID[upgradeId];
 }
 
 export function getCarClickerUpgradeLevel(
@@ -43,6 +48,10 @@ export function getCarClickerUpgradeLevel(
   upgradeId: CarClickerUpgradeId,
 ) {
   return levels[upgradeId] ?? 0;
+}
+
+export function calculateTotalUpgradeLevels(levels: CarClickerUpgradeLevels) {
+  return Object.values(levels).reduce((sum, level) => sum + level, 0);
 }
 
 export function calculatePerClick(levels: CarClickerUpgradeLevels) {
@@ -65,16 +74,80 @@ export function calculatePerSecond(levels: CarClickerUpgradeLevels) {
 }
 
 export function calculateCarTier(levels: CarClickerUpgradeLevels) {
-  const totalUpgradeLevels = Object.values(levels).reduce(
-    (sum, level) => sum + level,
-    0,
-  );
+  const totalUpgradeLevels = calculateTotalUpgradeLevels(levels);
 
   return CAR_TIER_THRESHOLDS.reduce(
     (tier, threshold, index) =>
       totalUpgradeLevels >= threshold ? index + 1 : tier,
     BASE_CAR_TIER,
   );
+}
+
+export function getCarTierProgress(
+  levels: CarClickerUpgradeLevels,
+): CarClickerTierProgress {
+  const currentLevelTotal = calculateTotalUpgradeLevels(levels);
+  const currentTier = calculateCarTier(levels);
+  const currentTierThreshold = CAR_TIER_THRESHOLDS[currentTier - 1] ?? 0;
+  const nextTierThreshold = CAR_TIER_THRESHOLDS[currentTier] ?? null;
+  const nextTier = currentTier < MAX_CAR_TIER ? currentTier + 1 : null;
+
+  if (nextTierThreshold === null) {
+    return {
+      currentTier,
+      nextTier,
+      currentLevelTotal,
+      currentTierThreshold,
+      nextTierThreshold,
+      progressRatio: 1,
+      levelsToNextTier: 0,
+    };
+  }
+
+  const tierRange = nextTierThreshold - currentTierThreshold;
+  const tierProgress = currentLevelTotal - currentTierThreshold;
+  const progressRatio = Math.max(0, Math.min(tierProgress / tierRange, 1));
+
+  return {
+    currentTier,
+    nextTier,
+    currentLevelTotal,
+    currentTierThreshold,
+    nextTierThreshold,
+    progressRatio,
+    levelsToNextTier: Math.max(nextTierThreshold - currentLevelTotal, 0),
+  };
+}
+
+export function getUpgradeView(
+  state: CarClickerState,
+  upgrade: CarClickerUpgradeDefinition,
+): CarClickerUpgradeView {
+  const level = getCarClickerUpgradeLevel(state.upgrades, upgrade.id);
+  const isMaxLevelReached =
+    upgrade.maxLevel !== undefined && level >= upgrade.maxLevel;
+  const nextCost = isMaxLevelReached
+    ? 0
+    : calculateUpgradeCost(upgrade, level);
+  const missingCash = Math.max(nextCost - state.cash, 0);
+
+  return {
+    upgrade,
+    level,
+    nextCost,
+    isAffordable: !isMaxLevelReached && state.cash >= nextCost,
+    isMaxLevelReached,
+    missingCash,
+  };
+}
+
+export function getUpgradeViews(
+  state: CarClickerState,
+  category?: CarClickerUpgradeCategory,
+) {
+  return CAR_CLICKER_UPGRADES.filter(
+    (upgrade) => category === undefined || upgrade.category === category,
+  ).map((upgrade) => getUpgradeView(state, upgrade));
 }
 
 export function recalculateCarClickerState(

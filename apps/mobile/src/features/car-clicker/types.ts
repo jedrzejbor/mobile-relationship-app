@@ -44,3 +44,22 @@ export type CarClickerUpgradePurchaseResult =
       status: 'insufficient_cash' | 'max_level_reached';
       state: CarClickerState;
     };
+
+export type CarClickerUpgradeView = {
+  upgrade: CarClickerUpgradeDefinition;
+  level: number;
+  nextCost: number;
+  isAffordable: boolean;
+  isMaxLevelReached: boolean;
+  missingCash: number;
+};
+
+export type CarClickerTierProgress = {
+  currentTier: number;
+  nextTier: number | null;
+  currentLevelTotal: number;
+  currentTierThreshold: number;
+  nextTierThreshold: number | null;
+  progressRatio: number;
+  levelsToNextTier: number;
+};

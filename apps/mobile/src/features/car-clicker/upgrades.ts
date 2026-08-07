@@ -65,6 +65,14 @@ export const CAR_CLICKER_UPGRADE_IDS = CAR_CLICKER_UPGRADES.map(
   (upgrade) => upgrade.id,
 ) satisfies CarClickerUpgradeId[];
 
+export const CAR_CLICKER_UPGRADES_BY_ID = CAR_CLICKER_UPGRADES.reduce(
+  (upgradesById, upgrade) => ({
+    ...upgradesById,
+    [upgrade.id]: upgrade,
+  }),
+  {} as Record<CarClickerUpgradeId, CarClickerUpgradeDefinition>,
+);
+
 export const INITIAL_CAR_CLICKER_UPGRADE_LEVELS =
   CAR_CLICKER_UPGRADE_IDS.reduce(
     (levels, upgradeId) => ({

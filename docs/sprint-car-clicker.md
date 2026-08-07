@@ -169,6 +169,13 @@ Co zostalo przygotowane:
 - Funkcje akcji gry: zebranie dochodu z klikniecia, zebranie dochodu pasywnego i zakup ulepszenia.
 - Kod bez zaleznosci od Reacta, gotowy do testow jednostkowych i podpiecia pod ekran lub store.
 
+Druga iteracja:
+
+- Dodano mapowanie ulepszen po `id`, zeby logika zakupu nie przeszukiwala listy przy kazdej akcji.
+- Dodano selektory danych dla UI sklepu: poziom, kolejny koszt, dostepnosc zakupu, brakujacy cash i status max level.
+- Dodano model progresu tieru auta: aktualny tier, kolejny tier, prog, procent progresu i liczba poziomow brakujacych do awansu.
+- Utrzymano rozdzial na konfiguracje, typy i czyste funkcje ekonomii, bez zaleznosci od React Native.
+
 - Zdefiniowac typy stanu gry i ulepszen.
 - Przygotowac liste startowych ulepszen.
 - Dodac funkcje liczenia ceny kolejnego poziomu.

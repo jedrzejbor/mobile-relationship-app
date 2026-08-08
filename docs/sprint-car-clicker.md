@@ -906,6 +906,17 @@ Zakres koncepcyjny:
 
 To nie wchodzi do obecnego MVP clickera, ale architektura nie powinna blokowac tych systemow.
 
+### Zadanie 10: subgra Nitro Rush
+
+Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
+
+Zakres koncepcyjny:
+
+- Dodac szybka subgre arcade oparta o wybor bramek, mnozniki i przeszkody.
+- Wynik subgry ma wracac do glownego Car Clickera jako czasowy bonus do ekonomii.
+- Bonusy moga zwiekszac cash za klik, pasywny dochod, tempo czasu albo obnizac koszt kolejnego ulepszenia.
+- Ranking i backend dla wynikow zostawiamy jako osobny sprint po lokalnym MVP subgry.
+
 ## Definicja ukonczenia sprintu
 
 - Widok car clickera jest dostepny w aplikacji.

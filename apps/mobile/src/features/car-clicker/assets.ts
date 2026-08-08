@@ -31,6 +31,12 @@ export type CarClickerLocationAsset = {
   source: ImageSourcePropType;
 };
 
+export type CarClickerUpgradeAsset = {
+  id: CarClickerUpgradeId;
+  label: string;
+  source: ImageSourcePropType;
+};
+
 export const STARTER_CAR_STAGE_ASSETS = [
   {
     id: 'stage_0_stock',
@@ -96,13 +102,37 @@ export function getStarterCarStageAsset(tier: number): CarClickerCarStageAsset {
 }
 
 export const CAR_CLICKER_UPGRADE_ASSETS = {
-  better_tires: require('@/assets/game/upgrades/better-tires.png'),
-  chip_tuning: require('@/assets/game/upgrades/chip-tuning.png'),
-  turbo: require('@/assets/game/upgrades/turbo.png'),
-  mechanic: require('@/assets/game/upgrades/mechanic.png'),
-  workshop: require('@/assets/game/upgrades/workshop.png'),
-  dealer: require('@/assets/game/upgrades/dealer.png'),
-} as const satisfies Record<CarClickerUpgradeId, ImageSourcePropType>;
+  better_tires: {
+    id: 'better_tires',
+    label: 'Better tires',
+    source: require('@/assets/game/upgrades/better-tires.png'),
+  },
+  chip_tuning: {
+    id: 'chip_tuning',
+    label: 'Chip tuning',
+    source: require('@/assets/game/upgrades/chip-tuning.png'),
+  },
+  turbo: {
+    id: 'turbo',
+    label: 'Turbo',
+    source: require('@/assets/game/upgrades/turbo.png'),
+  },
+  mechanic: {
+    id: 'mechanic',
+    label: 'Mechanic',
+    source: require('@/assets/game/upgrades/mechanic.png'),
+  },
+  workshop: {
+    id: 'workshop',
+    label: 'Workshop',
+    source: require('@/assets/game/upgrades/workshop.png'),
+  },
+  dealer: {
+    id: 'dealer',
+    label: 'Dealer',
+    source: require('@/assets/game/upgrades/dealer.png'),
+  },
+} as const satisfies Record<CarClickerUpgradeId, CarClickerUpgradeAsset>;
 
 export const CAR_CLICKER_LOCATION_ASSETS = {
   dealership: {

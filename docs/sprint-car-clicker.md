@@ -844,7 +844,7 @@ Kryteria akceptacji:
 
 ### Zadanie 8: plan assetow gry
 
-Status: pierwsza iteracja zrobiona.
+Status: pierwsza i druga iteracja zrobione.
 
 Cel: przygotowac strukture i kontrakt assetow, zanim zaczniemy podmieniac placeholder samochodu na grafiki.
 
@@ -870,6 +870,14 @@ Pierwsza iteracja:
 - Zachowano `getStarterCarStageAsset` jako kompatybilny wrapper dla obecnego UI.
 - Lokacje dostaly jawny kontrakt z `id`, `label`, `passiveIncomeBonus` i `source`, zamiast mapy samych obrazkow.
 - Dynamiczne sciezki assetow nadal nie sa uzywane; Expo dostaje statyczne `require`.
+
+Druga iteracja:
+
+- Rozszerzono kontrakt assetow ulepszen o `CarClickerUpgradeAsset`.
+- `CAR_CLICKER_UPGRADE_ASSETS` jest teraz manifestem z `id`, `label` i `source`, a nie mapa samych obrazkow.
+- `UpgradeShopPanel` pobiera obraz przez `CAR_CLICKER_UPGRADE_ASSETS[upgrade.id].source`.
+- Kontrakt assetow jest teraz spojny dla aut, lokacji i ulepszen.
+- Dynamiczne sciezki assetow nadal nie sa uzywane.
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 

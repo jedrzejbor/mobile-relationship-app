@@ -161,7 +161,7 @@ function UpgradeRow({
         <Image
           accessibilityIgnoresInvertColors
           contentFit="cover"
-          source={CAR_CLICKER_UPGRADE_ASSETS[upgrade.id]}
+          source={CAR_CLICKER_UPGRADE_ASSETS[upgrade.id].source}
           style={styles.assetImage}
         />
         <View style={styles.assetLevelBadge}>

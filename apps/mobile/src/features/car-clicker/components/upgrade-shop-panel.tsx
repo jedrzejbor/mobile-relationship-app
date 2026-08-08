@@ -5,9 +5,9 @@ import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import {
   CAR_CLICKER_UPGRADE_CATEGORY_OPTIONS,
-  CAR_CLICKER_UPGRADE_ASSETS,
   CarClickerTheme,
   formatCarClickerCash,
+  getUpgradeAsset,
   type CarClickerPurchaseFeedback,
   type CarClickerUpgradeCategoryFilter,
   type CarClickerUpgradeId,
@@ -129,6 +129,7 @@ function UpgradeRow({
   onPurchase: (upgradeId: CarClickerUpgradeId) => void;
 }) {
   const { upgrade } = upgradeView;
+  const upgradeAsset = getUpgradeAsset(upgrade.id);
   const effectLabel = getUpgradeEffectLabel(upgradeView);
   const effectTone = upgrade.perSecondBonus
     ? CarClickerTheme.colors.passive
@@ -161,7 +162,7 @@ function UpgradeRow({
         <Image
           accessibilityIgnoresInvertColors
           contentFit="cover"
-          source={CAR_CLICKER_UPGRADE_ASSETS[upgrade.id].source}
+          source={upgradeAsset.source}
           style={styles.assetImage}
         />
         <View style={styles.assetLevelBadge}>

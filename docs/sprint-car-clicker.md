@@ -844,7 +844,7 @@ Kryteria akceptacji:
 
 ### Zadanie 8: plan assetow gry
 
-Status: pierwsza i druga iteracja zrobione.
+Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
 
 Cel: przygotowac strukture i kontrakt assetow, zanim zaczniemy podmieniac placeholder samochodu na grafiki.
 
@@ -878,6 +878,21 @@ Druga iteracja:
 - `UpgradeShopPanel` pobiera obraz przez `CAR_CLICKER_UPGRADE_ASSETS[upgrade.id].source`.
 - Kontrakt assetow jest teraz spojny dla aut, lokacji i ulepszen.
 - Dynamiczne sciezki assetow nadal nie sa uzywane.
+
+Trzecia iteracja:
+
+- Dodano `apps/mobile/assets/game/README.md` z konwencja struktury katalogow i nazw plikow.
+- Opisano mapowanie kebab-case plikow na snake_case id w TypeScript.
+- Udokumentowano wymog statycznych `require` w `assets.ts` dla Metro/Expo.
+- Spisano wymagane pola manifestow dla aut, lokacji i ulepszen.
+- Zaznaczono, ze `old_garage` jest docelowa pierwsza lokacja, ale aktualnie brakuje jej runtime assetu.
+
+Czwarta iteracja:
+
+- Dodano `getUpgradeAsset(upgradeId)` jako selector manifestu ulepszen.
+- Dodano `getLocationAsset(locationId)` jako selector manifestu lokacji.
+- `UpgradeShopPanel` korzysta teraz z `getUpgradeAsset`, zamiast czytac bezposrednio strukture `CAR_CLICKER_UPGRADE_ASSETS`.
+- UI zna tylko kontrakt selectorow, wiec mozemy zmieniac szczegoly manifestu assetow bez przebudowy komponentow.
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 

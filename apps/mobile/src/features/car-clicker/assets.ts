@@ -134,6 +134,12 @@ export const CAR_CLICKER_UPGRADE_ASSETS = {
   },
 } as const satisfies Record<CarClickerUpgradeId, CarClickerUpgradeAsset>;
 
+export function getUpgradeAsset(
+  upgradeId: CarClickerUpgradeId,
+): CarClickerUpgradeAsset {
+  return CAR_CLICKER_UPGRADE_ASSETS[upgradeId];
+}
+
 export const CAR_CLICKER_LOCATION_ASSETS = {
   dealership: {
     id: 'dealership',
@@ -142,3 +148,9 @@ export const CAR_CLICKER_LOCATION_ASSETS = {
     source: require('@/assets/game/locations/dealership.png'),
   },
 } as const satisfies Record<CarClickerLocationAssetId, CarClickerLocationAsset>;
+
+export function getLocationAsset(
+  locationId: CarClickerLocationAssetId,
+): CarClickerLocationAsset {
+  return CAR_CLICKER_LOCATION_ASSETS[locationId];
+}

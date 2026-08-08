@@ -1,4 +1,9 @@
-import { Platform, ScrollView, StyleSheet } from 'react-native';
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedView } from '@/components/themed-view';
@@ -17,6 +22,8 @@ import {
 } from '@/features/car-clicker';
 
 export default function GameScreen() {
+  const { width } = useWindowDimensions();
+  const isCompactLayout = width < 420;
   const {
     actions,
     offlineIncomeFeedback,
@@ -35,7 +42,11 @@ export default function GameScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           style={styles.scrollView}>
-          <ThemedView style={styles.content}>
+          <ThemedView
+            style={[
+              styles.content,
+              isCompactLayout && styles.contentCompact,
+            ]}>
             <CarClickerScreenHeader
               subtitle={CAR_CLICKER_SCREEN.subtitle}
               title={CAR_CLICKER_SCREEN.title}
@@ -103,5 +114,8 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: MaxContentWidth,
     gap: Spacing.four,
+  },
+  contentCompact: {
+    gap: Spacing.three,
   },
 });

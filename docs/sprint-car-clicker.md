@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma i osma iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma i dziewiata iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -796,6 +796,14 @@ Osma iteracja:
 - Dodano `minWidth: 0` dla tresci rzedu ulepszenia, zeby tekst mogl poprawnie zawijac sie w ukladzie flex.
 - Panel statystyk moze teraz zawijac kafelki i status pasywnego dochodu, co zmniejsza ryzyko uciekania dlugich wartosci poza kontener.
 - Mechanika zakupow, ekonomia i zapis pozostaly bez zmian; iteracja dotyczyla odpornosci layoutu.
+
+Dziewiata iteracja:
+
+- Dodano kompaktowy layout w `CarTapButton` dla waskich ekranow.
+- Na kompaktowym ekranie panel auta ma mniejszy `minHeight`, mniejszy padding i krotszy label tieru, zeby glowna grafika nie ucinala reszty widoku.
+- Scena auta i ramka obrazu skaluja sie osobno od animacji klikniecia, wiec feedback `+cash` pozostaje w tym samym komponencie.
+- `game.tsx` zmniejsza pionowy gap miedzy sekcjami na waskich viewportach, bez zmiany ukladu na wiekszych ekranach.
+- Mechanika klikniecia i wybor assetu auta pozostaly bez zmian.
 
 Zakres pierwszej iteracji:
 

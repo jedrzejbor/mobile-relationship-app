@@ -1,6 +1,12 @@
 import { Image } from 'expo-image';
 import { useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import {
+  Animated,
+  Pressable,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -19,8 +25,10 @@ type CarTapButtonProps = {
 };
 
 export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
+  const { width } = useWindowDimensions();
   const appearance = getCarAppearance(tier);
   const stageAsset = getStarterCarStageAsset(tier);
+  const isCompactLayout = width < 420;
   const scale = useRef(new Animated.Value(1)).current;
   const feedbackOpacity = useRef(new Animated.Value(0)).current;
   const feedbackTranslateY = useRef(new Animated.Value(0)).current;
@@ -66,12 +74,15 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
       onPress={handlePress}
       style={({ pressed }) => [
         styles.button,
+        isCompactLayout && styles.buttonCompact,
         pressed && styles.buttonPressed,
       ]}>
       <ThemedText style={styles.tierLabel}>
-        Tier {tier} · {appearance.name} · {stageAsset.label}
+        {isCompactLayout
+          ? `Tier ${tier} · ${appearance.name}`
+          : `Tier ${tier} · ${appearance.name} · ${stageAsset.label}`}
       </ThemedText>
-      <View style={styles.carStage}>
+      <View style={[styles.carStage, isCompactLayout && styles.carStageCompact]}>
         <Animated.View
           key={feedbackKey}
           pointerEvents="none"
@@ -87,7 +98,12 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
           </ThemedText>
         </Animated.View>
 
-        <Animated.View style={[styles.carFrame, { transform: [{ scale }] }]}>
+        <Animated.View
+          style={[
+            styles.carFrame,
+            isCompactLayout && styles.carFrameCompact,
+            { transform: [{ scale }] },
+          ]}>
           <Image
             accessibilityIgnoresInvertColors
             contentFit="contain"
@@ -122,6 +138,11 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     shadowOffset: { width: 0, height: 8 },
   },
+  buttonCompact: {
+    minHeight: 236,
+    padding: Spacing.two,
+    gap: Spacing.two,
+  },
   buttonPressed: {
     opacity: 0.82,
     transform: [{ scale: 0.99 }],
@@ -137,6 +158,9 @@ const styles = StyleSheet.create({
     minHeight: 188,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  carStageCompact: {
+    minHeight: 152,
   },
   clickFeedback: {
     position: 'absolute',
@@ -154,6 +178,9 @@ const styles = StyleSheet.create({
   carFrame: {
     width: '100%',
     aspectRatio: 1.72,
+  },
+  carFrameCompact: {
+    width: '96%',
   },
   carImage: {
     width: '100%',

@@ -18,12 +18,13 @@ import { UpgradeShopPanel } from '@/features/car-clicker/components/upgrade-shop
 import {
   CAR_CLICKER_SCREEN,
   CarClickerTheme,
+  isCompactCarClickerWidth,
   useCarClickerGame,
 } from '@/features/car-clicker';
 
 export default function GameScreen() {
   const { width } = useWindowDimensions();
-  const isCompactLayout = width < 420;
+  const isCompactLayout = isCompactCarClickerWidth(width);
   const {
     actions,
     offlineIncomeFeedback,

@@ -2,6 +2,7 @@ export * from './assets';
 export * from './car-appearance';
 export * from './economy';
 export * from './format';
+export * from './layout';
 export * from './reducer';
 export * from './screen';
 export * from './storage';

@@ -8,6 +8,7 @@ import {
   CAR_CLICKER_UPGRADE_ASSETS,
   CarClickerTheme,
   formatCarClickerCash,
+  isCompactCarClickerWidth,
   type CarClickerPurchaseFeedback,
   type CarClickerUpgradeCategoryFilter,
   type CarClickerUpgradeId,
@@ -30,7 +31,7 @@ export function UpgradeShopPanel({
   onPurchase,
 }: UpgradeShopPanelProps) {
   const { width } = useWindowDimensions();
-  const isCompactLayout = width < 420;
+  const isCompactLayout = isCompactCarClickerWidth(width);
 
   return (
     <View style={styles.panel}>

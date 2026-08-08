@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma i dziewiata iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata i dziesiata iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -804,6 +804,13 @@ Dziewiata iteracja:
 - Scena auta i ramka obrazu skaluja sie osobno od animacji klikniecia, wiec feedback `+cash` pozostaje w tym samym komponencie.
 - `game.tsx` zmniejsza pionowy gap miedzy sekcjami na waskich viewportach, bez zmiany ukladu na wiekszych ekranach.
 - Mechanika klikniecia i wybor assetu auta pozostaly bez zmian.
+
+Dziesiata iteracja:
+
+- Dodano `layout.ts` w feature `car-clicker` z `CAR_CLICKER_COMPACT_WIDTH` i `isCompactCarClickerWidth`.
+- Usunieto powtorzone magiczne `width < 420` z `game.tsx`, `CarTapButton` i `UpgradeShopPanel`.
+- Komponenty nadal same mierza viewport przez `useWindowDimensions`, ale decyzja o breakpointcie jest wspolna i latwa do strojenia.
+- Zmiana nie rusza wygladu ani mechaniki; porzadkuje kontrakt responsywnosci po poprzednich iteracjach UI.
 
 Zakres pierwszej iteracji:
 

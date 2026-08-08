@@ -16,6 +16,7 @@ import { CAR_CLICKER_SCREEN } from '@/features/car-clicker/screen';
 import {
   CarClickerTheme,
   getStarterCarStageAsset,
+  isCompactCarClickerWidth,
 } from '@/features/car-clicker';
 
 type CarTapButtonProps = {
@@ -28,7 +29,7 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
   const { width } = useWindowDimensions();
   const appearance = getCarAppearance(tier);
   const stageAsset = getStarterCarStageAsset(tier);
-  const isCompactLayout = width < 420;
+  const isCompactLayout = isCompactCarClickerWidth(width);
   const scale = useRef(new Animated.Value(1)).current;
   const feedbackOpacity = useRef(new Animated.Value(0)).current;
   const feedbackTranslateY = useRef(new Animated.Value(0)).current;

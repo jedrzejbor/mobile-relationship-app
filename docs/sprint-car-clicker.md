@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata, dziesiata, jedenasta i dwunasta iteracja zrobione.
+Status: zakonczone po dwunastu iteracjach.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -844,6 +844,8 @@ Kryteria akceptacji:
 
 ### Zadanie 8: plan assetow gry
 
+Status: pierwsza iteracja zrobiona.
+
 Cel: przygotowac strukture i kontrakt assetow, zanim zaczniemy podmieniac placeholder samochodu na grafiki.
 
 Zakres:
@@ -859,6 +861,15 @@ Kryteria akceptacji:
 - Kod UI nie zaklada dynamicznych stringow assetow.
 - Assety samochodow sa rozdzielone od UI.
 - Mozna dodac kolejne auto bez przebudowy komponentu clickera.
+
+Pierwsza iteracja:
+
+- Rozszerzono `assets.ts` o `CarClickerCarAssetId`, `CarClickerLocationAssetId`, `CarClickerCarAsset` i `CarClickerLocationAsset`.
+- Dodano `CAR_CLICKER_CAR_ASSETS`, czyli manifest aut z lista stage dla `starter`.
+- Dodano generyczny selector `getCarStageAsset(carId, tier)`, zeby przyszle auta mogly korzystac z tego samego kontraktu.
+- Zachowano `getStarterCarStageAsset` jako kompatybilny wrapper dla obecnego UI.
+- Lokacje dostaly jawny kontrakt z `id`, `label`, `passiveIncomeBonus` i `source`, zamiast mapy samych obrazkow.
+- Dynamiczne sciezki assetow nadal nie sa uzywane; Expo dostaje statyczne `require`.
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 

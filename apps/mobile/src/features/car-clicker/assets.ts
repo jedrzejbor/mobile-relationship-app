@@ -2,6 +2,9 @@ import type { ImageSourcePropType } from 'react-native';
 
 import type { CarClickerUpgradeId } from './types';
 
+export type CarClickerCarAssetId = 'starter';
+export type CarClickerLocationAssetId = 'dealership';
+
 export type CarClickerCarStageAsset = {
   id:
     | 'stage_0_stock'
@@ -12,6 +15,19 @@ export type CarClickerCarStageAsset = {
     | 'stage_max_track_tuned';
   label: string;
   minTier: number;
+  source: ImageSourcePropType;
+};
+
+export type CarClickerCarAsset = {
+  id: CarClickerCarAssetId;
+  label: string;
+  stages: readonly CarClickerCarStageAsset[];
+};
+
+export type CarClickerLocationAsset = {
+  id: CarClickerLocationAssetId;
+  label: string;
+  passiveIncomeBonus: number;
   source: ImageSourcePropType;
 };
 
@@ -54,12 +70,29 @@ export const STARTER_CAR_STAGE_ASSETS = [
   },
 ] as const satisfies readonly CarClickerCarStageAsset[];
 
-export function getStarterCarStageAsset(tier: number): CarClickerCarStageAsset {
-  return STARTER_CAR_STAGE_ASSETS.reduce<CarClickerCarStageAsset>(
+export const CAR_CLICKER_CAR_ASSETS = {
+  starter: {
+    id: 'starter',
+    label: 'Starter Hatch',
+    stages: STARTER_CAR_STAGE_ASSETS,
+  },
+} as const satisfies Record<CarClickerCarAssetId, CarClickerCarAsset>;
+
+export function getCarStageAsset(
+  carId: CarClickerCarAssetId,
+  tier: number,
+): CarClickerCarStageAsset {
+  const carAsset = CAR_CLICKER_CAR_ASSETS[carId];
+
+  return carAsset.stages.reduce<CarClickerCarStageAsset>(
     (selectedAsset, stageAsset) =>
       tier >= stageAsset.minTier ? stageAsset : selectedAsset,
-    STARTER_CAR_STAGE_ASSETS[0],
+    carAsset.stages[0],
   );
+}
+
+export function getStarterCarStageAsset(tier: number): CarClickerCarStageAsset {
+  return getCarStageAsset('starter', tier);
 }
 
 export const CAR_CLICKER_UPGRADE_ASSETS = {
@@ -72,5 +105,10 @@ export const CAR_CLICKER_UPGRADE_ASSETS = {
 } as const satisfies Record<CarClickerUpgradeId, ImageSourcePropType>;
 
 export const CAR_CLICKER_LOCATION_ASSETS = {
-  dealership: require('@/assets/game/locations/dealership.png'),
-} as const satisfies Record<string, ImageSourcePropType>;
+  dealership: {
+    id: 'dealership',
+    label: 'Dealer showroom',
+    passiveIncomeBonus: 45,
+    source: require('@/assets/game/locations/dealership.png'),
+  },
+} as const satisfies Record<CarClickerLocationAssetId, CarClickerLocationAsset>;

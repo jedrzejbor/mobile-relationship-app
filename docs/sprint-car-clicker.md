@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata i dziesiata iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata, dziesiata i jedenasta iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -811,6 +811,13 @@ Dziesiata iteracja:
 - Usunieto powtorzone magiczne `width < 420` z `game.tsx`, `CarTapButton` i `UpgradeShopPanel`.
 - Komponenty nadal same mierza viewport przez `useWindowDimensions`, ale decyzja o breakpointcie jest wspolna i latwa do strojenia.
 - Zmiana nie rusza wygladu ani mechaniki; porzadkuje kontrakt responsywnosci po poprzednich iteracjach UI.
+
+Jedenasta iteracja:
+
+- Dodano `useCarClickerLayout`, ktory centralizuje pomiar viewportu i zwraca `isCompactLayout`.
+- Przepieto `game.tsx`, `CarTapButton` i `UpgradeShopPanel` na wspolny hook zamiast lokalnego `useWindowDimensions`.
+- `layout.ts` zostaje czystym kontraktem breakpointow, a hook jest jedynym miejscem laczacym go z React Native.
+- Zmiana poprawia reuzywalnosc i czytelnosc UI przed kolejnymi iteracjami, bez zmiany wygladu ani gameplayu.
 
 Zakres pierwszej iteracji:
 

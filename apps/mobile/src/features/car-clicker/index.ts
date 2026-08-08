@@ -8,6 +8,7 @@ export * from './screen';
 export * from './storage';
 export * from './theme';
 export * from './types';
+export * from './use-car-clicker-layout';
 export * from './use-car-clicker-save';
 export * from './use-car-clicker-game';
 export * from './use-passive-income-ticker';

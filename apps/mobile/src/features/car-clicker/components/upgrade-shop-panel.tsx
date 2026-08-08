@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -8,11 +8,11 @@ import {
   CAR_CLICKER_UPGRADE_ASSETS,
   CarClickerTheme,
   formatCarClickerCash,
-  isCompactCarClickerWidth,
   type CarClickerPurchaseFeedback,
   type CarClickerUpgradeCategoryFilter,
   type CarClickerUpgradeId,
   type CarClickerUpgradeView,
+  useCarClickerLayout,
 } from '@/features/car-clicker';
 
 type UpgradeShopPanelProps = {
@@ -30,8 +30,7 @@ export function UpgradeShopPanel({
   onCategoryChange,
   onPurchase,
 }: UpgradeShopPanelProps) {
-  const { width } = useWindowDimensions();
-  const isCompactLayout = isCompactCarClickerWidth(width);
+  const { isCompactLayout } = useCarClickerLayout();
 
   return (
     <View style={styles.panel}>

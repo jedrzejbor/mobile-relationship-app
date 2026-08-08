@@ -2,7 +2,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,13 +17,12 @@ import { UpgradeShopPanel } from '@/features/car-clicker/components/upgrade-shop
 import {
   CAR_CLICKER_SCREEN,
   CarClickerTheme,
-  isCompactCarClickerWidth,
+  useCarClickerLayout,
   useCarClickerGame,
 } from '@/features/car-clicker';
 
 export default function GameScreen() {
-  const { width } = useWindowDimensions();
-  const isCompactLayout = isCompactCarClickerWidth(width);
+  const { isCompactLayout } = useCarClickerLayout();
   const {
     actions,
     offlineIncomeFeedback,

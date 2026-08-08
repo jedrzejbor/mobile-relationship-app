@@ -717,7 +717,7 @@ Kryteria akceptacji:
 
 ### Zadanie 7: UI improvement clicker screena
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata, dziesiata i jedenasta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata, dziesiata, jedenasta i dwunasta iteracja zrobione.
 
 Cel: przebudowac obecny prosty wyglad w kierunku docelowego game UI, zachowujac natywny UI w kodzie i uzywajac assetow tylko jako grafiki gry.
 
@@ -818,6 +818,13 @@ Jedenasta iteracja:
 - Przepieto `game.tsx`, `CarTapButton` i `UpgradeShopPanel` na wspolny hook zamiast lokalnego `useWindowDimensions`.
 - `layout.ts` zostaje czystym kontraktem breakpointow, a hook jest jedynym miejscem laczacym go z React Native.
 - Zmiana poprawia reuzywalnosc i czytelnosc UI przed kolejnymi iteracjami, bez zmiany wygladu ani gameplayu.
+
+Dwunasta iteracja:
+
+- Przepieto `CarClickerScreenHeader` na `useCarClickerLayout`.
+- W kompaktowym layoucie naglowek ma mniejsza wysokosc i padding, zeby nie zabieral zbyt duzo miejsca nad gra.
+- Dekoracyjne track-marki i pomaranczowe pasy sa ukrywane na waskich ekranach, zeby nie nachodzily na tytul ani opis.
+- Zmiana dotyczy tylko responsywnosci naglowka; routing i mechanika gry pozostaly bez zmian.
 
 Zakres pierwszej iteracji:
 

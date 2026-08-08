@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
-import { CarClickerTheme } from '@/features/car-clicker';
+import { CarClickerTheme, useCarClickerLayout } from '@/features/car-clicker';
 
 type CarClickerScreenHeaderProps = {
   subtitle: string;
@@ -13,14 +13,18 @@ export function CarClickerScreenHeader({
   subtitle,
   title,
 }: CarClickerScreenHeaderProps) {
+  const { isCompactLayout } = useCarClickerLayout();
+
   return (
-    <View style={styles.header}>
-      <View pointerEvents="none" style={styles.trackMarkLeft}>
-        <View style={styles.trackDot} />
-        <View style={styles.trackDot} />
-        <View style={styles.trackDot} />
-        <View style={styles.trackDot} />
-      </View>
+    <View style={[styles.header, isCompactLayout && styles.headerCompact]}>
+      {!isCompactLayout && (
+        <View pointerEvents="none" style={styles.trackMarkLeft}>
+          <View style={styles.trackDot} />
+          <View style={styles.trackDot} />
+          <View style={styles.trackDot} />
+          <View style={styles.trackDot} />
+        </View>
+      )}
 
       <View style={styles.titleGroup}>
         <ThemedText type="subtitle" style={styles.title}>
@@ -31,10 +35,12 @@ export function CarClickerScreenHeader({
         </ThemedText>
       </View>
 
-      <View pointerEvents="none" style={styles.accentStripes}>
-        <View style={styles.accentStripe} />
-        <View style={styles.accentStripe} />
-      </View>
+      {!isCompactLayout && (
+        <View pointerEvents="none" style={styles.accentStripes}>
+          <View style={styles.accentStripe} />
+          <View style={styles.accentStripe} />
+        </View>
+      )}
     </View>
   );
 }
@@ -54,6 +60,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.16,
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 0 },
+  },
+  headerCompact: {
+    minHeight: 72,
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.three,
   },
   titleGroup: {
     alignItems: 'center',

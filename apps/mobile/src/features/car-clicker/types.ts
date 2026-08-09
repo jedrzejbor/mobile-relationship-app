@@ -1,3 +1,5 @@
+import type { CarClickerGarageState } from './garage';
+
 export type CarClickerUpgradeCategory =
   | 'power'
   | 'garage'
@@ -35,6 +37,7 @@ export type CarClickerState = {
   perSecond: number;
   upgrades: CarClickerUpgradeLevels;
   selectedCarTier: number;
+  garage: CarClickerGarageState;
 };
 
 export type CarClickerSaveData = {
@@ -54,6 +57,7 @@ export type CarClickerPersistedGameState = {
   totalEarnedCash: number;
   upgrades: CarClickerUpgradeLevels;
   selectedCarTier: number;
+  garage: CarClickerGarageState;
 };
 
 export type CarClickerUpgradePurchaseResult =

@@ -896,7 +896,7 @@ Czwarta iteracja:
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 
-Status: pierwsza iteracja zrobiona.
+Status: pierwsza i druga iteracja zrobione.
 
 Zakres koncepcyjny:
 
@@ -915,6 +915,15 @@ Pierwsza iteracja:
 - Dodano `INITIAL_CAR_CLICKER_GARAGE_STATE` z aktualnym autem `starter` i lokacja `dealership`.
 - Dodano konfiguracje `CAR_CLICKER_CARS` i `CAR_CLICKER_LOCATIONS` oraz selektory `getCarClickerCarById` i `getCarClickerLocationById`.
 - Modulu nie podpieto jeszcze do `CarClickerState`, zapisu ani UI, zeby pierwsza iteracja nie zmieniala obecnego gameplayu.
+
+Druga iteracja:
+
+- Dodano `garage` do `CarClickerState` i `CarClickerPersistedGameState`.
+- Nowy stan gry dostaje `INITIAL_CAR_CLICKER_GARAGE_STATE`.
+- Lokalny save zapisuje teraz stan garazu razem z pozostalymi danymi gry.
+- Parser save jest kompatybilny wstecz: stare zapisy bez `garage` dostaja domyslne `starter` i `dealership`.
+- Parser filtruje odblokowane auta i lokacje do znanych id, zeby uszkodzony save nie przeniosl niepoprawnych wartosci do stanu gry.
+- Nie dodano jeszcze wyboru auta/lokacji w UI ani wplywu lokacji na ekonomie.
 
 ### Zadanie 10: subgra Nitro Rush
 

@@ -3,6 +3,7 @@ import {
   CAR_CLICKER_UPGRADES_BY_ID,
   INITIAL_CAR_CLICKER_UPGRADE_LEVELS,
 } from './upgrades';
+import { INITIAL_CAR_CLICKER_GARAGE_STATE } from './garage';
 import type {
   CarClickerState,
   CarClickerOfflineIncomeFeedback,
@@ -31,6 +32,7 @@ export function createInitialCarClickerState(): CarClickerState {
     perSecond: BASE_PER_SECOND,
     upgrades: { ...INITIAL_CAR_CLICKER_UPGRADE_LEVELS },
     selectedCarTier: BASE_CAR_TIER,
+    garage: INITIAL_CAR_CLICKER_GARAGE_STATE,
   });
 }
 

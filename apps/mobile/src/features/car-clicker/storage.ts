@@ -5,6 +5,14 @@ import {
   CAR_CLICKER_UPGRADE_IDS,
   INITIAL_CAR_CLICKER_UPGRADE_LEVELS,
 } from './upgrades';
+import {
+  DEFAULT_CAR_CLICKER_CAR_ID,
+  DEFAULT_CAR_CLICKER_LOCATION_ID,
+  INITIAL_CAR_CLICKER_GARAGE_STATE,
+  type CarClickerCarId,
+  type CarClickerGarageState,
+  type CarClickerLocationId,
+} from './garage';
 import type {
   CarClickerLoadedSaveData,
   CarClickerPersistedGameState,
@@ -47,6 +55,44 @@ function parseUpgradeLevels(value: unknown): CarClickerUpgradeLevels {
   );
 }
 
+function parseGarageState(value: unknown): CarClickerGarageState {
+  if (!isRecord(value)) {
+    return INITIAL_CAR_CLICKER_GARAGE_STATE;
+  }
+
+  const currentCar =
+    value.currentCar === DEFAULT_CAR_CLICKER_CAR_ID
+      ? value.currentCar
+      : DEFAULT_CAR_CLICKER_CAR_ID;
+  const currentLocation =
+    value.currentLocation === DEFAULT_CAR_CLICKER_LOCATION_ID
+      ? value.currentLocation
+      : DEFAULT_CAR_CLICKER_LOCATION_ID;
+  const unlockedCars = Array.isArray(value.unlockedCars)
+    ? value.unlockedCars.filter(
+        (carId): carId is CarClickerCarId =>
+          carId === DEFAULT_CAR_CLICKER_CAR_ID,
+      )
+    : [];
+  const unlockedLocations = Array.isArray(value.unlockedLocations)
+    ? value.unlockedLocations.filter(
+        (locationId): locationId is CarClickerLocationId =>
+          locationId === DEFAULT_CAR_CLICKER_LOCATION_ID,
+      )
+    : [];
+
+  return {
+    currentCar,
+    currentLocation,
+    unlockedCars: unlockedCars.length > 0
+      ? [...new Set(unlockedCars)]
+      : [DEFAULT_CAR_CLICKER_CAR_ID],
+    unlockedLocations: unlockedLocations.length > 0
+      ? [...new Set(unlockedLocations)]
+      : [DEFAULT_CAR_CLICKER_LOCATION_ID],
+  };
+}
+
 function parseGameState(value: unknown): CarClickerState | null {
   if (!isRecord(value)) {
     return null;
@@ -59,6 +105,7 @@ function parseGameState(value: unknown): CarClickerState | null {
     perClick: 1,
     perSecond: 0,
     selectedCarTier: toNonNegativeInteger(value.selectedCarTier, 1),
+    garage: parseGarageState(value.garage),
   });
 }
 
@@ -70,6 +117,7 @@ function createPersistedGameState(
     totalEarnedCash: game.totalEarnedCash,
     upgrades: game.upgrades,
     selectedCarTier: game.selectedCarTier,
+    garage: game.garage,
   };
 }
 

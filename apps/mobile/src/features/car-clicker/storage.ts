@@ -6,6 +6,8 @@ import {
   INITIAL_CAR_CLICKER_UPGRADE_LEVELS,
 } from './upgrades';
 import {
+  CAR_CLICKER_CAR_IDS,
+  CAR_CLICKER_LOCATION_IDS,
   DEFAULT_CAR_CLICKER_CAR_ID,
   DEFAULT_CAR_CLICKER_LOCATION_ID,
   INITIAL_CAR_CLICKER_GARAGE_STATE,
@@ -43,6 +45,22 @@ function toNonNegativeInteger(value: unknown, fallback = 0) {
   return Math.floor(toNonNegativeNumber(value, fallback));
 }
 
+function isKnownCarClickerCarId(value: unknown): value is CarClickerCarId {
+  return (
+    typeof value === 'string' &&
+    CAR_CLICKER_CAR_IDS.includes(value as CarClickerCarId)
+  );
+}
+
+function isKnownCarClickerLocationId(
+  value: unknown,
+): value is CarClickerLocationId {
+  return (
+    typeof value === 'string' &&
+    CAR_CLICKER_LOCATION_IDS.includes(value as CarClickerLocationId)
+  );
+}
+
 function parseUpgradeLevels(value: unknown): CarClickerUpgradeLevels {
   const source = isRecord(value) ? value : {};
 
@@ -60,24 +78,21 @@ function parseGarageState(value: unknown): CarClickerGarageState {
     return INITIAL_CAR_CLICKER_GARAGE_STATE;
   }
 
-  const currentCar =
-    value.currentCar === DEFAULT_CAR_CLICKER_CAR_ID
-      ? value.currentCar
-      : DEFAULT_CAR_CLICKER_CAR_ID;
-  const currentLocation =
-    value.currentLocation === DEFAULT_CAR_CLICKER_LOCATION_ID
-      ? value.currentLocation
-      : DEFAULT_CAR_CLICKER_LOCATION_ID;
+  const currentCar = isKnownCarClickerCarId(value.currentCar)
+    ? value.currentCar
+    : DEFAULT_CAR_CLICKER_CAR_ID;
+  const currentLocation = isKnownCarClickerLocationId(value.currentLocation)
+    ? value.currentLocation
+    : DEFAULT_CAR_CLICKER_LOCATION_ID;
   const unlockedCars = Array.isArray(value.unlockedCars)
     ? value.unlockedCars.filter(
-        (carId): carId is CarClickerCarId =>
-          carId === DEFAULT_CAR_CLICKER_CAR_ID,
+        (carId): carId is CarClickerCarId => isKnownCarClickerCarId(carId),
       )
     : [];
   const unlockedLocations = Array.isArray(value.unlockedLocations)
     ? value.unlockedLocations.filter(
         (locationId): locationId is CarClickerLocationId =>
-          locationId === DEFAULT_CAR_CLICKER_LOCATION_ID,
+          isKnownCarClickerLocationId(locationId),
       )
     : [];
 

@@ -896,7 +896,7 @@ Czwarta iteracja:
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 
-Status: pierwsza, druga, trzecia, czwarta, piata i szosta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta i siodma iteracja zrobione.
 
 Zakres koncepcyjny:
 
@@ -956,6 +956,14 @@ Szosta iteracja:
 - `recalculateCarClickerState` liczy teraz `perSecond` na podstawie aktualnie wybranej lokacji z `garage.currentLocation`.
 - Reducer po akcji `select_location` przelicza caly stan gry, dzieki czemu zmiana lokacji od razu aktualizuje ekonomie.
 - `GaragePanel` pokazuje mnoznik, ktory ma juz realny efekt gameplayowy, a nie tylko opis UI.
+
+Siodma iteracja:
+
+- Dodano `CarClickerGarageUnlockProgress` jako maly kontrakt danych potrzebnych do odblokowywania aut i lokacji.
+- Dodano `isUnlockRequirementMet`, ktory obsluguje wymagania `default`, `cash` i `tier` bez mieszania tej logiki z UI.
+- Dodano `refreshCarClickerGarageUnlocks`, ktory scala aktualnie odblokowane auta/lokacje z elementami spelniajacymi warunki.
+- `recalculateCarClickerState` odswieza teraz odblokowania garazu przy kazdym przeliczeniu ekonomii i pilnuje, zeby aktualne auto/lokacja byly poprawne.
+- Parser save korzysta z `CAR_CLICKER_CAR_IDS` i `CAR_CLICKER_LOCATION_IDS`, wiec po dodaniu kolejnych definicji nie trzeba przepisywac walidacji zapisu.
 
 ### Zadanie 10: subgra Nitro Rush
 

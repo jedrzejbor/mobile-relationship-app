@@ -6,6 +6,7 @@ import {
 import {
   getCarClickerLocationById,
   INITIAL_CAR_CLICKER_GARAGE_STATE,
+  refreshCarClickerGarageUnlocks,
 } from './garage';
 import type { CarClickerLocationId } from './garage';
 import type {
@@ -201,11 +202,19 @@ export function compareUpgradeViews(
 export function recalculateCarClickerState(
   state: CarClickerState,
 ): CarClickerState {
+  const selectedCarTier = calculateCarTier(state.upgrades);
+  const garage = refreshCarClickerGarageUnlocks(state.garage, {
+    cash: state.cash,
+    selectedCarTier,
+    totalEarnedCash: state.totalEarnedCash,
+  });
+
   return {
     ...state,
+    garage,
     perClick: calculatePerClick(state.upgrades),
-    perSecond: calculatePerSecond(state.upgrades, state.garage.currentLocation),
-    selectedCarTier: calculateCarTier(state.upgrades),
+    perSecond: calculatePerSecond(state.upgrades, garage.currentLocation),
+    selectedCarTier,
   };
 }
 

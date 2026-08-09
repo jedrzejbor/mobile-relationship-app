@@ -51,6 +51,12 @@ export type CarClickerGarageState = {
   unlockedLocations: readonly CarClickerLocationId[];
 };
 
+export type CarClickerGarageUnlockProgress = {
+  cash: number;
+  selectedCarTier: number;
+  totalEarnedCash: number;
+};
+
 export type CarClickerGarageViewState = {
   garage: CarClickerGarageState;
   selectedCarTier: number;
@@ -103,6 +109,14 @@ export const CAR_CLICKER_LOCATIONS = [
   },
 ] as const satisfies readonly CarClickerLocationDefinition[];
 
+export const CAR_CLICKER_CAR_IDS = CAR_CLICKER_CARS.map(
+  (car) => car.id,
+) satisfies CarClickerCarId[];
+
+export const CAR_CLICKER_LOCATION_IDS = CAR_CLICKER_LOCATIONS.map(
+  (location) => location.id,
+) satisfies CarClickerLocationId[];
+
 export const INITIAL_CAR_CLICKER_GARAGE_STATE = {
   currentCar: DEFAULT_CAR_CLICKER_CAR_ID,
   currentLocation: DEFAULT_CAR_CLICKER_LOCATION_ID,
@@ -146,6 +160,57 @@ export function isCarClickerLocationUnlocked(
   locationId: CarClickerLocationId,
 ) {
   return garage.unlockedLocations.includes(locationId);
+}
+
+export function isUnlockRequirementMet(
+  requirement: CarClickerUnlockRequirement,
+  progress: CarClickerGarageUnlockProgress,
+) {
+  switch (requirement.type) {
+    case 'default':
+      return true;
+    case 'cash':
+      return progress.totalEarnedCash >= requirement.value;
+    case 'tier':
+      return progress.selectedCarTier >= requirement.value;
+  }
+}
+
+function mergeUnlockedIds<TId extends string>(
+  currentIds: readonly TId[],
+  nextIds: readonly TId[],
+) {
+  return [...new Set([...currentIds, ...nextIds])];
+}
+
+export function refreshCarClickerGarageUnlocks(
+  garage: CarClickerGarageState,
+  progress: CarClickerGarageUnlockProgress,
+): CarClickerGarageState {
+  const unlockedCars = mergeUnlockedIds(
+    garage.unlockedCars,
+    CAR_CLICKER_CARS.filter((car) =>
+      isUnlockRequirementMet(car.unlockRequirement, progress),
+    ).map((car) => car.id),
+  );
+  const unlockedLocations = mergeUnlockedIds(
+    garage.unlockedLocations,
+    CAR_CLICKER_LOCATIONS.filter((location) =>
+      isUnlockRequirementMet(location.unlockRequirement, progress),
+    ).map((location) => location.id),
+  );
+
+  return {
+    ...garage,
+    currentCar: unlockedCars.includes(garage.currentCar)
+      ? garage.currentCar
+      : DEFAULT_CAR_CLICKER_CAR_ID,
+    currentLocation: unlockedLocations.includes(garage.currentLocation)
+      ? garage.currentLocation
+      : DEFAULT_CAR_CLICKER_LOCATION_ID,
+    unlockedCars,
+    unlockedLocations,
+  };
 }
 
 export function selectCarClickerCar(

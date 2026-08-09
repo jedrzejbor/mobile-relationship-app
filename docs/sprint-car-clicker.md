@@ -844,7 +844,7 @@ Kryteria akceptacji:
 
 ### Zadanie 8: plan assetow gry
 
-Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
+Status: zakonczone po czterech iteracjach.
 
 Cel: przygotowac strukture i kontrakt assetow, zanim zaczniemy podmieniac placeholder samochodu na grafiki.
 
@@ -896,6 +896,8 @@ Czwarta iteracja:
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 
+Status: pierwsza iteracja zrobiona.
+
 Zakres koncepcyjny:
 
 - Rozszerzyc model gry o `currentCar`, `currentCarLevel`, `currentLocation`, `unlockedCars`.
@@ -905,6 +907,14 @@ Zakres koncepcyjny:
 - Przygotowac save pod `selectedCar`, `selectedLocation`, `carProgress`, `lastActiveAt` i `saveVersion`.
 
 To nie wchodzi do obecnego MVP clickera, ale architektura nie powinna blokowac tych systemow.
+
+Pierwsza iteracja:
+
+- Dodano `garage.ts` jako warstwe domenowa przyszlego garazu, aut i lokacji.
+- Zdefiniowano `CarClickerCarId`, `CarClickerLocationId`, `CarClickerUnlockRequirement`, `CarClickerCarDefinition`, `CarClickerLocationDefinition` i `CarClickerGarageState`.
+- Dodano `INITIAL_CAR_CLICKER_GARAGE_STATE` z aktualnym autem `starter` i lokacja `dealership`.
+- Dodano konfiguracje `CAR_CLICKER_CARS` i `CAR_CLICKER_LOCATIONS` oraz selektory `getCarClickerCarById` i `getCarClickerLocationById`.
+- Modulu nie podpieto jeszcze do `CarClickerState`, zapisu ani UI, zeby pierwsza iteracja nie zmieniala obecnego gameplayu.
 
 ### Zadanie 10: subgra Nitro Rush
 

@@ -56,7 +56,16 @@ export type CarClickerGarageUnlockProgress = {
   selectedCarTier: number;
 };
 
+export type CarClickerUnlockRequirementProgress = {
+  isMet: boolean;
+  missingCash: number;
+  missingTiers: number;
+  progressRatio: number;
+  requirement: CarClickerUnlockRequirement;
+};
+
 export type CarClickerGarageViewState = {
+  cash: number;
   garage: CarClickerGarageState;
   selectedCarTier: number;
 };
@@ -67,6 +76,7 @@ export type CarClickerCarView = {
   isCurrent: boolean;
   isUnlocked: boolean;
   stageAsset: CarClickerCarStageAsset;
+  unlockProgress: CarClickerUnlockRequirementProgress;
 };
 
 export type CarClickerLocationView = {
@@ -74,6 +84,7 @@ export type CarClickerLocationView = {
   definition: CarClickerLocationDefinition;
   isCurrent: boolean;
   isUnlocked: boolean;
+  unlockProgress: CarClickerUnlockRequirementProgress;
 };
 
 export type CarClickerGarageView = {
@@ -175,6 +186,50 @@ export function isUnlockRequirementMet(
   }
 }
 
+export function getUnlockRequirementProgress(
+  requirement: CarClickerUnlockRequirement,
+  progress: CarClickerGarageUnlockProgress,
+): CarClickerUnlockRequirementProgress {
+  switch (requirement.type) {
+    case 'default':
+      return {
+        isMet: true,
+        missingCash: 0,
+        missingTiers: 0,
+        progressRatio: 1,
+        requirement,
+      };
+    case 'cash': {
+      const requiredCash = Math.max(requirement.value, 0);
+
+      return {
+        isMet: progress.cash >= requiredCash,
+        missingCash: Math.max(requiredCash - progress.cash, 0),
+        missingTiers: 0,
+        progressRatio:
+          requiredCash > 0
+            ? Math.min(Math.max(progress.cash / requiredCash, 0), 1)
+            : 1,
+        requirement,
+      };
+    }
+    case 'tier': {
+      const requiredTier = Math.max(requirement.value, 0);
+
+      return {
+        isMet: progress.selectedCarTier >= requiredTier,
+        missingCash: 0,
+        missingTiers: Math.max(requiredTier - progress.selectedCarTier, 0),
+        progressRatio:
+          requiredTier > 0
+            ? Math.min(Math.max(progress.selectedCarTier / requiredTier, 0), 1)
+            : 1,
+        requirement,
+      };
+    }
+  }
+}
+
 function mergeUnlockedIds<TId extends string>(
   currentIds: readonly TId[],
   nextIds: readonly TId[],
@@ -249,18 +304,30 @@ export function selectCarClickerLocation(
 export function getCarClickerGarageView(
   state: CarClickerGarageViewState,
 ): CarClickerGarageView {
+  const unlockProgress = {
+    cash: state.cash,
+    selectedCarTier: state.selectedCarTier,
+  };
   const cars = CAR_CLICKER_CARS.map((car) => ({
     asset: getCarAsset(car.assetId),
     definition: car,
     isCurrent: car.id === state.garage.currentCar,
     isUnlocked: state.garage.unlockedCars.includes(car.id),
     stageAsset: getCarStageAsset(car.assetId, state.selectedCarTier),
+    unlockProgress: getUnlockRequirementProgress(
+      car.unlockRequirement,
+      unlockProgress,
+    ),
   }));
   const locations = CAR_CLICKER_LOCATIONS.map((location) => ({
     asset: getLocationAsset(location.assetId),
     definition: location,
     isCurrent: location.id === state.garage.currentLocation,
     isUnlocked: state.garage.unlockedLocations.includes(location.id),
+    unlockProgress: getUnlockRequirementProgress(
+      location.unlockRequirement,
+      unlockProgress,
+    ),
   }));
 
   return {

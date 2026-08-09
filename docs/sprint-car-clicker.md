@@ -896,7 +896,7 @@ Czwarta iteracja:
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma i osma iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma i dziewiata iteracja zrobione.
 
 Zakres koncepcyjny:
 
@@ -972,6 +972,14 @@ Osma iteracja:
 - `GaragePanel` formatuje wymagania odblokowania dla aut i lokacji, zamiast pokazywac samo `Zablokowane`.
 - Dla odblokowanych lokacji panel nadal pokazuje realny mnoznik passive income.
 - Nie dodano jeszcze nowych aut/lokacji, bo w projekcie mamy tylko jeden kompletny zestaw assetow auta i jedna lokacje; kolejne definicje powinny wejsc razem z assetami.
+
+Dziewiata iteracja:
+
+- Dodano `CarClickerUnlockRequirementProgress` jako view model postepu odblokowania.
+- Dodano `getUnlockRequirementProgress`, ktory liczy `missingCash`, `missingTiers`, `progressRatio` i `isMet` dla wymagan `default`, `cash` i `tier`.
+- `CarClickerGarageViewState` dostaje teraz `cash`, dzieki czemu `getCarClickerGarageView(game)` moze przygotowac pelny model dla UI.
+- `CarClickerCarView` i `CarClickerLocationView` zawieraja `unlockProgress`, wiec komponenty nie musza same znac zasad odblokowywania.
+- `GaragePanel` pokazuje bardziej konkretne komunikaty dla zablokowanych elementow, np. ile cashu albo tierow brakuje.
 
 ### Zadanie 10: subgra Nitro Rush
 

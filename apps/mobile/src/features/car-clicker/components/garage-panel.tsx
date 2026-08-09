@@ -11,7 +11,7 @@ import {
   type CarClickerGarageView,
   type CarClickerLocationId,
   type CarClickerLocationView,
-  type CarClickerUnlockRequirement,
+  type CarClickerUnlockRequirementProgress,
 } from '@/features/car-clicker';
 
 type GaragePanelProps = {
@@ -20,14 +20,20 @@ type GaragePanelProps = {
   onSelectLocation: (locationId: CarClickerLocationId) => void;
 };
 
-function formatUnlockRequirement(requirement: CarClickerUnlockRequirement) {
-  switch (requirement.type) {
+function formatUnlockRequirementProgress(
+  unlockProgress: CarClickerUnlockRequirementProgress,
+) {
+  switch (unlockProgress.requirement.type) {
     case 'default':
       return 'Dostepne od startu';
     case 'cash':
-      return `Wymaga ${formatCarClickerCash(requirement.value)} cash`;
+      return unlockProgress.missingCash > 0
+        ? `Brakuje ${formatCarClickerCash(unlockProgress.missingCash)} cash`
+        : `Wymaga ${formatCarClickerCash(unlockProgress.requirement.value)} cash`;
     case 'tier':
-      return `Wymaga tier ${requirement.value}`;
+      return unlockProgress.missingTiers > 0
+        ? `Brakuje ${unlockProgress.missingTiers} tier`
+        : `Wymaga tier ${unlockProgress.requirement.value}`;
   }
 }
 
@@ -133,7 +139,7 @@ function CarOption({
         <ThemedText type="smallBold" style={styles.optionMeta}>
           {car.isUnlocked
             ? 'Odblokowane'
-            : formatUnlockRequirement(car.definition.unlockRequirement)}
+            : formatUnlockRequirementProgress(car.unlockProgress)}
         </ThemedText>
       </View>
     </Pressable>
@@ -178,7 +184,7 @@ function LocationOption({
         <ThemedText type="smallBold" style={styles.optionMeta}>
           {location.isUnlocked
             ? `x${location.definition.passiveIncomeMultiplier.toFixed(2)} passive`
-            : formatUnlockRequirement(location.definition.unlockRequirement)}
+            : formatUnlockRequirementProgress(location.unlockProgress)}
         </ThemedText>
       </View>
     </Pressable>

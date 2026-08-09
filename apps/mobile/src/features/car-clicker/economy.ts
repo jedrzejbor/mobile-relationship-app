@@ -206,7 +206,6 @@ export function recalculateCarClickerState(
   const garage = refreshCarClickerGarageUnlocks(state.garage, {
     cash: state.cash,
     selectedCarTier,
-    totalEarnedCash: state.totalEarnedCash,
   });
 
   return {
@@ -219,11 +218,11 @@ export function recalculateCarClickerState(
 }
 
 export function collectClickIncome(state: CarClickerState): CarClickerState {
-  return {
+  return recalculateCarClickerState({
     ...state,
     cash: state.cash + state.perClick,
     totalEarnedCash: state.totalEarnedCash + state.perClick,
-  };
+  });
 }
 
 export function calculatePassiveIncome(
@@ -243,11 +242,11 @@ export function collectPassiveIncome(
     return state;
   }
 
-  return {
+  return recalculateCarClickerState({
     ...state,
     cash: state.cash + income,
     totalEarnedCash: state.totalEarnedCash + income,
-  };
+  });
 }
 
 export function calculateOfflineElapsedSeconds(
@@ -285,11 +284,11 @@ export function collectOfflineIncome(
       earnedCash,
       elapsedSeconds,
     },
-    state: {
+    state: recalculateCarClickerState({
       ...state,
       cash: state.cash + earnedCash,
       totalEarnedCash: state.totalEarnedCash + earnedCash,
-    },
+    }),
   };
 }
 

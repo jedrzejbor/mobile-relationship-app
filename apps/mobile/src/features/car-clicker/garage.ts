@@ -54,7 +54,6 @@ export type CarClickerGarageState = {
 export type CarClickerGarageUnlockProgress = {
   cash: number;
   selectedCarTier: number;
-  totalEarnedCash: number;
 };
 
 export type CarClickerGarageViewState = {
@@ -170,7 +169,7 @@ export function isUnlockRequirementMet(
     case 'default':
       return true;
     case 'cash':
-      return progress.totalEarnedCash >= requirement.value;
+      return progress.cash >= requirement.value;
     case 'tier':
       return progress.selectedCarTier >= requirement.value;
   }

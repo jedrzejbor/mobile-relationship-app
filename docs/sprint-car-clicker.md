@@ -896,7 +896,7 @@ Czwarta iteracja:
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta i siodma iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma i osma iteracja zrobione.
 
 Zakres koncepcyjny:
 
@@ -964,6 +964,14 @@ Siodma iteracja:
 - Dodano `refreshCarClickerGarageUnlocks`, ktory scala aktualnie odblokowane auta/lokacje z elementami spelniajacymi warunki.
 - `recalculateCarClickerState` odswieza teraz odblokowania garazu przy kazdym przeliczeniu ekonomii i pilnuje, zeby aktualne auto/lokacja byly poprawne.
 - Parser save korzysta z `CAR_CLICKER_CAR_IDS` i `CAR_CLICKER_LOCATION_IDS`, wiec po dodaniu kolejnych definicji nie trzeba przepisywac walidacji zapisu.
+
+Osma iteracja:
+
+- Doprecyzowano semantyke wymagania `cash`: warunek odblokowania sprawdza aktualny cash gracza, a nie laczny cash zarobiony w historii.
+- `collectClickIncome`, `collectPassiveIncome` i `collectOfflineIncome` przechodza teraz przez `recalculateCarClickerState`, wiec odblokowania moga pojawic sie od razu po zarobku.
+- `GaragePanel` formatuje wymagania odblokowania dla aut i lokacji, zamiast pokazywac samo `Zablokowane`.
+- Dla odblokowanych lokacji panel nadal pokazuje realny mnoznik passive income.
+- Nie dodano jeszcze nowych aut/lokacji, bo w projekcie mamy tylko jeden kompletny zestaw assetow auta i jedna lokacje; kolejne definicje powinny wejsc razem z assetami.
 
 ### Zadanie 10: subgra Nitro Rush
 

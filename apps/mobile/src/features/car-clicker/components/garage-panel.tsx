@@ -5,11 +5,13 @@ import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import {
   CarClickerTheme,
+  formatCarClickerCash,
   type CarClickerCarId,
   type CarClickerCarView,
   type CarClickerGarageView,
   type CarClickerLocationId,
   type CarClickerLocationView,
+  type CarClickerUnlockRequirement,
 } from '@/features/car-clicker';
 
 type GaragePanelProps = {
@@ -17,6 +19,17 @@ type GaragePanelProps = {
   onSelectCar: (carId: CarClickerCarId) => void;
   onSelectLocation: (locationId: CarClickerLocationId) => void;
 };
+
+function formatUnlockRequirement(requirement: CarClickerUnlockRequirement) {
+  switch (requirement.type) {
+    case 'default':
+      return 'Dostepne od startu';
+    case 'cash':
+      return `Wymaga ${formatCarClickerCash(requirement.value)} cash`;
+    case 'tier':
+      return `Wymaga tier ${requirement.value}`;
+  }
+}
 
 export function GaragePanel({
   garageView,
@@ -118,7 +131,9 @@ function CarOption({
           {car.definition.description}
         </ThemedText>
         <ThemedText type="smallBold" style={styles.optionMeta}>
-          {car.isUnlocked ? 'Odblokowane' : 'Zablokowane'}
+          {car.isUnlocked
+            ? 'Odblokowane'
+            : formatUnlockRequirement(car.definition.unlockRequirement)}
         </ThemedText>
       </View>
     </Pressable>
@@ -161,7 +176,9 @@ function LocationOption({
           {location.definition.description}
         </ThemedText>
         <ThemedText type="smallBold" style={styles.optionMeta}>
-          x{location.definition.passiveIncomeMultiplier.toFixed(2)} passive
+          {location.isUnlocked
+            ? `x${location.definition.passiveIncomeMultiplier.toFixed(2)} passive`
+            : formatUnlockRequirement(location.definition.unlockRequirement)}
         </ThemedText>
       </View>
     </Pressable>

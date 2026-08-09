@@ -4,6 +4,7 @@ import {
   createInitialCarClickerState,
   getCarClickerUpgradeById,
   purchaseCarClickerUpgrade,
+  recalculateCarClickerState,
 } from './economy';
 import {
   selectCarClickerCar,
@@ -124,13 +125,13 @@ export function carClickerReducer(
     case 'select_location':
       return {
         ...state,
-        game: {
+        game: recalculateCarClickerState({
           ...state.game,
           garage: selectCarClickerLocation(
             state.game.garage,
             action.locationId,
           ),
-        },
+        }),
       };
 
     case 'hydrate_game':

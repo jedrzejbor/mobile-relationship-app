@@ -896,7 +896,7 @@ Czwarta iteracja:
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 
-Status: pierwsza, druga, trzecia, czwarta i piata iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata i szosta iteracja zrobione.
 
 Zakres koncepcyjny:
 
@@ -948,6 +948,14 @@ Piata iteracja:
 - Opcje wyboru korzystaja z `selectCar` i `selectLocation`, ale respektuja stan `isUnlocked`.
 - `game.tsx` renderuje `GaragePanel` pod progresem auta i przed sklepem ulepszen.
 - To nadal nie jest pelny osobny ekran garazu; to pierwsza sekcja kontrolna na ekranie clickera.
+
+Szosta iteracja:
+
+- Dodano `calculateBasePerSecond`, zeby bazowy pasywny dochod byl liczony niezaleznie od modyfikatorow lokacji.
+- Dodano `getLocationPassiveIncomeMultiplier(locationId)` i podpieto `passiveIncomeMultiplier` lokacji do `calculatePerSecond`.
+- `recalculateCarClickerState` liczy teraz `perSecond` na podstawie aktualnie wybranej lokacji z `garage.currentLocation`.
+- Reducer po akcji `select_location` przelicza caly stan gry, dzieki czemu zmiana lokacji od razu aktualizuje ekonomie.
+- `GaragePanel` pokazuje mnoznik, ktory ma juz realny efekt gameplayowy, a nie tylko opis UI.
 
 ### Zadanie 10: subgra Nitro Rush
 

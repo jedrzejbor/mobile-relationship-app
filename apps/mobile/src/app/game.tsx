@@ -25,6 +25,7 @@ export default function GameScreen() {
   const { isCompactLayout } = useCarClickerLayout();
   const {
     actions,
+    garageView,
     offlineIncomeFeedback,
     purchaseFeedback,
     selectedUpgradeCategory,
@@ -63,8 +64,10 @@ export default function GameScreen() {
             />
 
             <CarTapButton
+              carName={garageView.currentCar.definition.name}
               onPress={actions.collectClick}
               perClick={state.perClick}
+              stageAsset={garageView.currentCar.stageAsset}
               tier={state.selectedCarTier}
             />
 

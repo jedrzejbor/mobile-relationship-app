@@ -5,6 +5,11 @@ import {
   getUpgradeViews,
 } from './economy';
 import {
+  getCarClickerGarageView,
+  type CarClickerCarId,
+  type CarClickerLocationId,
+} from './garage';
+import {
   carClickerReducer,
   createInitialCarClickerSessionState,
 } from './reducer';
@@ -36,6 +41,10 @@ export function useCarClickerGame() {
   const tierProgress = useMemo(
     () => getCarTierProgress(game.upgrades),
     [game.upgrades],
+  );
+  const garageView = useMemo(
+    () => getCarClickerGarageView(game),
+    [game],
   );
   const upgradeCategory: CarClickerUpgradeCategory | undefined =
     selectedUpgradeCategory === 'all'
@@ -100,11 +109,20 @@ export function useCarClickerGame() {
     dispatch({ type: 'purchase_upgrade', upgradeId });
   }
 
+  function selectCar(carId: CarClickerCarId) {
+    dispatch({ type: 'select_car', carId });
+  }
+
+  function selectLocation(locationId: CarClickerLocationId) {
+    dispatch({ type: 'select_location', locationId });
+  }
+
   return {
     offlineIncomeFeedback,
     purchaseFeedback,
     state: game,
     selectedUpgradeCategory,
+    garageView,
     tierFeedback,
     tierProgress,
     upgradeViews,
@@ -112,8 +130,10 @@ export function useCarClickerGame() {
       collectClick,
       dismissOfflineIncomeFeedback,
       purchaseUpgrade,
+      selectCar,
       selectUpgradeCategory: (category: CarClickerUpgradeCategoryFilter) =>
         dispatch({ type: 'select_upgrade_category', category }),
+      selectLocation,
     },
   };
 }

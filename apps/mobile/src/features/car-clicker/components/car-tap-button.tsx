@@ -14,20 +14,27 @@ import { formatCarClickerCash } from '@/features/car-clicker/format';
 import { CAR_CLICKER_SCREEN } from '@/features/car-clicker/screen';
 import {
   CarClickerTheme,
-  getStarterCarStageAsset,
+  type CarClickerCarStageAsset,
   useCarClickerLayout,
 } from '@/features/car-clicker';
 
 type CarTapButtonProps = {
+  carName: string;
   perClick: number;
+  stageAsset: CarClickerCarStageAsset;
   tier: number;
   onPress: () => void;
 };
 
-export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
+export function CarTapButton({
+  carName,
+  perClick,
+  stageAsset,
+  tier,
+  onPress,
+}: CarTapButtonProps) {
   const { isCompactLayout } = useCarClickerLayout();
   const appearance = getCarAppearance(tier);
-  const stageAsset = getStarterCarStageAsset(tier);
   const scale = useRef(new Animated.Value(1)).current;
   const feedbackOpacity = useRef(new Animated.Value(0)).current;
   const feedbackTranslateY = useRef(new Animated.Value(0)).current;
@@ -78,8 +85,8 @@ export function CarTapButton({ perClick, tier, onPress }: CarTapButtonProps) {
       ]}>
       <ThemedText style={styles.tierLabel}>
         {isCompactLayout
-          ? `Tier ${tier} · ${appearance.name}`
-          : `Tier ${tier} · ${appearance.name} · ${stageAsset.label}`}
+          ? `${carName} · Tier ${tier}`
+          : `${carName} · Tier ${tier} · ${appearance.name} · ${stageAsset.label}`}
       </ThemedText>
       <View style={[styles.carStage, isCompactLayout && styles.carStageCompact]}>
         <Animated.View

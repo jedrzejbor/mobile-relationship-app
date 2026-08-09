@@ -5,6 +5,12 @@ import {
   getCarClickerUpgradeById,
   purchaseCarClickerUpgrade,
 } from './economy';
+import {
+  selectCarClickerCar,
+  selectCarClickerLocation,
+  type CarClickerCarId,
+  type CarClickerLocationId,
+} from './garage';
 import type {
   CarClickerOfflineIncomeFeedback,
   CarClickerState,
@@ -28,6 +34,14 @@ export type CarClickerAction =
   | {
       type: 'select_upgrade_category';
       category: CarClickerUpgradeCategoryFilter;
+    }
+  | {
+      type: 'select_car';
+      carId: CarClickerCarId;
+    }
+  | {
+      type: 'select_location';
+      locationId: CarClickerLocationId;
     }
   | {
       type: 'hydrate_game';
@@ -96,6 +110,27 @@ export function carClickerReducer(
       return {
         ...state,
         selectedUpgradeCategory: action.category,
+      };
+
+    case 'select_car':
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          garage: selectCarClickerCar(state.game.garage, action.carId),
+        },
+      };
+
+    case 'select_location':
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          garage: selectCarClickerLocation(
+            state.game.garage,
+            action.locationId,
+          ),
+        },
       };
 
     case 'hydrate_game':

@@ -1,6 +1,14 @@
 import type {
+  CarClickerCarAsset,
   CarClickerCarAssetId,
+  CarClickerCarStageAsset,
+  CarClickerLocationAsset,
   CarClickerLocationAssetId,
+} from './assets';
+import {
+  getCarAsset,
+  getCarStageAsset,
+  getLocationAsset,
 } from './assets';
 
 export type CarClickerCarId = 'starter';
@@ -41,6 +49,33 @@ export type CarClickerGarageState = {
   currentLocation: CarClickerLocationId;
   unlockedCars: readonly CarClickerCarId[];
   unlockedLocations: readonly CarClickerLocationId[];
+};
+
+export type CarClickerGarageViewState = {
+  garage: CarClickerGarageState;
+  selectedCarTier: number;
+};
+
+export type CarClickerCarView = {
+  asset: CarClickerCarAsset;
+  definition: CarClickerCarDefinition;
+  isCurrent: boolean;
+  isUnlocked: boolean;
+  stageAsset: CarClickerCarStageAsset;
+};
+
+export type CarClickerLocationView = {
+  asset: CarClickerLocationAsset;
+  definition: CarClickerLocationDefinition;
+  isCurrent: boolean;
+  isUnlocked: boolean;
+};
+
+export type CarClickerGarageView = {
+  currentCar: CarClickerCarView;
+  currentLocation: CarClickerLocationView;
+  cars: readonly CarClickerCarView[];
+  locations: readonly CarClickerLocationView[];
 };
 
 export const DEFAULT_CAR_CLICKER_CAR_ID = 'starter' satisfies CarClickerCarId;
@@ -97,4 +132,78 @@ export function getCarClickerCarById(carId: CarClickerCarId) {
 
 export function getCarClickerLocationById(locationId: CarClickerLocationId) {
   return CAR_CLICKER_LOCATIONS_BY_ID[locationId];
+}
+
+export function isCarClickerCarUnlocked(
+  garage: CarClickerGarageState,
+  carId: CarClickerCarId,
+) {
+  return garage.unlockedCars.includes(carId);
+}
+
+export function isCarClickerLocationUnlocked(
+  garage: CarClickerGarageState,
+  locationId: CarClickerLocationId,
+) {
+  return garage.unlockedLocations.includes(locationId);
+}
+
+export function selectCarClickerCar(
+  garage: CarClickerGarageState,
+  carId: CarClickerCarId,
+): CarClickerGarageState {
+  if (
+    garage.currentCar === carId ||
+    !isCarClickerCarUnlocked(garage, carId)
+  ) {
+    return garage;
+  }
+
+  return {
+    ...garage,
+    currentCar: carId,
+  };
+}
+
+export function selectCarClickerLocation(
+  garage: CarClickerGarageState,
+  locationId: CarClickerLocationId,
+): CarClickerGarageState {
+  if (
+    garage.currentLocation === locationId ||
+    !isCarClickerLocationUnlocked(garage, locationId)
+  ) {
+    return garage;
+  }
+
+  return {
+    ...garage,
+    currentLocation: locationId,
+  };
+}
+
+export function getCarClickerGarageView(
+  state: CarClickerGarageViewState,
+): CarClickerGarageView {
+  const cars = CAR_CLICKER_CARS.map((car) => ({
+    asset: getCarAsset(car.assetId),
+    definition: car,
+    isCurrent: car.id === state.garage.currentCar,
+    isUnlocked: state.garage.unlockedCars.includes(car.id),
+    stageAsset: getCarStageAsset(car.assetId, state.selectedCarTier),
+  }));
+  const locations = CAR_CLICKER_LOCATIONS.map((location) => ({
+    asset: getLocationAsset(location.assetId),
+    definition: location,
+    isCurrent: location.id === state.garage.currentLocation,
+    isUnlocked: state.garage.unlockedLocations.includes(location.id),
+  }));
+
+  return {
+    currentCar: cars.find((car) => car.isCurrent) ?? cars[0],
+    currentLocation:
+      locations.find((location) => location.isCurrent) ?? locations[0],
+    cars,
+    locations,
+  };
 }

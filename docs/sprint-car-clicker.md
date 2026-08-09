@@ -896,7 +896,7 @@ Czwarta iteracja:
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 
-Status: pierwsza i druga iteracja zrobione.
+Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
 
 Zakres koncepcyjny:
 
@@ -924,6 +924,22 @@ Druga iteracja:
 - Parser save jest kompatybilny wstecz: stare zapisy bez `garage` dostaja domyslne `starter` i `dealership`.
 - Parser filtruje odblokowane auta i lokacje do znanych id, zeby uszkodzony save nie przeniosl niepoprawnych wartosci do stanu gry.
 - Nie dodano jeszcze wyboru auta/lokacji w UI ani wplywu lokacji na ekonomie.
+
+Trzecia iteracja:
+
+- Dodano `CarClickerGarageView`, `CarClickerCarView`, `CarClickerLocationView` i `getCarClickerGarageView`.
+- Dodano `getCarAsset(carId)` w manifestach assetow, zeby widok garazu mogl skladac definicje auta z assetem i aktualnym stage.
+- `useCarClickerGame` zwraca teraz `garageView` jako gotowy model dla UI.
+- `CarTapButton` nie pobiera juz na sztywno assetu `starter`; dostaje `carName` i `stageAsset` z `garageView`.
+- Aktualny ekran nadal wyglada tak samo dla `starter`, ale architektura jest gotowa na kolejne auta bez przebudowy komponentu clickera.
+
+Czwarta iteracja:
+
+- Dodano czyste funkcje domenowe `selectCarClickerCar` i `selectCarClickerLocation`.
+- Dodano guardy `isCarClickerCarUnlocked` i `isCarClickerLocationUnlocked`, zeby nie dało sie ustawic zablokowanego auta albo lokacji.
+- Reducer obsluguje akcje `select_car` i `select_location`, aktualizujac tylko `game.garage`.
+- `useCarClickerGame` wystawia akcje `selectCar` i `selectLocation` dla przyszlego UI garazu.
+- Nie dodano jeszcze panelu wyboru auta/lokacji; iteracja przygotowuje bezpieczny kontrakt akcji.
 
 ### Zadanie 10: subgra Nitro Rush
 

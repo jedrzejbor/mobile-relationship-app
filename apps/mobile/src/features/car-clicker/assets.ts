@@ -84,11 +84,15 @@ export const CAR_CLICKER_CAR_ASSETS = {
   },
 } as const satisfies Record<CarClickerCarAssetId, CarClickerCarAsset>;
 
+export function getCarAsset(carId: CarClickerCarAssetId): CarClickerCarAsset {
+  return CAR_CLICKER_CAR_ASSETS[carId];
+}
+
 export function getCarStageAsset(
   carId: CarClickerCarAssetId,
   tier: number,
 ): CarClickerCarStageAsset {
-  const carAsset = CAR_CLICKER_CAR_ASSETS[carId];
+  const carAsset = getCarAsset(carId);
 
   return carAsset.stages.reduce<CarClickerCarStageAsset>(
     (selectedAsset, stageAsset) =>

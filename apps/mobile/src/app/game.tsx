@@ -11,6 +11,7 @@ import { CarClickerScreenHeader } from '@/features/car-clicker/components/car-cl
 import { CarClickerStatsPanel } from '@/features/car-clicker/components/car-clicker-stats-panel';
 import { CarTapButton } from '@/features/car-clicker/components/car-tap-button';
 import { CarTierProgressPanel } from '@/features/car-clicker/components/car-tier-progress-panel';
+import { GaragePanel } from '@/features/car-clicker/components/garage-panel';
 import { OfflineIncomeFeedbackPanel } from '@/features/car-clicker/components/offline-income-feedback-panel';
 import { TierUpFeedbackPanel } from '@/features/car-clicker/components/tier-up-feedback-panel';
 import { UpgradeShopPanel } from '@/features/car-clicker/components/upgrade-shop-panel';
@@ -74,6 +75,12 @@ export default function GameScreen() {
             <CarTierProgressPanel progress={tierProgress} />
 
             <TierUpFeedbackPanel feedback={tierFeedback} />
+
+            <GaragePanel
+              garageView={garageView}
+              onSelectCar={actions.selectCar}
+              onSelectLocation={actions.selectLocation}
+            />
 
             <UpgradeShopPanel
               onCategoryChange={actions.selectUpgradeCategory}

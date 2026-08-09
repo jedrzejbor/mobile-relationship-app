@@ -896,7 +896,7 @@ Czwarta iteracja:
 
 ### Zadanie 9: garage, cars i locations jako kolejne sprinty
 
-Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta i piata iteracja zrobione.
 
 Zakres koncepcyjny:
 
@@ -940,6 +940,14 @@ Czwarta iteracja:
 - Reducer obsluguje akcje `select_car` i `select_location`, aktualizujac tylko `game.garage`.
 - `useCarClickerGame` wystawia akcje `selectCar` i `selectLocation` dla przyszlego UI garazu.
 - Nie dodano jeszcze panelu wyboru auta/lokacji; iteracja przygotowuje bezpieczny kontrakt akcji.
+
+Piata iteracja:
+
+- Dodano `GaragePanel` jako pierwszy komponent UI dla garazu, aut i lokacji.
+- Panel pokazuje aktualne auto, aktualna lokacje, liste aut i liste lokacji na podstawie `garageView`.
+- Opcje wyboru korzystaja z `selectCar` i `selectLocation`, ale respektuja stan `isUnlocked`.
+- `game.tsx` renderuje `GaragePanel` pod progresem auta i przed sklepem ulepszen.
+- To nadal nie jest pelny osobny ekran garazu; to pierwsza sekcja kontrolna na ekranie clickera.
 
 ### Zadanie 10: subgra Nitro Rush
 

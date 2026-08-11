@@ -141,6 +141,9 @@ function CarOption({
             ? 'Odblokowane'
             : formatUnlockRequirementProgress(car.unlockProgress)}
         </ThemedText>
+        {!car.isUnlocked ? (
+          <UnlockProgressBar progressRatio={car.unlockProgress.progressRatio} />
+        ) : null}
       </View>
     </Pressable>
   );
@@ -186,8 +189,35 @@ function LocationOption({
             ? `x${location.definition.passiveIncomeMultiplier.toFixed(2)} passive`
             : formatUnlockRequirementProgress(location.unlockProgress)}
         </ThemedText>
+        {!location.isUnlocked ? (
+          <UnlockProgressBar
+            progressRatio={location.unlockProgress.progressRatio}
+          />
+        ) : null}
       </View>
     </Pressable>
+  );
+}
+
+function UnlockProgressBar({ progressRatio }: { progressRatio: number }) {
+  const progressPercent = `${Math.round(
+    Math.min(Math.max(progressRatio, 0), 1) * 100,
+  )}%` as const;
+
+  return (
+    <View
+      accessibilityLabel={`Postep odblokowania ${progressPercent}`}
+      accessibilityRole="progressbar"
+      style={styles.unlockProgressTrack}>
+      <View
+        style={[
+          styles.unlockProgressFill,
+          {
+            width: progressPercent,
+          },
+        ]}
+      />
+    </View>
   );
 }
 
@@ -292,5 +322,17 @@ const styles = StyleSheet.create({
   optionMeta: {
     color: CarClickerTheme.colors.click,
     textTransform: 'uppercase',
+  },
+  unlockProgressTrack: {
+    width: '100%',
+    height: 6,
+    overflow: 'hidden',
+    borderRadius: CarClickerTheme.radii.badge,
+    backgroundColor: CarClickerTheme.colors.panelMuted,
+  },
+  unlockProgressFill: {
+    height: '100%',
+    borderRadius: CarClickerTheme.radii.badge,
+    backgroundColor: CarClickerTheme.colors.accent,
   },
 });

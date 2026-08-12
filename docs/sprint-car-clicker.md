@@ -991,6 +991,8 @@ Dziesiata iteracja:
 
 ### Zadanie 10: subgra Nitro Rush
 
+Status: pierwsza iteracja zrobiona.
+
 Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
 
 Zakres koncepcyjny:
@@ -999,6 +1001,16 @@ Zakres koncepcyjny:
 - Wynik subgry ma wracac do glownego Car Clickera jako czasowy bonus do ekonomii.
 - Bonusy moga zwiekszac cash za klik, pasywny dochod, tempo czasu albo obnizac koszt kolejnego ulepszenia.
 - Ranking i backend dla wynikow zostawiamy jako osobny sprint po lokalnym MVP subgry.
+
+Pierwsza iteracja:
+
+- Dodano domenowy model bonusow czasowych w `bonuses.ts`.
+- Zdefiniowano `CarClickerActiveBonus`, `CarClickerBonusDefinition`, `CarClickerBonusType`, `CarClickerBonusSource` i `CarClickerActiveBonusView`.
+- Dodano pierwsze definicje nagrod z `Nitro Rush`: `Nitro Cash Boost` dla cash za klik i `Turbo Passive` dla dochodu pasywnego.
+- `CarClickerState` i lokalny save przechowuja teraz `activeBonuses`.
+- Parser save waliduje bonusy i odrzuca niepoprawne albo uszkodzone wpisy.
+- `recalculateCarClickerState` filtruje wygasle bonusy i stosuje aktywne mnozniki do `perClick` oraz `perSecond`.
+- Nie dodano jeszcze ekranu runa ani przyznawania nagrod z gameplayu; ta iteracja przygotowuje kontrakt ekonomii pod kolejne kroki.
 
 ## Definicja ukonczenia sprintu
 

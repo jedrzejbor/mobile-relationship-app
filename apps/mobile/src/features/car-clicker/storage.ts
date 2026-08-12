@@ -2,6 +2,11 @@ import * as SecureStore from 'expo-secure-store';
 
 import { recalculateCarClickerState } from './economy';
 import {
+  type CarClickerActiveBonus,
+  type CarClickerBonusSource,
+  type CarClickerBonusType,
+} from './bonuses';
+import {
   CAR_CLICKER_UPGRADE_IDS,
   INITIAL_CAR_CLICKER_UPGRADE_LEVELS,
 } from './upgrades';
@@ -45,6 +50,19 @@ function toNonNegativeInteger(value: unknown, fallback = 0) {
   return Math.floor(toNonNegativeNumber(value, fallback));
 }
 
+function isKnownCarClickerBonusSource(
+  value: unknown,
+): value is CarClickerBonusSource {
+  return value === 'nitro_rush';
+}
+
+function isKnownCarClickerBonusType(value: unknown): value is CarClickerBonusType {
+  return (
+    value === 'cash_per_click_multiplier' ||
+    value === 'passive_income_multiplier'
+  );
+}
+
 function isKnownCarClickerCarId(value: unknown): value is CarClickerCarId {
   return (
     typeof value === 'string' &&
@@ -71,6 +89,50 @@ function parseUpgradeLevels(value: unknown): CarClickerUpgradeLevels {
     }),
     { ...INITIAL_CAR_CLICKER_UPGRADE_LEVELS },
   );
+}
+
+function parseActiveBonus(value: unknown): CarClickerActiveBonus | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  if (
+    typeof value.id !== 'string' ||
+    typeof value.label !== 'string' ||
+    !isKnownCarClickerBonusSource(value.source) ||
+    !isKnownCarClickerBonusType(value.type)
+  ) {
+    return null;
+  }
+
+  const startedAt = toNonNegativeNumber(value.startedAt);
+  const expiresAt = toNonNegativeNumber(value.expiresAt);
+
+  if (expiresAt <= startedAt) {
+    return null;
+  }
+
+  return {
+    id: value.id,
+    label: value.label,
+    multiplier: Math.max(toNonNegativeNumber(value.multiplier, 1), 1),
+    source: value.source,
+    startedAt,
+    expiresAt,
+    type: value.type,
+  };
+}
+
+function parseActiveBonuses(value: unknown) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((bonus) => {
+    const activeBonus = parseActiveBonus(bonus);
+
+    return activeBonus ? [activeBonus] : [];
+  });
 }
 
 function parseGarageState(value: unknown): CarClickerGarageState {
@@ -115,6 +177,7 @@ function parseGameState(value: unknown): CarClickerState | null {
 
   return recalculateCarClickerState({
     cash: toNonNegativeNumber(value.cash),
+    activeBonuses: parseActiveBonuses(value.activeBonuses),
     totalEarnedCash: toNonNegativeNumber(value.totalEarnedCash),
     upgrades: parseUpgradeLevels(value.upgrades),
     perClick: 1,
@@ -129,6 +192,7 @@ function createPersistedGameState(
 ): CarClickerPersistedGameState {
   return {
     cash: game.cash,
+    activeBonuses: game.activeBonuses,
     totalEarnedCash: game.totalEarnedCash,
     upgrades: game.upgrades,
     selectedCarTier: game.selectedCarTier,

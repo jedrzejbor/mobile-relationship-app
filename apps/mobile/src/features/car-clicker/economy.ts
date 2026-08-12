@@ -4,6 +4,12 @@ import {
   INITIAL_CAR_CLICKER_UPGRADE_LEVELS,
 } from './upgrades';
 import {
+  calculateCarClickerBonusMultiplier,
+  filterActiveCarClickerBonuses,
+  INITIAL_CAR_CLICKER_ACTIVE_BONUSES,
+} from './bonuses';
+import type { CarClickerActiveBonus } from './bonuses';
+import {
   getCarClickerLocationById,
   INITIAL_CAR_CLICKER_GARAGE_STATE,
   refreshCarClickerGarageUnlocks,
@@ -32,6 +38,7 @@ export const MAX_OFFLINE_INCOME_SECONDS = 4 * 60 * 60;
 export function createInitialCarClickerState(): CarClickerState {
   return recalculateCarClickerState({
     cash: 0,
+    activeBonuses: INITIAL_CAR_CLICKER_ACTIVE_BONUSES,
     totalEarnedCash: 0,
     perClick: BASE_PER_CLICK,
     perSecond: BASE_PER_SECOND,
@@ -63,12 +70,27 @@ export function calculateTotalUpgradeLevels(levels: CarClickerUpgradeLevels) {
   return Object.values(levels).reduce((sum, level) => sum + level, 0);
 }
 
-export function calculatePerClick(levels: CarClickerUpgradeLevels) {
+export function calculateBasePerClick(levels: CarClickerUpgradeLevels) {
   return CAR_CLICKER_UPGRADES.reduce(
     (perClick, upgrade) =>
       perClick +
       (upgrade.perClickBonus ?? 0) * getCarClickerUpgradeLevel(levels, upgrade.id),
     BASE_PER_CLICK,
+  );
+}
+
+export function calculatePerClick(
+  levels: CarClickerUpgradeLevels,
+  activeBonuses: readonly CarClickerActiveBonus[] = INITIAL_CAR_CLICKER_ACTIVE_BONUSES,
+  now = Date.now(),
+) {
+  return (
+    calculateBasePerClick(levels) *
+    calculateCarClickerBonusMultiplier(
+      activeBonuses,
+      'cash_per_click_multiplier',
+      now,
+    )
   );
 }
 
@@ -91,14 +113,25 @@ export function getLocationPassiveIncomeMultiplier(
 export function calculatePerSecond(
   levels: CarClickerUpgradeLevels,
   locationId?: CarClickerLocationId,
+  activeBonuses: readonly CarClickerActiveBonus[] = INITIAL_CAR_CLICKER_ACTIVE_BONUSES,
+  now = Date.now(),
 ) {
   const basePerSecond = calculateBasePerSecond(levels);
+  const passiveBonusMultiplier = calculateCarClickerBonusMultiplier(
+    activeBonuses,
+    'passive_income_multiplier',
+    now,
+  );
 
   if (locationId === undefined) {
-    return basePerSecond;
+    return basePerSecond * passiveBonusMultiplier;
   }
 
-  return basePerSecond * getLocationPassiveIncomeMultiplier(locationId);
+  return (
+    basePerSecond *
+    getLocationPassiveIncomeMultiplier(locationId) *
+    passiveBonusMultiplier
+  );
 }
 
 export function calculateCarTier(levels: CarClickerUpgradeLevels) {
@@ -201,8 +234,10 @@ export function compareUpgradeViews(
 
 export function recalculateCarClickerState(
   state: CarClickerState,
+  now = Date.now(),
 ): CarClickerState {
   const selectedCarTier = calculateCarTier(state.upgrades);
+  const activeBonuses = filterActiveCarClickerBonuses(state.activeBonuses, now);
   const garage = refreshCarClickerGarageUnlocks(state.garage, {
     cash: state.cash,
     selectedCarTier,
@@ -210,9 +245,15 @@ export function recalculateCarClickerState(
 
   return {
     ...state,
+    activeBonuses,
     garage,
-    perClick: calculatePerClick(state.upgrades),
-    perSecond: calculatePerSecond(state.upgrades, garage.currentLocation),
+    perClick: calculatePerClick(state.upgrades, activeBonuses, now),
+    perSecond: calculatePerSecond(
+      state.upgrades,
+      garage.currentLocation,
+      activeBonuses,
+      now,
+    ),
     selectedCarTier,
   };
 }

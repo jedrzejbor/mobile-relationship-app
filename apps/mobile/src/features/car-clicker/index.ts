@@ -1,4 +1,5 @@
 export * from './assets';
+export * from './bonuses';
 export * from './car-appearance';
 export * from './economy';
 export * from './format';

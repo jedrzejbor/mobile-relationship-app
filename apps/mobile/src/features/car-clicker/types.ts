@@ -1,3 +1,4 @@
+import type { CarClickerActiveBonus } from './bonuses';
 import type { CarClickerGarageState } from './garage';
 
 export type CarClickerUpgradeCategory =
@@ -32,6 +33,7 @@ export type CarClickerUpgradeLevels = Record<CarClickerUpgradeId, number>;
 
 export type CarClickerState = {
   cash: number;
+  activeBonuses: readonly CarClickerActiveBonus[];
   totalEarnedCash: number;
   perClick: number;
   perSecond: number;
@@ -54,6 +56,7 @@ export type CarClickerLoadedSaveData = {
 
 export type CarClickerPersistedGameState = {
   cash: number;
+  activeBonuses: readonly CarClickerActiveBonus[];
   totalEarnedCash: number;
   upgrades: CarClickerUpgradeLevels;
   selectedCarTier: number;

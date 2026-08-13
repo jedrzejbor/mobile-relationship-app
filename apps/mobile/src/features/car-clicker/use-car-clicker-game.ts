@@ -4,6 +4,7 @@ import {
   getCarTierProgress,
   getUpgradeViews,
 } from './economy';
+import { getActiveCarClickerBonusViews } from './bonuses';
 import {
   getCarClickerGarageView,
   type CarClickerCarId,
@@ -54,6 +55,10 @@ export function useCarClickerGame() {
   const upgradeViews = useMemo(
     () => getUpgradeViews(game, upgradeCategory),
     [game, upgradeCategory],
+  );
+  const activeBonusViews = useMemo(
+    () => getActiveCarClickerBonusViews(game.activeBonuses),
+    [game.activeBonuses],
   );
   const hydrateGame = useCallback(
     (
@@ -123,6 +128,7 @@ export function useCarClickerGame() {
   }
 
   return {
+    activeBonusViews,
     offlineIncomeFeedback,
     purchaseFeedback,
     state: game,

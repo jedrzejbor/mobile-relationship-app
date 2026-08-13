@@ -3,16 +3,22 @@ import { Animated, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
-import { formatCarClickerCash } from '@/features/car-clicker/format';
+import type { CarClickerActiveBonusView } from '@/features/car-clicker/bonuses';
+import {
+  formatCarClickerCash,
+  formatCarClickerDuration,
+} from '@/features/car-clicker/format';
 import { CarClickerTheme } from '@/features/car-clicker/theme';
 
 type CarClickerStatsPanelProps = {
+  activeBonusViews?: readonly CarClickerActiveBonusView[];
   cash: number;
   perClick: number;
   perSecond: number;
 };
 
 export function CarClickerStatsPanel({
+  activeBonusViews = [],
   cash,
   perClick,
   perSecond,
@@ -96,6 +102,20 @@ export function CarClickerStatsPanel({
           {passiveIncomeStatus}
         </ThemedText>
       </View>
+
+      {activeBonusViews.length > 0 ? (
+        <View style={styles.bonusList}>
+          <ThemedText type="smallBold" style={styles.bonusListTitle}>
+            Aktywne bonusy
+          </ThemedText>
+          {activeBonusViews.map((bonusView) => (
+            <ActiveBonusItem
+              bonusView={bonusView}
+              key={bonusView.bonus.id}
+            />
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -119,6 +139,45 @@ function StatItem({
       <ThemedText type="smallBold" style={[styles.value, { color: valueColor }]}>
         {value}
       </ThemedText>
+    </View>
+  );
+}
+
+function ActiveBonusItem({
+  bonusView,
+}: {
+  bonusView: CarClickerActiveBonusView;
+}) {
+  const progressPercent = `${Math.round(
+    Math.min(Math.max(bonusView.progressRatio, 0), 1) * 100,
+  )}%` as const;
+
+  return (
+    <View style={styles.bonusItem}>
+      <View style={styles.bonusHeader}>
+        <ThemedText type="smallBold" style={styles.bonusName}>
+          {bonusView.bonus.label}
+        </ThemedText>
+        <ThemedText type="smallBold" style={styles.bonusMultiplier}>
+          x{bonusView.bonus.multiplier.toFixed(1)}
+        </ThemedText>
+      </View>
+      <ThemedText type="small" style={styles.bonusTime}>
+        {formatCarClickerDuration(bonusView.remainingSeconds)}
+      </ThemedText>
+      <View
+        accessibilityLabel={`Pozostaly czas bonusu ${progressPercent}`}
+        accessibilityRole="progressbar"
+        style={styles.bonusProgressTrack}>
+        <View
+          style={[
+            styles.bonusProgressFill,
+            {
+              width: progressPercent,
+            },
+          ]}
+        />
+      </View>
     </View>
   );
 }
@@ -187,5 +246,51 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     color: CarClickerTheme.colors.textMuted,
     textAlign: 'right',
+  },
+  bonusList: {
+    gap: Spacing.two,
+  },
+  bonusListTitle: {
+    color: CarClickerTheme.colors.text,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
+  bonusItem: {
+    borderRadius: CarClickerTheme.radii.control,
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    backgroundColor: CarClickerTheme.colors.panelStrong,
+    padding: Spacing.two,
+    gap: Spacing.one,
+  },
+  bonusHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.two,
+  },
+  bonusName: {
+    flexShrink: 1,
+    color: CarClickerTheme.colors.accent,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
+  bonusMultiplier: {
+    color: CarClickerTheme.colors.money,
+  },
+  bonusTime: {
+    color: CarClickerTheme.colors.textMuted,
+  },
+  bonusProgressTrack: {
+    width: '100%',
+    height: 6,
+    overflow: 'hidden',
+    borderRadius: CarClickerTheme.radii.badge,
+    backgroundColor: CarClickerTheme.colors.panelMuted,
+  },
+  bonusProgressFill: {
+    height: '100%',
+    borderRadius: CarClickerTheme.radii.badge,
+    backgroundColor: CarClickerTheme.colors.accent,
   },
 });

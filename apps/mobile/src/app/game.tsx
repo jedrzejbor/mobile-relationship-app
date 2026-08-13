@@ -26,6 +26,7 @@ export default function GameScreen() {
   const { isCompactLayout } = useCarClickerLayout();
   const {
     actions,
+    activeBonusViews,
     garageView,
     offlineIncomeFeedback,
     purchaseFeedback,
@@ -54,6 +55,7 @@ export default function GameScreen() {
             />
 
             <CarClickerStatsPanel
+              activeBonusViews={activeBonusViews}
               cash={state.cash}
               perClick={state.perClick}
               perSecond={state.perSecond}

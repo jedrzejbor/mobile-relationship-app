@@ -28,6 +28,9 @@ export default function AppTabs() {
           <TabTrigger name="game" href="/game" asChild>
             <TabButton>{CAR_CLICKER_SCREEN.tabTitle}</TabButton>
           </TabTrigger>
+          <TabTrigger name="nitro-rush" href="/nitro-rush" asChild>
+            <TabButton>Nitro</TabButton>
+          </TabTrigger>
         </CustomTabList>
       </TabList>
     </Tabs>

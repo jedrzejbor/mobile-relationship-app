@@ -991,7 +991,7 @@ Dziesiata iteracja:
 
 ### Zadanie 10: subgra Nitro Rush
 
-Status: pierwsza, druga, trzecia i czwarta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta i piata iteracja zrobione.
 
 Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
 
@@ -1038,6 +1038,15 @@ Czwarta iteracja:
 - Panel statystyk pokazuje liste aktywnych bonusow, ich mnoznik, pozostaly czas i pasek postepu czasu trwania.
 - `game.tsx` przekazuje `activeBonusViews` do panelu statystyk glownego clickera.
 - Aktywny bonus z Nitro Rush ma teraz widoczny efekt w UI glownej gry, nawet zanim powstanie osobny ekran runa.
+
+Piata iteracja:
+
+- Dodano ekran `nitro-rush.tsx` jako pierwszy prototyp subgry.
+- Ekran pokazuje naglowek runa, czas trwania, tor z bramkami i przeszkodami, aktualne auto oraz wynik demo runa.
+- Ekran korzysta z `NITRO_RUSH_RUN_CONFIG` i `createNitroRushRunResult`, wiec UI jest podpiety do domenowej konfiguracji zamiast miec osobna logike wyniku.
+- Dodano CTA `Odbierz bonus`, ktore wywoluje `claimNitroRushReward(DEMO_RUN_INPUT)` i zapisuje nagrode w glownej ekonomii Car Clickera.
+- Dodano trase `nitro-rush` do tabow natywnych i webowych.
+- To nadal nie jest finalny runner z ruchem i kolizjami; to pierwszy playable/prototype screen pozwalajacy przejsc od runa do aktywnego bonusu.
 
 ## Definicja ukonczenia sprintu
 

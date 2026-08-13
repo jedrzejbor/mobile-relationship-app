@@ -51,6 +51,18 @@ export default function AppTabs() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="nitro-rush"
+        options={{
+          title: 'Nitro',
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('@/assets/images/tabIcons/explore.png')}
+              style={[styles.tabIcon, { tintColor: color }]}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

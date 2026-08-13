@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { Image } from 'expo-image';
 import { Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,11 +17,6 @@ import {
   type NitroRushRunInput,
   useCarClickerGame,
 } from '@/features/car-clicker';
-
-const DEMO_RUN_INPUT = {
-  collectedGateIds: ['gate_score_5', 'gate_multiplier_2', 'gate_nitro_10'],
-  hitObstacleIds: ['obstacle_cones'],
-} as const satisfies NitroRushRunInput;
 
 function getGateEffectLabel(gate: NitroRushGateDefinition) {
   switch (gate.effect.type) {
@@ -55,10 +51,48 @@ function getLaneStyle(lane: NitroRushLane) {
 
 export default function NitroRushScreen() {
   const { actions, garageView } = useCarClickerGame();
-  const runResult = createNitroRushRunResult(DEMO_RUN_INPUT);
+  const [collectedGateIds, setCollectedGateIds] = useState<string[]>([]);
+  const [hitObstacleIds, setHitObstacleIds] = useState<string[]>([]);
+  const runInput = useMemo<NitroRushRunInput>(
+    () => ({
+      collectedGateIds,
+      hitObstacleIds,
+    }),
+    [collectedGateIds, hitObstacleIds],
+  );
+  const runResult = useMemo(
+    () => createNitroRushRunResult(runInput),
+    [runInput],
+  );
+  const hasRunChoices =
+    collectedGateIds.length > 0 || hitObstacleIds.length > 0;
+
+  function toggleGate(gateId: string) {
+    setCollectedGateIds((currentGateIds) =>
+      currentGateIds.includes(gateId)
+        ? currentGateIds.filter((currentGateId) => currentGateId !== gateId)
+        : [...currentGateIds, gateId],
+    );
+  }
+
+  function toggleObstacle(obstacleId: string) {
+    setHitObstacleIds((currentObstacleIds) =>
+      currentObstacleIds.includes(obstacleId)
+        ? currentObstacleIds.filter(
+            (currentObstacleId) => currentObstacleId !== obstacleId,
+          )
+        : [...currentObstacleIds, obstacleId],
+    );
+  }
+
+  function resetRun() {
+    setCollectedGateIds([]);
+    setHitObstacleIds([]);
+  }
 
   function claimReward() {
-    actions.claimNitroRushReward(DEMO_RUN_INPUT);
+    actions.claimNitroRushReward(runInput);
+    resetRun();
   }
 
   return (
@@ -84,7 +118,7 @@ export default function NitroRushScreen() {
             <View style={styles.trackPanel}>
               <View style={styles.trackHeader}>
                 <ThemedText type="smallBold" style={styles.panelTitle}>
-                  Tor
+                  Wybierz linie
                 </ThemedText>
                 <ThemedText type="smallBold" style={styles.multiplierBadge}>
                   x{runResult.finalMultiplier.toFixed(1)}
@@ -92,38 +126,54 @@ export default function NitroRushScreen() {
               </View>
 
               <View style={styles.track}>
-                {NITRO_RUSH_RUN_CONFIG.gates.map((gate) => (
-                  <View
-                    key={gate.id}
-                    style={[
-                      styles.trackTile,
-                      styles.gateTile,
-                      getLaneStyle(gate.lane),
-                    ]}>
-                    <ThemedText type="smallBold" style={styles.tileTitle}>
-                      {gate.label}
-                    </ThemedText>
-                    <ThemedText type="small" style={styles.tileMeta}>
-                      {getGateEffectLabel(gate)}
-                    </ThemedText>
-                  </View>
-                ))}
-                {NITRO_RUSH_RUN_CONFIG.obstacles.map((obstacle) => (
-                  <View
-                    key={obstacle.id}
-                    style={[
-                      styles.trackTile,
-                      styles.obstacleTile,
-                      getLaneStyle(obstacle.lane),
-                    ]}>
-                    <ThemedText type="smallBold" style={styles.tileTitle}>
-                      {obstacle.label}
-                    </ThemedText>
-                    <ThemedText type="small" style={styles.tileMeta}>
-                      {getObstaclePenaltyLabel(obstacle)}
-                    </ThemedText>
-                  </View>
-                ))}
+                {NITRO_RUSH_RUN_CONFIG.gates.map((gate) => {
+                  const isSelected = collectedGateIds.includes(gate.id);
+
+                  return (
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: isSelected }}
+                      key={gate.id}
+                      onPress={() => toggleGate(gate.id)}
+                      style={[
+                        styles.trackTile,
+                        styles.gateTile,
+                        isSelected && styles.gateTileSelected,
+                        getLaneStyle(gate.lane),
+                      ]}>
+                      <ThemedText type="smallBold" style={styles.tileTitle}>
+                        {gate.label}
+                      </ThemedText>
+                      <ThemedText type="small" style={styles.tileMeta}>
+                        {getGateEffectLabel(gate)}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+                {NITRO_RUSH_RUN_CONFIG.obstacles.map((obstacle) => {
+                  const isSelected = hitObstacleIds.includes(obstacle.id);
+
+                  return (
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: isSelected }}
+                      key={obstacle.id}
+                      onPress={() => toggleObstacle(obstacle.id)}
+                      style={[
+                        styles.trackTile,
+                        styles.obstacleTile,
+                        isSelected && styles.obstacleTileSelected,
+                        getLaneStyle(obstacle.lane),
+                      ]}>
+                      <ThemedText type="smallBold" style={styles.tileTitle}>
+                        {obstacle.label}
+                      </ThemedText>
+                      <ThemedText type="small" style={styles.tileMeta}>
+                        {getObstaclePenaltyLabel(obstacle)}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
               </View>
 
               <Image
@@ -156,13 +206,28 @@ export default function NitroRushScreen() {
 
               <Pressable
                 accessibilityRole="button"
+                disabled={!hasRunChoices}
                 onPress={claimReward}
                 style={({ pressed }) => [
                   styles.claimButton,
+                  !hasRunChoices && styles.claimButtonDisabled,
                   pressed && styles.claimButtonPressed,
                 ]}>
                 <ThemedText type="smallBold" style={styles.claimButtonText}>
                   Odbierz bonus
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                disabled={!hasRunChoices}
+                onPress={resetRun}
+                style={({ pressed }) => [
+                  styles.resetButton,
+                  !hasRunChoices && styles.resetButtonDisabled,
+                  pressed && styles.claimButtonPressed,
+                ]}>
+                <ThemedText type="smallBold" style={styles.resetButtonText}>
+                  Reset runa
                 </ThemedText>
               </Pressable>
             </View>
@@ -278,9 +343,17 @@ const styles = StyleSheet.create({
     borderColor: CarClickerTheme.colors.click,
     backgroundColor: 'rgba(47, 185, 255, 0.16)',
   },
+  gateTileSelected: {
+    borderColor: CarClickerTheme.colors.accent,
+    backgroundColor: CarClickerTheme.colors.accentDim,
+  },
   obstacleTile: {
     borderColor: CarClickerTheme.colors.danger,
     backgroundColor: 'rgba(255, 92, 112, 0.14)',
+  },
+  obstacleTileSelected: {
+    borderColor: CarClickerTheme.colors.danger,
+    backgroundColor: 'rgba(255, 92, 112, 0.28)',
   },
   tileLeft: {
     alignSelf: 'flex-start',
@@ -371,8 +444,29 @@ const styles = StyleSheet.create({
   claimButtonPressed: {
     opacity: 0.78,
   },
+  claimButtonDisabled: {
+    opacity: 0.45,
+  },
   claimButtonText: {
     color: CarClickerTheme.colors.background,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
+  resetButton: {
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    borderRadius: CarClickerTheme.radii.control,
+    backgroundColor: CarClickerTheme.colors.panelStrong,
+    paddingHorizontal: Spacing.three,
+  },
+  resetButtonDisabled: {
+    opacity: 0.45,
+  },
+  resetButtonText: {
+    color: CarClickerTheme.colors.textMuted,
     fontStyle: 'italic',
     textTransform: 'uppercase',
   },

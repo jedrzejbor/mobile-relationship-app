@@ -991,7 +991,7 @@ Dziesiata iteracja:
 
 ### Zadanie 10: subgra Nitro Rush
 
-Status: pierwsza, druga, trzecia, czwarta i piata iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata i szosta iteracja zrobione.
 
 Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
 
@@ -1047,6 +1047,16 @@ Piata iteracja:
 - Dodano CTA `Odbierz bonus`, ktore wywoluje `claimNitroRushReward(DEMO_RUN_INPUT)` i zapisuje nagrode w glownej ekonomii Car Clickera.
 - Dodano trase `nitro-rush` do tabow natywnych i webowych.
 - To nadal nie jest finalny runner z ruchem i kolizjami; to pierwszy playable/prototype screen pozwalajacy przejsc od runa do aktywnego bonusu.
+
+Szosta iteracja:
+
+- Ekran `nitro-rush.tsx` ma teraz lokalny stan runa: `collectedGateIds` i `hitObstacleIds`.
+- Klikniecie bramki dodaje albo usuwa ja z aktualnego runa.
+- Klikniecie przeszkody oznacza albo cofa kolizje w aktualnym runie.
+- Wynik, combo, mnoznik i nagroda licza sie z aktualnego `NitroRushRunInput`, zamiast ze stalego demo inputu.
+- CTA `Odbierz bonus` jest wylaczone do momentu pierwszego wyboru i po odbiorze resetuje run.
+- Dodano `Reset runa`, zeby mozna bylo szybko wyczyscic wybory podczas prototypowania.
+- To nadal nie jest runner w czasie rzeczywistym; to minimalna interakcja tap-to-select, ktora sprawdza petle wybor -> wynik -> nagroda.
 
 ## Definicja ukonczenia sprintu
 

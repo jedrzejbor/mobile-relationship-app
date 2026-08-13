@@ -991,7 +991,7 @@ Dziesiata iteracja:
 
 ### Zadanie 10: subgra Nitro Rush
 
-Status: pierwsza, druga, trzecia, czwarta, piata i szosta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta i siodma iteracja zrobione.
 
 Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
 
@@ -1057,6 +1057,14 @@ Szosta iteracja:
 - CTA `Odbierz bonus` jest wylaczone do momentu pierwszego wyboru i po odbiorze resetuje run.
 - Dodano `Reset runa`, zeby mozna bylo szybko wyczyscic wybory podczas prototypowania.
 - To nadal nie jest runner w czasie rzeczywistym; to minimalna interakcja tap-to-select, ktora sprawdza petle wybor -> wynik -> nagroda.
+
+Siodma iteracja:
+
+- Dodano `NitroRushRunSelection` jako domenowy stan wyborow runa.
+- Dodano `INITIAL_NITRO_RUSH_RUN_SELECTION`.
+- Dodano czyste helpery `toggleNitroRushGate`, `toggleNitroRushObstacle`, `hasNitroRushRunSelection` i `createNitroRushRunInput`.
+- Ekran `nitro-rush.tsx` przechowuje teraz jeden obiekt `runSelection`, zamiast osobno zarzadzac listami bramek i przeszkod.
+- Logika toggle/reset/build input zostala przeniesiona poza UI, zeby przyszly runner z animacja mogl uzyc tego samego kontraktu.
 
 ## Definicja ukonczenia sprintu
 

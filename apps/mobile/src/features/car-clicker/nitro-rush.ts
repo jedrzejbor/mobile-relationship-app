@@ -57,6 +57,11 @@ export type NitroRushRunInput = {
   hitObstacleIds: readonly string[];
 };
 
+export type NitroRushRunSelection = {
+  collectedGateIds: readonly string[];
+  hitObstacleIds: readonly string[];
+};
+
 export type NitroRushRunResult = {
   bestGateValue: number;
   bonusDefinition: CarClickerBonusDefinition;
@@ -111,6 +116,11 @@ export const NITRO_RUSH_RUN_CONFIG = {
   ],
 } as const satisfies NitroRushRunConfig;
 
+export const INITIAL_NITRO_RUSH_RUN_SELECTION = {
+  collectedGateIds: [],
+  hitObstacleIds: [],
+} as const satisfies NitroRushRunSelection;
+
 const NITRO_RUSH_GATE_BY_ID = NITRO_RUSH_RUN_CONFIG.gates.reduce(
   (gatesById, gate) => ({
     ...gatesById,
@@ -126,6 +136,48 @@ const NITRO_RUSH_OBSTACLE_BY_ID = NITRO_RUSH_RUN_CONFIG.obstacles.reduce(
   }),
   {} as Record<string, NitroRushObstacleDefinition>,
 );
+
+function toggleId(ids: readonly string[], id: string) {
+  return ids.includes(id)
+    ? ids.filter((currentId) => currentId !== id)
+    : [...ids, id];
+}
+
+export function toggleNitroRushGate(
+  selection: NitroRushRunSelection,
+  gateId: string,
+): NitroRushRunSelection {
+  return {
+    ...selection,
+    collectedGateIds: toggleId(selection.collectedGateIds, gateId),
+  };
+}
+
+export function toggleNitroRushObstacle(
+  selection: NitroRushRunSelection,
+  obstacleId: string,
+): NitroRushRunSelection {
+  return {
+    ...selection,
+    hitObstacleIds: toggleId(selection.hitObstacleIds, obstacleId),
+  };
+}
+
+export function hasNitroRushRunSelection(selection: NitroRushRunSelection) {
+  return (
+    selection.collectedGateIds.length > 0 ||
+    selection.hitObstacleIds.length > 0
+  );
+}
+
+export function createNitroRushRunInput(
+  selection: NitroRushRunSelection,
+): NitroRushRunInput {
+  return {
+    collectedGateIds: selection.collectedGateIds,
+    hitObstacleIds: selection.hitObstacleIds,
+  };
+}
 
 export function calculateNitroRushScore(
   input: NitroRushRunInput,

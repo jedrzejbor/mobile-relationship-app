@@ -8,13 +8,18 @@ import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import {
   CarClickerTheme,
+  createNitroRushRunInput,
   createNitroRushRunResult,
   formatCarClickerDuration,
+  hasNitroRushRunSelection,
+  INITIAL_NITRO_RUSH_RUN_SELECTION,
   NITRO_RUSH_RUN_CONFIG,
+  toggleNitroRushGate,
+  toggleNitroRushObstacle,
   type NitroRushGateDefinition,
   type NitroRushLane,
   type NitroRushObstacleDefinition,
-  type NitroRushRunInput,
+  type NitroRushRunSelection,
   useCarClickerGame,
 } from '@/features/car-clicker';
 
@@ -51,43 +56,33 @@ function getLaneStyle(lane: NitroRushLane) {
 
 export default function NitroRushScreen() {
   const { actions, garageView } = useCarClickerGame();
-  const [collectedGateIds, setCollectedGateIds] = useState<string[]>([]);
-  const [hitObstacleIds, setHitObstacleIds] = useState<string[]>([]);
-  const runInput = useMemo<NitroRushRunInput>(
-    () => ({
-      collectedGateIds,
-      hitObstacleIds,
-    }),
-    [collectedGateIds, hitObstacleIds],
+  const [runSelection, setRunSelection] = useState<NitroRushRunSelection>(
+    INITIAL_NITRO_RUSH_RUN_SELECTION,
+  );
+  const runInput = useMemo(
+    () => createNitroRushRunInput(runSelection),
+    [runSelection],
   );
   const runResult = useMemo(
     () => createNitroRushRunResult(runInput),
     [runInput],
   );
-  const hasRunChoices =
-    collectedGateIds.length > 0 || hitObstacleIds.length > 0;
+  const hasRunChoices = hasNitroRushRunSelection(runSelection);
 
   function toggleGate(gateId: string) {
-    setCollectedGateIds((currentGateIds) =>
-      currentGateIds.includes(gateId)
-        ? currentGateIds.filter((currentGateId) => currentGateId !== gateId)
-        : [...currentGateIds, gateId],
+    setRunSelection((currentSelection) =>
+      toggleNitroRushGate(currentSelection, gateId),
     );
   }
 
   function toggleObstacle(obstacleId: string) {
-    setHitObstacleIds((currentObstacleIds) =>
-      currentObstacleIds.includes(obstacleId)
-        ? currentObstacleIds.filter(
-            (currentObstacleId) => currentObstacleId !== obstacleId,
-          )
-        : [...currentObstacleIds, obstacleId],
+    setRunSelection((currentSelection) =>
+      toggleNitroRushObstacle(currentSelection, obstacleId),
     );
   }
 
   function resetRun() {
-    setCollectedGateIds([]);
-    setHitObstacleIds([]);
+    setRunSelection(INITIAL_NITRO_RUSH_RUN_SELECTION);
   }
 
   function claimReward() {
@@ -127,7 +122,7 @@ export default function NitroRushScreen() {
 
               <View style={styles.track}>
                 {NITRO_RUSH_RUN_CONFIG.gates.map((gate) => {
-                  const isSelected = collectedGateIds.includes(gate.id);
+                  const isSelected = runSelection.collectedGateIds.includes(gate.id);
 
                   return (
                     <Pressable
@@ -151,7 +146,9 @@ export default function NitroRushScreen() {
                   );
                 })}
                 {NITRO_RUSH_RUN_CONFIG.obstacles.map((obstacle) => {
-                  const isSelected = hitObstacleIds.includes(obstacle.id);
+                  const isSelected = runSelection.hitObstacleIds.includes(
+                    obstacle.id,
+                  );
 
                   return (
                     <Pressable

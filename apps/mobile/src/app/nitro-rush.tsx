@@ -19,6 +19,7 @@ import {
   type NitroRushGateDefinition,
   type NitroRushLane,
   type NitroRushObstacleDefinition,
+  type NitroRushRunResult,
   type NitroRushRunSelection,
   useCarClickerGame,
 } from '@/features/car-clicker';
@@ -59,6 +60,8 @@ export default function NitroRushScreen() {
   const [runSelection, setRunSelection] = useState<NitroRushRunSelection>(
     INITIAL_NITRO_RUSH_RUN_SELECTION,
   );
+  const [lastClaimedResult, setLastClaimedResult] =
+    useState<NitroRushRunResult | null>(null);
   const runInput = useMemo(
     () => createNitroRushRunInput(runSelection),
     [runSelection],
@@ -70,12 +73,14 @@ export default function NitroRushScreen() {
   const hasRunChoices = hasNitroRushRunSelection(runSelection);
 
   function toggleGate(gateId: string) {
+    setLastClaimedResult(null);
     setRunSelection((currentSelection) =>
       toggleNitroRushGate(currentSelection, gateId),
     );
   }
 
   function toggleObstacle(obstacleId: string) {
+    setLastClaimedResult(null);
     setRunSelection((currentSelection) =>
       toggleNitroRushObstacle(currentSelection, obstacleId),
     );
@@ -87,6 +92,7 @@ export default function NitroRushScreen() {
 
   function claimReward() {
     actions.claimNitroRushReward(runInput);
+    setLastClaimedResult(runResult);
     resetRun();
   }
 
@@ -200,6 +206,18 @@ export default function NitroRushScreen() {
                   {formatCarClickerDuration(runResult.bonusDefinition.durationSeconds)}
                 </ThemedText>
               </View>
+
+              {lastClaimedResult ? (
+                <View style={styles.claimedBox}>
+                  <ThemedText type="smallBold" style={styles.claimedTitle}>
+                    Bonus aktywny
+                  </ThemedText>
+                  <ThemedText type="small" style={styles.claimedText}>
+                    {lastClaimedResult.bonusDefinition.label} za score{' '}
+                    {lastClaimedResult.score}
+                  </ThemedText>
+                </View>
+              ) : null}
 
               <Pressable
                 accessibilityRole="button"
@@ -429,6 +447,22 @@ const styles = StyleSheet.create({
   },
   rewardMeta: {
     color: CarClickerTheme.colors.money,
+  },
+  claimedBox: {
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.success,
+    borderRadius: CarClickerTheme.radii.control,
+    backgroundColor: 'rgba(120, 223, 69, 0.12)',
+    padding: Spacing.two,
+    gap: Spacing.one,
+  },
+  claimedTitle: {
+    color: CarClickerTheme.colors.success,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
+  claimedText: {
+    color: CarClickerTheme.colors.textMuted,
   },
   claimButton: {
     minHeight: 52,

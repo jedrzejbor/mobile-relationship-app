@@ -991,7 +991,7 @@ Dziesiata iteracja:
 
 ### Zadanie 10: subgra Nitro Rush
 
-Status: pierwsza iteracja zrobiona.
+Status: pierwsza i druga iteracja zrobione.
 
 Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
 
@@ -1011,6 +1011,16 @@ Pierwsza iteracja:
 - Parser save waliduje bonusy i odrzuca niepoprawne albo uszkodzone wpisy.
 - `recalculateCarClickerState` filtruje wygasle bonusy i stosuje aktywne mnozniki do `perClick` oraz `perSecond`.
 - Nie dodano jeszcze ekranu runa ani przyznawania nagrod z gameplayu; ta iteracja przygotowuje kontrakt ekonomii pod kolejne kroki.
+
+Druga iteracja:
+
+- Dodano `nitro-rush.ts` jako czysty modul domenowy subgry.
+- Zdefiniowano `NitroRushRunConfig`, `NitroRushGateDefinition`, `NitroRushObstacleDefinition`, `NitroRushRunInput` i `NitroRushRunResult`.
+- Dodano pierwsza konfiguracje runa `NITRO_RUSH_RUN_CONFIG`: czas trwania, trzy pasy, bramki punktow, bramke mnoznika, bramke nitro i dwie przeszkody.
+- Dodano `calculateNitroRushScore`, ktory liczy wynik, combo, najlepsza bramke i finalny mnoznik na podstawie zebranych bramek oraz trafionych przeszkod.
+- Dodano `selectNitroRushBonusDefinition`, ktory mapuje wynik runa na definicje bonusu dla glownego Car Clickera.
+- Dodano `createNitroRushRunResult`, ktory tworzy finalny wynik runa razem z gotowym `rewardBonus`.
+- Nie dodano jeszcze UI runa; ta iteracja przygotowuje konfiguracje i logike, z ktorej bedzie korzystac ekran.
 
 ## Definicja ukonczenia sprintu
 

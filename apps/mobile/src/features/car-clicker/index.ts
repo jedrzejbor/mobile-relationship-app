@@ -5,6 +5,7 @@ export * from './economy';
 export * from './format';
 export * from './garage';
 export * from './layout';
+export * from './nitro-rush';
 export * from './reducer';
 export * from './screen';
 export * from './storage';

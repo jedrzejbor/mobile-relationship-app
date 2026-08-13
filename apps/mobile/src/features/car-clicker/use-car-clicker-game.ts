@@ -9,6 +9,7 @@ import {
   type CarClickerCarId,
   type CarClickerLocationId,
 } from './garage';
+import type { NitroRushRunInput } from './nitro-rush';
 import {
   carClickerReducer,
   createInitialCarClickerSessionState,
@@ -117,6 +118,10 @@ export function useCarClickerGame() {
     dispatch({ type: 'select_location', locationId });
   }
 
+  function claimNitroRushReward(runInput: NitroRushRunInput) {
+    dispatch({ type: 'claim_nitro_rush_reward', runInput });
+  }
+
   return {
     offlineIncomeFeedback,
     purchaseFeedback,
@@ -127,6 +132,7 @@ export function useCarClickerGame() {
     tierProgress,
     upgradeViews,
     actions: {
+      claimNitroRushReward,
       collectClick,
       dismissOfflineIncomeFeedback,
       purchaseUpgrade,

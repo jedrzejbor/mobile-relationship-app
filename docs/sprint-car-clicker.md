@@ -991,7 +991,7 @@ Dziesiata iteracja:
 
 ### Zadanie 10: subgra Nitro Rush
 
-Status: pierwsza i druga iteracja zrobione.
+Status: pierwsza, druga i trzecia iteracja zrobione.
 
 Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
 
@@ -1021,6 +1021,15 @@ Druga iteracja:
 - Dodano `selectNitroRushBonusDefinition`, ktory mapuje wynik runa na definicje bonusu dla glownego Car Clickera.
 - Dodano `createNitroRushRunResult`, ktory tworzy finalny wynik runa razem z gotowym `rewardBonus`.
 - Nie dodano jeszcze UI runa; ta iteracja przygotowuje konfiguracje i logike, z ktorej bedzie korzystac ekran.
+
+Trzecia iteracja:
+
+- Dodano `applyCarClickerBonus`, ktory aplikuje aktywny bonus do stanu gry i przelicza ekonomie.
+- `applyCarClickerBonus` zastępuje starszy aktywny bonus tego samego typu, zeby nie stackowac przypadkowo wielu mnoznikow z tego samego zrodla gameplayowego.
+- Reducer obsluguje akcje `claim_nitro_rush_reward`.
+- Akcja tworzy `NitroRushRunResult` na podstawie `NitroRushRunInput`, bierze `rewardBonus` i podpina go do glownego Car Clickera.
+- `useCarClickerGame` wystawia `claimNitroRushReward(runInput)` jako publiczna akcje dla przyszlego ekranu subgry.
+- Nadal nie ma ekranu runa; od tej iteracji ekran ma juz gotowy kontrakt do przekazania wyniku i odebrania bonusu.
 
 ## Definicja ukonczenia sprintu
 

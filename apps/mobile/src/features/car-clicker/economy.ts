@@ -266,6 +266,25 @@ export function collectClickIncome(state: CarClickerState): CarClickerState {
   });
 }
 
+export function applyCarClickerBonus(
+  state: CarClickerState,
+  bonus: CarClickerActiveBonus,
+  now = Date.now(),
+): CarClickerState {
+  return recalculateCarClickerState(
+    {
+      ...state,
+      activeBonuses: [
+        ...state.activeBonuses.filter(
+          (activeBonus) => activeBonus.type !== bonus.type,
+        ),
+        bonus,
+      ],
+    },
+    now,
+  );
+}
+
 export function calculatePassiveIncome(
   perSecond: number,
   elapsedSeconds: number,

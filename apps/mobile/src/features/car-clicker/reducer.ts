@@ -1,4 +1,5 @@
 import {
+  applyCarClickerBonus,
   collectClickIncome,
   collectPassiveIncome,
   createInitialCarClickerState,
@@ -12,6 +13,10 @@ import {
   type CarClickerCarId,
   type CarClickerLocationId,
 } from './garage';
+import {
+  createNitroRushRunResult,
+  type NitroRushRunInput,
+} from './nitro-rush';
 import type {
   CarClickerOfflineIncomeFeedback,
   CarClickerState,
@@ -43,6 +48,11 @@ export type CarClickerAction =
   | {
       type: 'select_location';
       locationId: CarClickerLocationId;
+    }
+  | {
+      type: 'claim_nitro_rush_reward';
+      runInput: NitroRushRunInput;
+      claimedAt?: number;
     }
   | {
       type: 'hydrate_game';
@@ -133,6 +143,22 @@ export function carClickerReducer(
           ),
         }),
       };
+
+    case 'claim_nitro_rush_reward': {
+      const runResult = createNitroRushRunResult(
+        action.runInput,
+        action.claimedAt,
+      );
+
+      return {
+        ...state,
+        game: applyCarClickerBonus(
+          state.game,
+          runResult.rewardBonus,
+          action.claimedAt,
+        ),
+      };
+    }
 
     case 'hydrate_game':
       return {

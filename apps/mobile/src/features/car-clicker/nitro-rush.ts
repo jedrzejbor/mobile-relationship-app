@@ -52,6 +52,16 @@ export type NitroRushRunConfig = {
   startingMultiplier: number;
 };
 
+export type NitroRushTrackItem =
+  | {
+      type: 'gate';
+      gate: NitroRushGateDefinition;
+    }
+  | {
+      type: 'obstacle';
+      obstacle: NitroRushObstacleDefinition;
+    };
+
 export type NitroRushRunInput = {
   collectedGateIds: readonly string[];
   hitObstacleIds: readonly string[];
@@ -60,6 +70,14 @@ export type NitroRushRunInput = {
 export type NitroRushRunSelection = {
   collectedGateIds: readonly string[];
   hitObstacleIds: readonly string[];
+};
+
+export type NitroRushRunnerDirection = 'left' | 'right';
+
+export type NitroRushRunnerState = {
+  currentItemIndex: number;
+  currentLane: NitroRushLane;
+  selection: NitroRushRunSelection;
 };
 
 export type NitroRushRunResult = {
@@ -121,26 +139,42 @@ export const INITIAL_NITRO_RUSH_RUN_SELECTION = {
   hitObstacleIds: [],
 } as const satisfies NitroRushRunSelection;
 
-const NITRO_RUSH_GATE_BY_ID = NITRO_RUSH_RUN_CONFIG.gates.reduce(
-  (gatesById, gate) => ({
-    ...gatesById,
-    [gate.id]: gate,
-  }),
-  {} as Record<string, NitroRushGateDefinition>,
-);
+export const INITIAL_NITRO_RUSH_RUNNER_STATE = {
+  currentItemIndex: 0,
+  currentLane: 'center',
+  selection: INITIAL_NITRO_RUSH_RUN_SELECTION,
+} as const satisfies NitroRushRunnerState;
 
-const NITRO_RUSH_OBSTACLE_BY_ID = NITRO_RUSH_RUN_CONFIG.obstacles.reduce(
-  (obstaclesById, obstacle) => ({
-    ...obstaclesById,
-    [obstacle.id]: obstacle,
-  }),
-  {} as Record<string, NitroRushObstacleDefinition>,
-);
+const NITRO_RUSH_LANES: readonly NitroRushLane[] = ['left', 'center', 'right'];
+
+function createNitroRushGateMap(config: NitroRushRunConfig) {
+  return config.gates.reduce(
+    (gatesById, gate) => ({
+      ...gatesById,
+      [gate.id]: gate,
+    }),
+    {} as Record<string, NitroRushGateDefinition>,
+  );
+}
+
+function createNitroRushObstacleMap(config: NitroRushRunConfig) {
+  return config.obstacles.reduce(
+    (obstaclesById, obstacle) => ({
+      ...obstaclesById,
+      [obstacle.id]: obstacle,
+    }),
+    {} as Record<string, NitroRushObstacleDefinition>,
+  );
+}
 
 function toggleId(ids: readonly string[], id: string) {
   return ids.includes(id)
     ? ids.filter((currentId) => currentId !== id)
     : [...ids, id];
+}
+
+function addUniqueId(ids: readonly string[], id: string) {
+  return ids.includes(id) ? ids : [...ids, id];
 }
 
 export function toggleNitroRushGate(
@@ -179,13 +213,116 @@ export function createNitroRushRunInput(
   };
 }
 
+export function createNitroRushRunInputFromRunner(
+  runnerState: NitroRushRunnerState,
+): NitroRushRunInput {
+  return createNitroRushRunInput(runnerState.selection);
+}
+
+export function getNitroRushTrackItems(
+  config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
+): NitroRushTrackItem[] {
+  const itemCount = Math.max(config.gates.length, config.obstacles.length);
+  const items: NitroRushTrackItem[] = [];
+
+  for (let itemIndex = 0; itemIndex < itemCount; itemIndex += 1) {
+    const gate = config.gates[itemIndex];
+    const obstacle = config.obstacles[itemIndex];
+
+    if (gate) {
+      items.push({ type: 'gate', gate });
+    }
+
+    if (obstacle) {
+      items.push({ type: 'obstacle', obstacle });
+    }
+  }
+
+  return items;
+}
+
+export function moveNitroRushCar(
+  runnerState: NitroRushRunnerState,
+  direction: NitroRushRunnerDirection,
+): NitroRushRunnerState {
+  const currentLaneIndex = NITRO_RUSH_LANES.indexOf(runnerState.currentLane);
+  const nextLaneIndex =
+    direction === 'left' ? currentLaneIndex - 1 : currentLaneIndex + 1;
+  const clampedLaneIndex = Math.min(
+    Math.max(nextLaneIndex, 0),
+    NITRO_RUSH_LANES.length - 1,
+  );
+
+  return {
+    ...runnerState,
+    currentLane: NITRO_RUSH_LANES[clampedLaneIndex],
+  };
+}
+
+export function isNitroRushRunnerComplete(
+  runnerState: NitroRushRunnerState,
+  config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
+) {
+  return runnerState.currentItemIndex >= getNitroRushTrackItems(config).length;
+}
+
+export function resolveNitroRushTrackItem(
+  runnerState: NitroRushRunnerState,
+  config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
+): NitroRushRunnerState {
+  const trackItem = getNitroRushTrackItems(config)[runnerState.currentItemIndex];
+
+  if (!trackItem) {
+    return runnerState;
+  }
+
+  const nextState = {
+    ...runnerState,
+    currentItemIndex: runnerState.currentItemIndex + 1,
+  };
+
+  if (trackItem.type === 'gate') {
+    if (trackItem.gate.lane !== runnerState.currentLane) {
+      return nextState;
+    }
+
+    return {
+      ...nextState,
+      selection: {
+        ...runnerState.selection,
+        collectedGateIds: addUniqueId(
+          runnerState.selection.collectedGateIds,
+          trackItem.gate.id,
+        ),
+      },
+    };
+  }
+
+  if (trackItem.obstacle.lane !== runnerState.currentLane) {
+    return nextState;
+  }
+
+  return {
+    ...nextState,
+    selection: {
+      ...runnerState.selection,
+      hitObstacleIds: addUniqueId(
+        runnerState.selection.hitObstacleIds,
+        trackItem.obstacle.id,
+      ),
+    },
+  };
+}
+
 export function calculateNitroRushScore(
   input: NitroRushRunInput,
   config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
 ) {
+  const gatesById = createNitroRushGateMap(config);
+  const obstaclesById = createNitroRushObstacleMap(config);
   const scoreState = input.collectedGateIds.reduce(
     (state, gateId) => {
-      const gate = NITRO_RUSH_GATE_BY_ID[gateId];
+      const gate = gatesById[gateId];
 
       if (!gate) {
         return state;
@@ -223,7 +360,7 @@ export function calculateNitroRushScore(
   );
 
   return input.hitObstacleIds.reduce((state, obstacleId) => {
-    const obstacle = NITRO_RUSH_OBSTACLE_BY_ID[obstacleId];
+    const obstacle = obstaclesById[obstacleId];
 
     if (!obstacle) {
       return state;

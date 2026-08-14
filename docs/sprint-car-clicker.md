@@ -991,7 +991,7 @@ Dziesiata iteracja:
 
 ### Zadanie 10: subgra Nitro Rush
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma i osma iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma i dziewiata iteracja zrobione.
 
 Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
 
@@ -1072,6 +1072,14 @@ Osma iteracja:
 - Po kliknieciu `Odbierz bonus` gracz widzi komunikat `Bonus aktywny` z nazwa bonusu i wynikiem runa.
 - Nowy wybor bramki albo przeszkody czysci poprzedni komunikat, zeby feedback odpowiadal aktualnemu runowi.
 - Feedback pozostaje lokalny dla ekranu, a ekonomia dalej korzysta z istniejacego `claimNitroRushReward`.
+
+Dziewiata iteracja:
+
+- Dodano domenowy model runnera Nitro Rush: aktualny pas, indeks aktualnego elementu toru i stan zebranych bramek oraz trafionych przeszkod.
+- Dodano helpery `getNitroRushTrackItems`, `moveNitroRushCar`, `resolveNitroRushTrackItem`, `isNitroRushRunnerComplete` i `createNitroRushRunInputFromRunner`.
+- `calculateNitroRushScore` buduje mapy bramek i przeszkod z przekazanej konfiguracji, dzieki czemu modul jest bardziej reuzywalny i testowalny.
+- Ekran `nitro-rush.tsx` nie opiera sie juz na recznym tap-to-select; gracz przesuwa auto miedzy trzema pasami i przejezdza kolejne elementy toru.
+- Odbior nagrody jest mozliwy dopiero po zakonczeniu runa i zebraniu przynajmniej jednego punktowanego albo karnego zdarzenia.
 
 ## Definicja ukonczenia sprintu
 

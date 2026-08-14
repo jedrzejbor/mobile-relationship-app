@@ -8,19 +8,23 @@ import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import {
   CarClickerTheme,
-  createNitroRushRunInput,
+  createNitroRushRunInputFromRunner,
   createNitroRushRunResult,
   formatCarClickerDuration,
+  getNitroRushTrackItems,
   hasNitroRushRunSelection,
-  INITIAL_NITRO_RUSH_RUN_SELECTION,
+  INITIAL_NITRO_RUSH_RUNNER_STATE,
+  isNitroRushRunnerComplete,
+  moveNitroRushCar,
   NITRO_RUSH_RUN_CONFIG,
-  toggleNitroRushGate,
-  toggleNitroRushObstacle,
+  resolveNitroRushTrackItem,
   type NitroRushGateDefinition,
   type NitroRushLane,
   type NitroRushObstacleDefinition,
   type NitroRushRunResult,
-  type NitroRushRunSelection,
+  type NitroRushRunnerDirection,
+  type NitroRushRunnerState,
+  type NitroRushTrackItem,
   useCarClickerGame,
 } from '@/features/car-clicker';
 
@@ -55,39 +59,87 @@ function getLaneStyle(lane: NitroRushLane) {
   }
 }
 
+function getLaneLabel(lane: NitroRushLane) {
+  switch (lane) {
+    case 'left':
+      return 'lewy';
+    case 'center':
+      return 'srodek';
+    case 'right':
+      return 'prawy';
+  }
+}
+
+function getTrackItemLane(trackItem: NitroRushTrackItem) {
+  return trackItem.type === 'gate'
+    ? trackItem.gate.lane
+    : trackItem.obstacle.lane;
+}
+
+function getTrackItemId(trackItem: NitroRushTrackItem) {
+  return trackItem.type === 'gate' ? trackItem.gate.id : trackItem.obstacle.id;
+}
+
+function getTrackItemTitle(trackItem: NitroRushTrackItem) {
+  return trackItem.type === 'gate'
+    ? trackItem.gate.label
+    : trackItem.obstacle.label;
+}
+
+function getTrackItemMeta(trackItem: NitroRushTrackItem) {
+  return trackItem.type === 'gate'
+    ? getGateEffectLabel(trackItem.gate)
+    : getObstaclePenaltyLabel(trackItem.obstacle);
+}
+
+function hasResolvedTrackItem(
+  runnerState: NitroRushRunnerState,
+  trackItem: NitroRushTrackItem,
+) {
+  const trackItemId = getTrackItemId(trackItem);
+
+  return trackItem.type === 'gate'
+    ? runnerState.selection.collectedGateIds.includes(trackItemId)
+    : runnerState.selection.hitObstacleIds.includes(trackItemId);
+}
+
 export default function NitroRushScreen() {
   const { actions, garageView } = useCarClickerGame();
-  const [runSelection, setRunSelection] = useState<NitroRushRunSelection>(
-    INITIAL_NITRO_RUSH_RUN_SELECTION,
+  const [runnerState, setRunnerState] = useState<NitroRushRunnerState>(
+    INITIAL_NITRO_RUSH_RUNNER_STATE,
   );
   const [lastClaimedResult, setLastClaimedResult] =
     useState<NitroRushRunResult | null>(null);
+  const trackItems = useMemo(() => getNitroRushTrackItems(), []);
+  const currentTrackItem = trackItems[runnerState.currentItemIndex] ?? null;
   const runInput = useMemo(
-    () => createNitroRushRunInput(runSelection),
-    [runSelection],
+    () => createNitroRushRunInputFromRunner(runnerState),
+    [runnerState],
   );
   const runResult = useMemo(
     () => createNitroRushRunResult(runInput),
     [runInput],
   );
-  const hasRunChoices = hasNitroRushRunSelection(runSelection);
+  const hasRunChoices = hasNitroRushRunSelection(runnerState.selection);
+  const isRunnerComplete = isNitroRushRunnerComplete(runnerState);
+  const canClaimReward = isRunnerComplete && hasRunChoices;
 
-  function toggleGate(gateId: string) {
+  function moveCar(direction: NitroRushRunnerDirection) {
     setLastClaimedResult(null);
-    setRunSelection((currentSelection) =>
-      toggleNitroRushGate(currentSelection, gateId),
+    setRunnerState((currentRunnerState) =>
+      moveNitroRushCar(currentRunnerState, direction),
     );
   }
 
-  function toggleObstacle(obstacleId: string) {
+  function resolveCurrentTrackItem() {
     setLastClaimedResult(null);
-    setRunSelection((currentSelection) =>
-      toggleNitroRushObstacle(currentSelection, obstacleId),
+    setRunnerState((currentRunnerState) =>
+      resolveNitroRushTrackItem(currentRunnerState),
     );
   }
 
   function resetRun() {
-    setRunSelection(INITIAL_NITRO_RUSH_RUN_SELECTION);
+    setRunnerState(INITIAL_NITRO_RUSH_RUNNER_STATE);
   }
 
   function claimReward() {
@@ -119,7 +171,7 @@ export default function NitroRushScreen() {
             <View style={styles.trackPanel}>
               <View style={styles.trackHeader}>
                 <ThemedText type="smallBold" style={styles.panelTitle}>
-                  Wybierz linie
+                  Przejazd
                 </ThemedText>
                 <ThemedText type="smallBold" style={styles.multiplierBadge}>
                   x{runResult.finalMultiplier.toFixed(1)}
@@ -127,64 +179,75 @@ export default function NitroRushScreen() {
               </View>
 
               <View style={styles.track}>
-                {NITRO_RUSH_RUN_CONFIG.gates.map((gate) => {
-                  const isSelected = runSelection.collectedGateIds.includes(gate.id);
+                {trackItems.map((trackItem, trackItemIndex) => {
+                  const isCurrent =
+                    trackItemIndex === runnerState.currentItemIndex;
+                  const isPast = trackItemIndex < runnerState.currentItemIndex;
+                  const isResolved = hasResolvedTrackItem(runnerState, trackItem);
 
                   return (
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: isSelected }}
-                      key={gate.id}
-                      onPress={() => toggleGate(gate.id)}
+                    <View
+                      key={getTrackItemId(trackItem)}
                       style={[
                         styles.trackTile,
-                        styles.gateTile,
-                        isSelected && styles.gateTileSelected,
-                        getLaneStyle(gate.lane),
+                        trackItem.type === 'gate'
+                          ? styles.gateTile
+                          : styles.obstacleTile,
+                        isCurrent && styles.trackTileCurrent,
+                        isPast && styles.trackTilePast,
+                        isResolved &&
+                          (trackItem.type === 'gate'
+                            ? styles.gateTileSelected
+                            : styles.obstacleTileSelected),
+                        getLaneStyle(getTrackItemLane(trackItem)),
                       ]}>
                       <ThemedText type="smallBold" style={styles.tileTitle}>
-                        {gate.label}
+                        {getTrackItemTitle(trackItem)}
                       </ThemedText>
                       <ThemedText type="small" style={styles.tileMeta}>
-                        {getGateEffectLabel(gate)}
+                        {getTrackItemMeta(trackItem)}
                       </ThemedText>
-                    </Pressable>
-                  );
-                })}
-                {NITRO_RUSH_RUN_CONFIG.obstacles.map((obstacle) => {
-                  const isSelected = runSelection.hitObstacleIds.includes(
-                    obstacle.id,
-                  );
-
-                  return (
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: isSelected }}
-                      key={obstacle.id}
-                      onPress={() => toggleObstacle(obstacle.id)}
-                      style={[
-                        styles.trackTile,
-                        styles.obstacleTile,
-                        isSelected && styles.obstacleTileSelected,
-                        getLaneStyle(obstacle.lane),
-                      ]}>
-                      <ThemedText type="smallBold" style={styles.tileTitle}>
-                        {obstacle.label}
-                      </ThemedText>
-                      <ThemedText type="small" style={styles.tileMeta}>
-                        {getObstaclePenaltyLabel(obstacle)}
-                      </ThemedText>
-                    </Pressable>
+                    </View>
                   );
                 })}
               </View>
 
-              <Image
-                accessibilityIgnoresInvertColors
-                contentFit="contain"
-                source={garageView.currentCar.stageAsset.source}
-                style={styles.carImage}
-              />
+              <View style={styles.runnerStatus}>
+                <ThemedText type="smallBold" style={styles.runnerStatusText}>
+                  Pas: {getLaneLabel(runnerState.currentLane)}
+                </ThemedText>
+                <ThemedText type="smallBold" style={styles.runnerStatusText}>
+                  {Math.min(runnerState.currentItemIndex + 1, trackItems.length)} /{' '}
+                  {trackItems.length}
+                </ThemedText>
+              </View>
+
+              <View style={[styles.carLane, getLaneStyle(runnerState.currentLane)]}>
+                <Image
+                  accessibilityIgnoresInvertColors
+                  contentFit="contain"
+                  source={garageView.currentCar.stageAsset.source}
+                  style={styles.carImage}
+                />
+              </View>
+
+              <View style={styles.runnerControls}>
+                <RunnerControlButton
+                  disabled={runnerState.currentLane === 'left' || isRunnerComplete}
+                  label="Lewo"
+                  onPress={() => moveCar('left')}
+                />
+                <RunnerControlButton
+                  disabled={!currentTrackItem}
+                  label={currentTrackItem?.type === 'gate' ? 'Zbierz' : 'Dalej'}
+                  onPress={resolveCurrentTrackItem}
+                />
+                <RunnerControlButton
+                  disabled={runnerState.currentLane === 'right' || isRunnerComplete}
+                  label="Prawo"
+                  onPress={() => moveCar('right')}
+                />
+              </View>
             </View>
 
             <View style={styles.resultPanel}>
@@ -221,11 +284,11 @@ export default function NitroRushScreen() {
 
               <Pressable
                 accessibilityRole="button"
-                disabled={!hasRunChoices}
+                disabled={!canClaimReward}
                 onPress={claimReward}
                 style={({ pressed }) => [
                   styles.claimButton,
-                  !hasRunChoices && styles.claimButtonDisabled,
+                  !canClaimReward && styles.claimButtonDisabled,
                   pressed && styles.claimButtonPressed,
                 ]}>
                 <ThemedText type="smallBold" style={styles.claimButtonText}>
@@ -234,11 +297,11 @@ export default function NitroRushScreen() {
               </Pressable>
               <Pressable
                 accessibilityRole="button"
-                disabled={!hasRunChoices}
+                disabled={!hasRunChoices && !isRunnerComplete}
                 onPress={resetRun}
                 style={({ pressed }) => [
                   styles.resetButton,
-                  !hasRunChoices && styles.resetButtonDisabled,
+                  !hasRunChoices && !isRunnerComplete && styles.resetButtonDisabled,
                   pressed && styles.claimButtonPressed,
                 ]}>
                 <ThemedText type="smallBold" style={styles.resetButtonText}>
@@ -250,6 +313,32 @@ export default function NitroRushScreen() {
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
+  );
+}
+
+function RunnerControlButton({
+  disabled,
+  label,
+  onPress,
+}: {
+  disabled: boolean;
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      disabled={disabled}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.runnerControlButton,
+        disabled && styles.runnerControlButtonDisabled,
+        pressed && styles.claimButtonPressed,
+      ]}>
+      <ThemedText type="smallBold" style={styles.runnerControlButtonText}>
+        {label}
+      </ThemedText>
+    </Pressable>
   );
 }
 
@@ -354,6 +443,13 @@ const styles = StyleSheet.create({
     padding: Spacing.two,
     gap: Spacing.one,
   },
+  trackTileCurrent: {
+    borderColor: CarClickerTheme.colors.text,
+    transform: [{ scale: 1.04 }],
+  },
+  trackTilePast: {
+    opacity: 0.62,
+  },
   gateTile: {
     borderColor: CarClickerTheme.colors.click,
     backgroundColor: 'rgba(47, 185, 255, 0.16)',
@@ -390,9 +486,48 @@ const styles = StyleSheet.create({
     color: CarClickerTheme.colors.textMuted,
     textAlign: 'center',
   },
+  runnerStatus: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: Spacing.two,
+  },
+  runnerStatusText: {
+    color: CarClickerTheme.colors.textMuted,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
+  carLane: {
+    width: '44%',
+    minHeight: 118,
+    justifyContent: 'center',
+  },
   carImage: {
     width: '100%',
-    height: 170,
+    height: 118,
+  },
+  runnerControls: {
+    flexDirection: 'row',
+    gap: Spacing.two,
+  },
+  runnerControlButton: {
+    flex: 1,
+    minHeight: 46,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.borderStrong,
+    borderRadius: CarClickerTheme.radii.control,
+    backgroundColor: CarClickerTheme.colors.panelStrong,
+    paddingHorizontal: Spacing.two,
+  },
+  runnerControlButtonDisabled: {
+    opacity: 0.45,
+  },
+  runnerControlButtonText: {
+    color: CarClickerTheme.colors.text,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    textTransform: 'uppercase',
   },
   resultPanel: {
     borderWidth: CarClickerTheme.borders.hairline,

@@ -991,7 +991,7 @@ Dziesiata iteracja:
 
 ### Zadanie 10: subgra Nitro Rush
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata i dziesiata iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata, dziesiata i jedenasta iteracja zrobione.
 
 Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
 
@@ -1087,6 +1087,13 @@ Dziesiata iteracja:
 - Dodano `resolveNitroRushTrackItemWithOutcome`, ktory zwraca nowy stan runnera oraz jawny rezultat przejazdu przez element toru.
 - UI pokazuje feedback po kazdym kroku runa: zebrany bonus, minieta bramka, ominieta przeszkoda albo trafiona przeszkoda.
 - Ekran nie musi zgadywac rezultatu na podstawie list ID; korzysta z kontraktu domenowego, co upraszcza przyszle testy i animacje.
+
+Jedenasta iteracja:
+
+- `calculateNitroRushScore` liczy wynik zgodnie z kolejnoscia elementow toru zwracana przez `getNitroRushTrackItems`.
+- Bramki, mnozniki i przeszkody sa teraz aplikowane w tej samej kolejnosci, w ktorej gracz przejezdza run.
+- Nieznane ID bramek albo przeszkod dalej sa ignorowane, ale wynik nie jest juz sztucznie liczony jako wszystkie bramki przed wszystkimi przeszkodami.
+- Zmiana domyka wazna czesc gameplayu runnera: timing mnoznika, kary i combo sa spojne z przebiegiem toru.
 
 ## Definicja ukonczenia sprintu
 

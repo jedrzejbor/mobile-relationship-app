@@ -160,26 +160,6 @@ export const INITIAL_NITRO_RUSH_RUNNER_STATE = {
 
 const NITRO_RUSH_LANES: readonly NitroRushLane[] = ['left', 'center', 'right'];
 
-function createNitroRushGateMap(config: NitroRushRunConfig) {
-  return config.gates.reduce(
-    (gatesById, gate) => ({
-      ...gatesById,
-      [gate.id]: gate,
-    }),
-    {} as Record<string, NitroRushGateDefinition>,
-  );
-}
-
-function createNitroRushObstacleMap(config: NitroRushRunConfig) {
-  return config.obstacles.reduce(
-    (obstaclesById, obstacle) => ({
-      ...obstaclesById,
-      [obstacle.id]: obstacle,
-    }),
-    {} as Record<string, NitroRushObstacleDefinition>,
-  );
-}
-
 function toggleId(ids: readonly string[], id: string) {
   return ids.includes(id)
     ? ids.filter((currentId) => currentId !== id)
@@ -358,36 +338,66 @@ export function calculateNitroRushScore(
   input: NitroRushRunInput,
   config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
 ) {
-  const gatesById = createNitroRushGateMap(config);
-  const obstaclesById = createNitroRushObstacleMap(config);
-  const scoreState = input.collectedGateIds.reduce(
-    (state, gateId) => {
-      const gate = gatesById[gateId];
+  const collectedGateIds = new Set(input.collectedGateIds);
+  const hitObstacleIds = new Set(input.hitObstacleIds);
 
-      if (!gate) {
+  return getNitroRushTrackItems(config).reduce(
+    (state, trackItem) => {
+      if (trackItem.type === 'gate') {
+        if (!collectedGateIds.has(trackItem.gate.id)) {
+          return state;
+        }
+
+        switch (trackItem.gate.effect.type) {
+          case 'add_score':
+            return {
+              ...state,
+              bestGateValue: Math.max(
+                state.bestGateValue,
+                trackItem.gate.effect.value,
+              ),
+              combo: state.combo + 1,
+              score:
+                state.score + trackItem.gate.effect.value * state.multiplier,
+            };
+          case 'multiply_score':
+            return {
+              ...state,
+              bestGateValue: Math.max(
+                state.bestGateValue,
+                trackItem.gate.effect.value,
+              ),
+              combo: state.combo + 1,
+              multiplier: state.multiplier * trackItem.gate.effect.value,
+            };
+          case 'add_nitro':
+            return {
+              ...state,
+              combo: state.combo + 1,
+              score: state.score + trackItem.gate.effect.value,
+            };
+        }
+      }
+
+      if (!hitObstacleIds.has(trackItem.obstacle.id)) {
         return state;
       }
 
-      switch (gate.effect.type) {
-        case 'add_score':
+      switch (trackItem.obstacle.penalty.type) {
+        case 'lose_score':
           return {
             ...state,
-            bestGateValue: Math.max(state.bestGateValue, gate.effect.value),
-            combo: state.combo + 1,
-            score: state.score + gate.effect.value * state.multiplier,
+            combo: 0,
+            score: Math.max(state.score - trackItem.obstacle.penalty.value, 0),
           };
-        case 'multiply_score':
+        case 'reduce_multiplier':
           return {
             ...state,
-            bestGateValue: Math.max(state.bestGateValue, gate.effect.value),
-            combo: state.combo + 1,
-            multiplier: state.multiplier * gate.effect.value,
-          };
-        case 'add_nitro':
-          return {
-            ...state,
-            combo: state.combo + 1,
-            score: state.score + gate.effect.value,
+            combo: 0,
+            multiplier: Math.max(
+              state.multiplier * trackItem.obstacle.penalty.value,
+              1,
+            ),
           };
       }
     },
@@ -398,29 +408,6 @@ export function calculateNitroRushScore(
       score: 0,
     },
   );
-
-  return input.hitObstacleIds.reduce((state, obstacleId) => {
-    const obstacle = obstaclesById[obstacleId];
-
-    if (!obstacle) {
-      return state;
-    }
-
-    switch (obstacle.penalty.type) {
-      case 'lose_score':
-        return {
-          ...state,
-          combo: 0,
-          score: Math.max(state.score - obstacle.penalty.value, 0),
-        };
-      case 'reduce_multiplier':
-        return {
-          ...state,
-          combo: 0,
-          multiplier: Math.max(state.multiplier * obstacle.penalty.value, 1),
-        };
-    }
-  }, scoreState);
 }
 
 export function selectNitroRushBonusDefinition(score: number) {

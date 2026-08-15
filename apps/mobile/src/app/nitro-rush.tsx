@@ -11,10 +11,9 @@ import {
   createNitroRushRunInputFromRunner,
   createNitroRushRunResult,
   formatCarClickerDuration,
+  getNitroRushRunProgress,
   getNitroRushTrackItems,
-  hasNitroRushRunSelection,
   INITIAL_NITRO_RUSH_RUNNER_STATE,
-  isNitroRushRunnerComplete,
   moveNitroRushCar,
   NITRO_RUSH_RUN_CONFIG,
   resolveNitroRushTrackItemWithOutcome,
@@ -156,6 +155,10 @@ export default function NitroRushScreen() {
     useState<NitroRushTrackResolution | null>(null);
   const trackItems = useMemo(() => getNitroRushTrackItems(), []);
   const currentTrackItem = trackItems[runnerState.currentItemIndex] ?? null;
+  const runProgress = useMemo(
+    () => getNitroRushRunProgress(runnerState),
+    [runnerState],
+  );
   const resolutionFeedback = lastResolution
     ? getResolutionFeedback(lastResolution)
     : null;
@@ -167,9 +170,6 @@ export default function NitroRushScreen() {
     () => createNitroRushRunResult(runInput),
     [runInput],
   );
-  const hasRunChoices = hasNitroRushRunSelection(runnerState.selection);
-  const isRunnerComplete = isNitroRushRunnerComplete(runnerState);
-  const canClaimReward = isRunnerComplete && hasRunChoices;
 
   function moveCar(direction: NitroRushRunnerDirection) {
     setLastClaimedResult(null);
@@ -266,9 +266,17 @@ export default function NitroRushScreen() {
                   Pas: {getLaneLabel(runnerState.currentLane)}
                 </ThemedText>
                 <ThemedText type="smallBold" style={styles.runnerStatusText}>
-                  {Math.min(runnerState.currentItemIndex + 1, trackItems.length)} /{' '}
-                  {trackItems.length}
+                  {runProgress.completedItems} / {runProgress.totalItems}
                 </ThemedText>
+              </View>
+
+              <View style={styles.progressTrack}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    { width: `${runProgress.progressRatio * 100}%` },
+                  ]}
+                />
               </View>
 
               {resolutionFeedback ? (
@@ -300,7 +308,7 @@ export default function NitroRushScreen() {
 
               <View style={styles.runnerControls}>
                 <RunnerControlButton
-                  disabled={runnerState.currentLane === 'left' || isRunnerComplete}
+                  disabled={runnerState.currentLane === 'left' || runProgress.isComplete}
                   label="Lewo"
                   onPress={() => moveCar('left')}
                 />
@@ -310,7 +318,9 @@ export default function NitroRushScreen() {
                   onPress={resolveCurrentTrackItem}
                 />
                 <RunnerControlButton
-                  disabled={runnerState.currentLane === 'right' || isRunnerComplete}
+                  disabled={
+                    runnerState.currentLane === 'right' || runProgress.isComplete
+                  }
                   label="Prawo"
                   onPress={() => moveCar('right')}
                 />
@@ -351,11 +361,11 @@ export default function NitroRushScreen() {
 
               <Pressable
                 accessibilityRole="button"
-                disabled={!canClaimReward}
+                disabled={!runProgress.canClaimReward}
                 onPress={claimReward}
                 style={({ pressed }) => [
                   styles.claimButton,
-                  !canClaimReward && styles.claimButtonDisabled,
+                  !runProgress.canClaimReward && styles.claimButtonDisabled,
                   pressed && styles.claimButtonPressed,
                 ]}>
                 <ThemedText type="smallBold" style={styles.claimButtonText}>
@@ -364,11 +374,13 @@ export default function NitroRushScreen() {
               </Pressable>
               <Pressable
                 accessibilityRole="button"
-                disabled={!hasRunChoices && !isRunnerComplete}
+                disabled={!runProgress.hasRunEvents && !runProgress.isComplete}
                 onPress={resetRun}
                 style={({ pressed }) => [
                   styles.resetButton,
-                  !hasRunChoices && !isRunnerComplete && styles.resetButtonDisabled,
+                  !runProgress.hasRunEvents &&
+                    !runProgress.isComplete &&
+                    styles.resetButtonDisabled,
                   pressed && styles.claimButtonPressed,
                 ]}>
                 <ThemedText type="smallBold" style={styles.resetButtonText}>
@@ -562,6 +574,17 @@ const styles = StyleSheet.create({
     color: CarClickerTheme.colors.textMuted,
     fontStyle: 'italic',
     textTransform: 'uppercase',
+  },
+  progressTrack: {
+    height: 8,
+    overflow: 'hidden',
+    borderRadius: CarClickerTheme.radii.badge,
+    backgroundColor: CarClickerTheme.colors.panelStrong,
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: CarClickerTheme.radii.badge,
+    backgroundColor: CarClickerTheme.colors.accent,
   },
   resolutionBox: {
     borderWidth: CarClickerTheme.borders.hairline,

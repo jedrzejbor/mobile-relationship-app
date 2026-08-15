@@ -80,6 +80,15 @@ export type NitroRushRunnerState = {
   selection: NitroRushRunSelection;
 };
 
+export type NitroRushRunProgress = {
+  canClaimReward: boolean;
+  completedItems: number;
+  hasRunEvents: boolean;
+  isComplete: boolean;
+  progressRatio: number;
+  totalItems: number;
+};
+
 export type NitroRushTrackResolutionOutcome =
   | 'avoided_obstacle'
   | 'collected_gate'
@@ -256,7 +265,26 @@ export function isNitroRushRunnerComplete(
   runnerState: NitroRushRunnerState,
   config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
 ) {
-  return runnerState.currentItemIndex >= getNitroRushTrackItems(config).length;
+  return getNitroRushRunProgress(runnerState, config).isComplete;
+}
+
+export function getNitroRushRunProgress(
+  runnerState: NitroRushRunnerState,
+  config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
+): NitroRushRunProgress {
+  const totalItems = getNitroRushTrackItems(config).length;
+  const completedItems = Math.min(runnerState.currentItemIndex, totalItems);
+  const isComplete = completedItems >= totalItems;
+  const hasRunEvents = hasNitroRushRunSelection(runnerState.selection);
+
+  return {
+    canClaimReward: isComplete && hasRunEvents,
+    completedItems,
+    hasRunEvents,
+    isComplete,
+    progressRatio: totalItems > 0 ? completedItems / totalItems : 1,
+    totalItems,
+  };
 }
 
 export function resolveNitroRushTrackItem(

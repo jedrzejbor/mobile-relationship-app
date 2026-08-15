@@ -80,6 +80,19 @@ export type NitroRushRunnerState = {
   selection: NitroRushRunSelection;
 };
 
+export type NitroRushTrackResolutionOutcome =
+  | 'avoided_obstacle'
+  | 'collected_gate'
+  | 'complete'
+  | 'hit_obstacle'
+  | 'missed_gate';
+
+export type NitroRushTrackResolution = {
+  outcome: NitroRushTrackResolutionOutcome;
+  runnerState: NitroRushRunnerState;
+  trackItem: NitroRushTrackItem | null;
+};
+
 export type NitroRushRunResult = {
   bestGateValue: number;
   bonusDefinition: CarClickerBonusDefinition;
@@ -270,10 +283,21 @@ export function resolveNitroRushTrackItem(
   runnerState: NitroRushRunnerState,
   config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
 ): NitroRushRunnerState {
+  return resolveNitroRushTrackItemWithOutcome(runnerState, config).runnerState;
+}
+
+export function resolveNitroRushTrackItemWithOutcome(
+  runnerState: NitroRushRunnerState,
+  config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
+): NitroRushTrackResolution {
   const trackItem = getNitroRushTrackItems(config)[runnerState.currentItemIndex];
 
   if (!trackItem) {
-    return runnerState;
+    return {
+      outcome: 'complete',
+      runnerState,
+      trackItem: null,
+    };
   }
 
   const nextState = {
@@ -283,34 +307,50 @@ export function resolveNitroRushTrackItem(
 
   if (trackItem.type === 'gate') {
     if (trackItem.gate.lane !== runnerState.currentLane) {
-      return nextState;
+      return {
+        outcome: 'missed_gate',
+        runnerState: nextState,
+        trackItem,
+      };
     }
 
     return {
-      ...nextState,
-      selection: {
-        ...runnerState.selection,
-        collectedGateIds: addUniqueId(
-          runnerState.selection.collectedGateIds,
-          trackItem.gate.id,
-        ),
+      outcome: 'collected_gate',
+      runnerState: {
+        ...nextState,
+        selection: {
+          ...runnerState.selection,
+          collectedGateIds: addUniqueId(
+            runnerState.selection.collectedGateIds,
+            trackItem.gate.id,
+          ),
+        },
       },
+      trackItem,
     };
   }
 
   if (trackItem.obstacle.lane !== runnerState.currentLane) {
-    return nextState;
+    return {
+      outcome: 'avoided_obstacle',
+      runnerState: nextState,
+      trackItem,
+    };
   }
 
   return {
-    ...nextState,
-    selection: {
-      ...runnerState.selection,
-      hitObstacleIds: addUniqueId(
-        runnerState.selection.hitObstacleIds,
-        trackItem.obstacle.id,
-      ),
+    outcome: 'hit_obstacle',
+    runnerState: {
+      ...nextState,
+      selection: {
+        ...runnerState.selection,
+        hitObstacleIds: addUniqueId(
+          runnerState.selection.hitObstacleIds,
+          trackItem.obstacle.id,
+        ),
+      },
     },
+    trackItem,
   };
 }
 

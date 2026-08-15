@@ -17,13 +17,14 @@ import {
   isNitroRushRunnerComplete,
   moveNitroRushCar,
   NITRO_RUSH_RUN_CONFIG,
-  resolveNitroRushTrackItem,
+  resolveNitroRushTrackItemWithOutcome,
   type NitroRushGateDefinition,
   type NitroRushLane,
   type NitroRushObstacleDefinition,
   type NitroRushRunResult,
   type NitroRushRunnerDirection,
   type NitroRushRunnerState,
+  type NitroRushTrackResolution,
   type NitroRushTrackItem,
   useCarClickerGame,
 } from '@/features/car-clicker';
@@ -103,6 +104,47 @@ function hasResolvedTrackItem(
     : runnerState.selection.hitObstacleIds.includes(trackItemId);
 }
 
+function getResolutionFeedback(resolution: NitroRushTrackResolution) {
+  switch (resolution.outcome) {
+    case 'collected_gate':
+      return {
+        tone: 'success' as const,
+        title: 'Zebrano bonus',
+        text: resolution.trackItem ? getTrackItemMeta(resolution.trackItem) : '',
+      };
+    case 'missed_gate':
+      return {
+        tone: 'neutral' as const,
+        title: 'Minieto bramke',
+        text: resolution.trackItem
+          ? `Potrzebny pas: ${getLaneLabel(getTrackItemLane(resolution.trackItem))}`
+          : '',
+      };
+    case 'avoided_obstacle':
+      return {
+        tone: 'success' as const,
+        title: 'Ominieto przeszkode',
+        text: resolution.trackItem
+          ? `Przeszkoda byla na pasie: ${getLaneLabel(
+              getTrackItemLane(resolution.trackItem),
+            )}`
+          : '',
+      };
+    case 'hit_obstacle':
+      return {
+        tone: 'danger' as const,
+        title: 'Trafiono przeszkode',
+        text: resolution.trackItem ? getTrackItemMeta(resolution.trackItem) : '',
+      };
+    case 'complete':
+      return {
+        tone: 'neutral' as const,
+        title: 'Run zakonczony',
+        text: 'Mozesz odebrac bonus albo zaczac od nowa.',
+      };
+  }
+}
+
 export default function NitroRushScreen() {
   const { actions, garageView } = useCarClickerGame();
   const [runnerState, setRunnerState] = useState<NitroRushRunnerState>(
@@ -110,8 +152,13 @@ export default function NitroRushScreen() {
   );
   const [lastClaimedResult, setLastClaimedResult] =
     useState<NitroRushRunResult | null>(null);
+  const [lastResolution, setLastResolution] =
+    useState<NitroRushTrackResolution | null>(null);
   const trackItems = useMemo(() => getNitroRushTrackItems(), []);
   const currentTrackItem = trackItems[runnerState.currentItemIndex] ?? null;
+  const resolutionFeedback = lastResolution
+    ? getResolutionFeedback(lastResolution)
+    : null;
   const runInput = useMemo(
     () => createNitroRushRunInputFromRunner(runnerState),
     [runnerState],
@@ -133,13 +180,15 @@ export default function NitroRushScreen() {
 
   function resolveCurrentTrackItem() {
     setLastClaimedResult(null);
-    setRunnerState((currentRunnerState) =>
-      resolveNitroRushTrackItem(currentRunnerState),
-    );
+    const resolution = resolveNitroRushTrackItemWithOutcome(runnerState);
+
+    setLastResolution(resolution);
+    setRunnerState(resolution.runnerState);
   }
 
   function resetRun() {
     setRunnerState(INITIAL_NITRO_RUSH_RUNNER_STATE);
+    setLastResolution(null);
   }
 
   function claimReward() {
@@ -221,6 +270,24 @@ export default function NitroRushScreen() {
                   {trackItems.length}
                 </ThemedText>
               </View>
+
+              {resolutionFeedback ? (
+                <View
+                  style={[
+                    styles.resolutionBox,
+                    resolutionFeedback.tone === 'success' &&
+                      styles.resolutionBoxSuccess,
+                    resolutionFeedback.tone === 'danger' &&
+                      styles.resolutionBoxDanger,
+                  ]}>
+                  <ThemedText type="smallBold" style={styles.resolutionTitle}>
+                    {resolutionFeedback.title}
+                  </ThemedText>
+                  <ThemedText type="small" style={styles.resolutionText}>
+                    {resolutionFeedback.text}
+                  </ThemedText>
+                </View>
+              ) : null}
 
               <View style={[styles.carLane, getLaneStyle(runnerState.currentLane)]}>
                 <Image
@@ -495,6 +562,30 @@ const styles = StyleSheet.create({
     color: CarClickerTheme.colors.textMuted,
     fontStyle: 'italic',
     textTransform: 'uppercase',
+  },
+  resolutionBox: {
+    borderWidth: CarClickerTheme.borders.hairline,
+    borderColor: CarClickerTheme.colors.border,
+    borderRadius: CarClickerTheme.radii.control,
+    backgroundColor: CarClickerTheme.colors.panelStrong,
+    padding: Spacing.two,
+    gap: Spacing.one,
+  },
+  resolutionBoxSuccess: {
+    borderColor: CarClickerTheme.colors.success,
+    backgroundColor: 'rgba(120, 223, 69, 0.12)',
+  },
+  resolutionBoxDanger: {
+    borderColor: CarClickerTheme.colors.danger,
+    backgroundColor: 'rgba(255, 92, 112, 0.14)',
+  },
+  resolutionTitle: {
+    color: CarClickerTheme.colors.text,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+  },
+  resolutionText: {
+    color: CarClickerTheme.colors.textMuted,
   },
   carLane: {
     width: '44%',

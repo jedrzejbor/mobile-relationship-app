@@ -49,6 +49,7 @@ export type NitroRushRunConfig = {
   durationSeconds: number;
   gates: readonly NitroRushGateDefinition[];
   obstacles: readonly NitroRushObstacleDefinition[];
+  stepDurationMs: number;
   startingMultiplier: number;
 };
 
@@ -113,6 +114,7 @@ export type NitroRushRunResult = {
 
 export const NITRO_RUSH_RUN_CONFIG = {
   durationSeconds: 35,
+  stepDurationMs: 1200,
   startingMultiplier: 1,
   gates: [
     {

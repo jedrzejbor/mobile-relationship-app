@@ -991,7 +991,7 @@ Dziesiata iteracja:
 
 ### Zadanie 10: subgra Nitro Rush
 
-Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata, dziesiata, jedenasta i dwunasta iteracja zrobione.
+Status: pierwsza, druga, trzecia, czwarta, piata, szosta, siodma, osma, dziewiata, dziesiata, jedenasta, dwunasta i trzynasta iteracja zrobione.
 
 Opis koncepcji znajduje sie w `docs/car-clicker-subgame-nitro-rush.md`.
 
@@ -1102,6 +1102,14 @@ Dwunasta iteracja:
 - `isNitroRushRunnerComplete` korzysta teraz z tego samego kontraktu progresu, zeby nie dublowac zasad ukonczenia runa.
 - Ekran `nitro-rush.tsx` korzysta z `runProgress` zamiast samodzielnie skladac warunki `hasRunChoices`, `isRunnerComplete` i `canClaimReward`.
 - Dodano pasek postepu przejazdu, zeby gracz widzial, jaka czesc toru juz pokonal.
+
+Trzynasta iteracja:
+
+- Dodano `stepDurationMs` do `NitroRushRunConfig`, zeby tempo automatycznego przejazdu bylo czescia konfiguracji domenowej.
+- Ekran `nitro-rush.tsx` ma pierwszy wariant auto-runa: przycisk `Start` uruchamia przejazd, a `Pauza` go zatrzymuje.
+- Podczas aktywnego runa auto co tick przejezdza przez kolejny element toru i odpala `resolveNitroRushTrackItemWithOutcome`.
+- Gracz moze zmieniac pas w trakcie przejazdu, wiec zbieranie bonusow zaczyna dzialac jak celowanie autem w odpowiedni tor.
+- Po ukonczeniu runa auto-run sam sie zatrzymuje, a odbior nagrody nadal korzysta z istniejacego `runProgress.canClaimReward`.
 
 ## Definicja ukonczenia sprintu
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Image } from 'expo-image';
 import { Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -149,6 +149,7 @@ export default function NitroRushScreen() {
   const [runnerState, setRunnerState] = useState<NitroRushRunnerState>(
     INITIAL_NITRO_RUSH_RUNNER_STATE,
   );
+  const [isRunActive, setIsRunActive] = useState(false);
   const [lastClaimedResult, setLastClaimedResult] =
     useState<NitroRushRunResult | null>(null);
   const [lastResolution, setLastResolution] =
@@ -171,6 +172,26 @@ export default function NitroRushScreen() {
     [runInput],
   );
 
+  useEffect(() => {
+    if (!isRunActive || runProgress.isComplete) {
+      return;
+    }
+
+    const stepTimeout = setTimeout(() => {
+      const resolution = resolveNitroRushTrackItemWithOutcome(runnerState);
+      const nextProgress = getNitroRushRunProgress(resolution.runnerState);
+
+      setLastClaimedResult(null);
+      setLastResolution(resolution);
+      setRunnerState(resolution.runnerState);
+      setIsRunActive(!nextProgress.isComplete);
+    }, NITRO_RUSH_RUN_CONFIG.stepDurationMs);
+
+    return () => {
+      clearTimeout(stepTimeout);
+    };
+  }, [isRunActive, runProgress.isComplete, runnerState]);
+
   function moveCar(direction: NitroRushRunnerDirection) {
     setLastClaimedResult(null);
     setRunnerState((currentRunnerState) =>
@@ -178,15 +199,13 @@ export default function NitroRushScreen() {
     );
   }
 
-  function resolveCurrentTrackItem() {
+  function toggleAutoRun() {
     setLastClaimedResult(null);
-    const resolution = resolveNitroRushTrackItemWithOutcome(runnerState);
-
-    setLastResolution(resolution);
-    setRunnerState(resolution.runnerState);
+    setIsRunActive((currentIsRunActive) => !currentIsRunActive);
   }
 
   function resetRun() {
+    setIsRunActive(false);
     setRunnerState(INITIAL_NITRO_RUSH_RUNNER_STATE);
     setLastResolution(null);
   }
@@ -313,9 +332,9 @@ export default function NitroRushScreen() {
                   onPress={() => moveCar('left')}
                 />
                 <RunnerControlButton
-                  disabled={!currentTrackItem}
-                  label={currentTrackItem?.type === 'gate' ? 'Zbierz' : 'Dalej'}
-                  onPress={resolveCurrentTrackItem}
+                  disabled={!currentTrackItem && !isRunActive}
+                  label={isRunActive ? 'Pauza' : 'Start'}
+                  onPress={toggleAutoRun}
                 />
                 <RunnerControlButton
                   disabled={

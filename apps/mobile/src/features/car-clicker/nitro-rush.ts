@@ -81,6 +81,16 @@ export type NitroRushRunnerState = {
   selection: NitroRushRunSelection;
 };
 
+export type NitroRushAutoRunStatus = 'complete' | 'paused' | 'ready' | 'running';
+
+export type NitroRushAutoRunView = {
+  canAdvance: boolean;
+  canMove: boolean;
+  canToggle: boolean;
+  isRunning: boolean;
+  status: NitroRushAutoRunStatus;
+};
+
 export type NitroRushRunProgress = {
   canClaimReward: boolean;
   completedItems: number;
@@ -101,6 +111,12 @@ export type NitroRushTrackResolution = {
   outcome: NitroRushTrackResolutionOutcome;
   runnerState: NitroRushRunnerState;
   trackItem: NitroRushTrackItem | null;
+};
+
+export type NitroRushAutoRunStep = {
+  progress: NitroRushRunProgress;
+  resolution: NitroRushTrackResolution;
+  shouldContinue: boolean;
 };
 
 export type NitroRushRunResult = {
@@ -286,6 +302,53 @@ export function getNitroRushRunProgress(
     isComplete,
     progressRatio: totalItems > 0 ? completedItems / totalItems : 1,
     totalItems,
+  };
+}
+
+export function getNitroRushAutoRunView(
+  runnerState: NitroRushRunnerState,
+  isRunning: boolean,
+  config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
+): NitroRushAutoRunView {
+  const progress = getNitroRushRunProgress(runnerState, config);
+  const status: NitroRushAutoRunStatus = progress.isComplete
+    ? 'complete'
+    : isRunning
+      ? 'running'
+      : progress.completedItems > 0
+        ? 'paused'
+        : 'ready';
+
+  return {
+    canAdvance: isRunning && !progress.isComplete,
+    canMove: !progress.isComplete,
+    canToggle: !progress.isComplete,
+    isRunning,
+    status,
+  };
+}
+
+export function toggleNitroRushAutoRun(
+  runnerState: NitroRushRunnerState,
+  isRunning: boolean,
+  config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
+) {
+  return getNitroRushRunProgress(runnerState, config).isComplete
+    ? false
+    : !isRunning;
+}
+
+export function advanceNitroRushAutoRun(
+  runnerState: NitroRushRunnerState,
+  config: NitroRushRunConfig = NITRO_RUSH_RUN_CONFIG,
+): NitroRushAutoRunStep {
+  const resolution = resolveNitroRushTrackItemWithOutcome(runnerState, config);
+  const progress = getNitroRushRunProgress(resolution.runnerState, config);
+
+  return {
+    progress,
+    resolution,
+    shouldContinue: !progress.isComplete,
   };
 }
 

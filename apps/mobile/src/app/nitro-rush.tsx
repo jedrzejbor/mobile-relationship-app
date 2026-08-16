@@ -7,16 +7,19 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import {
+  advanceNitroRushAutoRun,
   CarClickerTheme,
   createNitroRushRunInputFromRunner,
   createNitroRushRunResult,
   formatCarClickerDuration,
+  getNitroRushAutoRunView,
   getNitroRushRunProgress,
   getNitroRushTrackItems,
   INITIAL_NITRO_RUSH_RUNNER_STATE,
   moveNitroRushCar,
   NITRO_RUSH_RUN_CONFIG,
-  resolveNitroRushTrackItemWithOutcome,
+  toggleNitroRushAutoRun,
+  type NitroRushAutoRunStatus,
   type NitroRushGateDefinition,
   type NitroRushLane,
   type NitroRushObstacleDefinition,
@@ -144,6 +147,19 @@ function getResolutionFeedback(resolution: NitroRushTrackResolution) {
   }
 }
 
+function getAutoRunStatusLabel(status: NitroRushAutoRunStatus) {
+  switch (status) {
+    case 'ready':
+      return 'Gotowy';
+    case 'running':
+      return 'Jedzie';
+    case 'paused':
+      return 'Pauza';
+    case 'complete':
+      return 'Meta';
+  }
+}
+
 export default function NitroRushScreen() {
   const { actions, garageView } = useCarClickerGame();
   const [runnerState, setRunnerState] = useState<NitroRushRunnerState>(
@@ -155,10 +171,13 @@ export default function NitroRushScreen() {
   const [lastResolution, setLastResolution] =
     useState<NitroRushTrackResolution | null>(null);
   const trackItems = useMemo(() => getNitroRushTrackItems(), []);
-  const currentTrackItem = trackItems[runnerState.currentItemIndex] ?? null;
   const runProgress = useMemo(
     () => getNitroRushRunProgress(runnerState),
     [runnerState],
+  );
+  const autoRunView = useMemo(
+    () => getNitroRushAutoRunView(runnerState, isRunActive),
+    [isRunActive, runnerState],
   );
   const resolutionFeedback = lastResolution
     ? getResolutionFeedback(lastResolution)
@@ -173,24 +192,23 @@ export default function NitroRushScreen() {
   );
 
   useEffect(() => {
-    if (!isRunActive || runProgress.isComplete) {
+    if (!autoRunView.canAdvance) {
       return;
     }
 
     const stepTimeout = setTimeout(() => {
-      const resolution = resolveNitroRushTrackItemWithOutcome(runnerState);
-      const nextProgress = getNitroRushRunProgress(resolution.runnerState);
+      const autoRunStep = advanceNitroRushAutoRun(runnerState);
 
       setLastClaimedResult(null);
-      setLastResolution(resolution);
-      setRunnerState(resolution.runnerState);
-      setIsRunActive(!nextProgress.isComplete);
+      setLastResolution(autoRunStep.resolution);
+      setRunnerState(autoRunStep.resolution.runnerState);
+      setIsRunActive(autoRunStep.shouldContinue);
     }, NITRO_RUSH_RUN_CONFIG.stepDurationMs);
 
     return () => {
       clearTimeout(stepTimeout);
     };
-  }, [isRunActive, runProgress.isComplete, runnerState]);
+  }, [autoRunView.canAdvance, runnerState]);
 
   function moveCar(direction: NitroRushRunnerDirection) {
     setLastClaimedResult(null);
@@ -201,7 +219,9 @@ export default function NitroRushScreen() {
 
   function toggleAutoRun() {
     setLastClaimedResult(null);
-    setIsRunActive((currentIsRunActive) => !currentIsRunActive);
+    setIsRunActive((currentIsRunActive) =>
+      toggleNitroRushAutoRun(runnerState, currentIsRunActive),
+    );
   }
 
   function resetRun() {
@@ -287,6 +307,9 @@ export default function NitroRushScreen() {
                 <ThemedText type="smallBold" style={styles.runnerStatusText}>
                   {runProgress.completedItems} / {runProgress.totalItems}
                 </ThemedText>
+                <ThemedText type="smallBold" style={styles.runnerStatusText}>
+                  {getAutoRunStatusLabel(autoRunView.status)}
+                </ThemedText>
               </View>
 
               <View style={styles.progressTrack}>
@@ -327,18 +350,18 @@ export default function NitroRushScreen() {
 
               <View style={styles.runnerControls}>
                 <RunnerControlButton
-                  disabled={runnerState.currentLane === 'left' || runProgress.isComplete}
+                  disabled={runnerState.currentLane === 'left' || !autoRunView.canMove}
                   label="Lewo"
                   onPress={() => moveCar('left')}
                 />
                 <RunnerControlButton
-                  disabled={!currentTrackItem && !isRunActive}
-                  label={isRunActive ? 'Pauza' : 'Start'}
+                  disabled={!autoRunView.canToggle}
+                  label={autoRunView.isRunning ? 'Pauza' : 'Start'}
                   onPress={toggleAutoRun}
                 />
                 <RunnerControlButton
                   disabled={
-                    runnerState.currentLane === 'right' || runProgress.isComplete
+                    runnerState.currentLane === 'right' || !autoRunView.canMove
                   }
                   label="Prawo"
                   onPress={() => moveCar('right')}
